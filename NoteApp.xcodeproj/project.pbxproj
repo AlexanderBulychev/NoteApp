@@ -9,7 +9,7 @@
 /* Begin PBXBuildFile section */
 		FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9827EDF3A800F4CE6F /* AppDelegate.swift */; };
 		FC205D9B27EDF3A800F4CE6F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9A27EDF3A800F4CE6F /* SceneDelegate.swift */; };
-		FC205D9D27EDF3A800F4CE6F /* MainViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9C27EDF3A800F4CE6F /* MainViewController.swift */; };
+		FC205D9D27EDF3A800F4CE6F /* NewNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9C27EDF3A800F4CE6F /* NewNoteViewController.swift */; };
 		FC205DA027EDF3A800F4CE6F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC205D9E27EDF3A800F4CE6F /* Main.storyboard */; };
 		FC205DA227EDF3AB00F4CE6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC205DA127EDF3AB00F4CE6F /* Assets.xcassets */; };
 		FC205DA527EDF3AB00F4CE6F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC205DA327EDF3AB00F4CE6F /* LaunchScreen.storyboard */; };
@@ -21,7 +21,7 @@
 		FC205D9527EDF3A800F4CE6F /* NoteApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC205D9827EDF3A800F4CE6F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FC205D9A27EDF3A800F4CE6F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FC205D9C27EDF3A800F4CE6F /* MainViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainViewController.swift; sourceTree = "<group>"; };
+		FC205D9C27EDF3A800F4CE6F /* NewNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewNoteViewController.swift; sourceTree = "<group>"; };
 		FC205D9F27EDF3A800F4CE6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
 		FC205DA127EDF3AB00F4CE6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FC205DA427EDF3AB00F4CE6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
@@ -73,7 +73,7 @@
 		FC205DAC27EDF56400F4CE6F /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				FC205D9C27EDF3A800F4CE6F /* MainViewController.swift */,
+				FC205D9C27EDF3A800F4CE6F /* NewNoteViewController.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -128,6 +128,7 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FC205DA927EDF3AB00F4CE6F /* Build configuration list for PBXNativeTarget "NoteApp" */;
 			buildPhases = (
+				FC205DB627F31DCD00F4CE6F /* ShellScript */,
 				FC205D9127EDF3A800F4CE6F /* Sources */,
 				FC205D9227EDF3A800F4CE6F /* Frameworks */,
 				FC205D9327EDF3A800F4CE6F /* Resources */,
@@ -187,12 +188,32 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		FC205DB627F31DCD00F4CE6F /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "# Type a script or drag a script file from your workspace to insert its path.\nexport PATH=\"$PATH:~/portable_swiftlint\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		FC205D9127EDF3A800F4CE6F /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC205D9D27EDF3A800F4CE6F /* MainViewController.swift in Sources */,
+				FC205D9D27EDF3A800F4CE6F /* NewNoteViewController.swift in Sources */,
 				FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */,
 				FC205DB527F19E8B00F4CE6F /* StorageManager.swift in Sources */,
 				FC205D9B27EDF3A800F4CE6F /* SceneDelegate.swift in Sources */,

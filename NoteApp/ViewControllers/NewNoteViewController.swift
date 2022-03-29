@@ -7,7 +7,7 @@
 
 import UIKit
 
-class MainViewController: UIViewController {
+class NewNoteViewController: UIViewController {
 
     private var readyBarButtonItem = UIBarButtonItem()
     private var noteHeaderTextField = UITextField()
@@ -22,6 +22,10 @@ class MainViewController: UIViewController {
         setupStackView()
         
         noteBodyTextView.becomeFirstResponder()
+        
+        if let noteText = UserDefaults.standard.string(forKey: "NoteText") {
+            noteBodyTextView.text = noteText
+        }
     }
 
     private func setupStackView() {
@@ -60,6 +64,9 @@ class MainViewController: UIViewController {
     
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
+        
+        guard let noteText = noteBodyTextView.text else { return }
+        UserDefaults.standard.set(noteText, forKey: "NoteText")
     }
 }
 
