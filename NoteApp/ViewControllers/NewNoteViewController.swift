@@ -8,7 +8,6 @@
 import UIKit
 
 class NewNoteViewController: UIViewController {
-
     private var readyBarButtonItem = UIBarButtonItem()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
@@ -27,7 +26,7 @@ class NewNoteViewController: UIViewController {
             noteBodyTextView.text = noteText
         }
     }
-
+    
     private func setupStackView() {
         let stackView = UIStackView()
         stackView.translatesAutoresizingMaskIntoConstraints = false
@@ -52,7 +51,7 @@ class NewNoteViewController: UIViewController {
         noteBodyTextView.layer.cornerRadius = 8
         noteBodyTextView.backgroundColor = .black.withAlphaComponent(0.1)
         noteBodyTextView.font = .systemFont(ofSize: 14)
-    
+        
     }
     
     private func setupBarButtonItem() {
@@ -69,5 +68,3 @@ class NewNoteViewController: UIViewController {
         UserDefaults.standard.set(noteText, forKey: "NoteText")
     }
 }
-
-
