@@ -11,7 +11,7 @@ class NewNoteViewController: UIViewController {
     private var readyBarButtonItem = UIBarButtonItem()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
-    
+
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -21,6 +21,7 @@ class NewNoteViewController: UIViewController {
         setupStackView()
         
         noteBodyTextView.becomeFirstResponder()
+
         
         if let noteText = UserDefaults.standard.string(forKey: "NoteText") {
             noteBodyTextView.text = noteText
