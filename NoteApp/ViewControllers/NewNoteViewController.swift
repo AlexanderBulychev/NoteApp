@@ -14,53 +14,20 @@ class NewNoteViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        title = "New note"
+        title = "Новая заметка"
         setupBarButtonItem()
-        setupStackView()
+        setupNoteHeaderTextField()
+        setupNoteBodyTextView()
+
         noteBodyTextView.becomeFirstResponder()
 
-        
-        if let noteText = UserDefaults.standard.string(forKey: "NoteText") {
-            noteBodyTextView.text = noteText
-        }
-    }
-
-    private func setupStackView() {
-        let stackView = UIStackView()
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        stackView.axis = .vertical
-        stackView.spacing = 4
-        view.addSubview(stackView)
-
-        stackView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor).isActive = true
-        stackView.leadingAnchor.constraint(
-            equalTo: view.safeAreaLayoutGuide.leadingAnchor,
-            constant: 16
-        )
-            .isActive = true
-        stackView.trailingAnchor.constraint(
-            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
-            constant: -16
-        )
-            .isActive = true
-        stackView.bottomAnchor.constraint(greaterThanOrEqualTo: view.safeAreaLayoutGuide.bottomAnchor).isActive = true
-
-        stackView.addArrangedSubview(noteHeaderTextField)
-        noteHeaderTextField.backgroundColor = .lightGray
-        noteHeaderTextField.placeholder = "Enter title of the note"
-        noteHeaderTextField.font = .boldSystemFont(ofSize: 22)
-        noteHeaderTextField.heightAnchor.constraint(equalToConstant: 30).isActive = true
-        noteHeaderTextField.borderStyle = .roundedRect
-
-        stackView.addArrangedSubview(noteBodyTextView)
-        noteBodyTextView.text = "Add text of your note here"
-        noteBodyTextView.layer.cornerRadius = 8
-        noteBodyTextView.backgroundColor = .black.withAlphaComponent(0.1)
-        noteBodyTextView.font = .systemFont(ofSize: 14)
+        guard let note = StorageManager.shared.getNote() else { return }
+        noteHeaderTextField.text = note.header
+        noteBodyTextView.text = note.body
     }
 
     private func setupBarButtonItem() {
-        readyBarButtonItem.title = "Ready"
+        readyBarButtonItem.title = "Готово"
         navigationItem.rightBarButtonItem = readyBarButtonItem
         readyBarButtonItem.target = self
         readyBarButtonItem.action = #selector(readyBarButtonAction)
@@ -69,7 +36,64 @@ class NewNoteViewController: UIViewController {
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
 
-        guard let noteText = noteBodyTextView.text else { return }
-        UserDefaults.standard.set(noteText, forKey: "NoteText")
+        guard let headerText = noteHeaderTextField.text,
+              let noteText = noteBodyTextView.text
+        else { return }
+        let note = Note(header: headerText, body: noteText)
+        StorageManager.shared.saveNote(note: note)
+    }
+
+    private func setupNoteHeaderTextField() {
+        noteHeaderTextField.backgroundColor = .lightGray
+        noteHeaderTextField.placeholder = "Введите заголовок заметки"
+        noteHeaderTextField.font = .boldSystemFont(ofSize: 22)
+        noteHeaderTextField.borderStyle = .roundedRect
+
+        noteHeaderTextField.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(noteHeaderTextField)
+        let topConstraint = noteHeaderTextField.topAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.topAnchor,
+            constant: 16
+        )
+        let leadingConstraint = noteHeaderTextField.leadingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+            constant: 16
+        )
+        let trailingConstraint = noteHeaderTextField.trailingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            constant: -16
+        )
+        NSLayoutConstraint.activate([topConstraint,
+                                     leadingConstraint,
+                                     trailingConstraint])
+    }
+
+    private func setupNoteBodyTextView() {
+        noteBodyTextView.backgroundColor = .black.withAlphaComponent(0.1)
+        noteBodyTextView.text = "Добавьте текст заметки здесь"
+        noteBodyTextView.font = .systemFont(ofSize: 14)
+        noteBodyTextView.layer.cornerRadius = 8
+
+        noteBodyTextView.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(noteBodyTextView)
+        let topConstraint = noteBodyTextView.topAnchor.constraint(
+            equalTo: noteHeaderTextField.bottomAnchor,
+            constant: 8
+        )
+        let leadingConstraint = noteBodyTextView.leadingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+            constant: 16
+        )
+        let trailingConstraint = noteBodyTextView.trailingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            constant: -16
+        )
+        let bottomConstraint = noteBodyTextView.bottomAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.bottomAnchor
+        )
+        NSLayoutConstraint.activate([topConstraint,
+                                     leadingConstraint,
+                                     trailingConstraint,
+                                     bottomConstraint])
     }
 }
