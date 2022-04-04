@@ -11,6 +11,9 @@ class NewNoteViewController: UIViewController {
     private var readyBarButtonItem = UIBarButtonItem()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
+    private var dateField = UITextField()
+
+    private var datePicker = UIDatePicker()
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -19,6 +22,8 @@ class NewNoteViewController: UIViewController {
 
         setupBarButtonItem()
         setupNoteHeaderTextField()
+        setupDateField()
+        setupDatePicker()
         setupNoteBodyTextView()
 
         noteBodyTextView.becomeFirstResponder()
@@ -79,7 +84,7 @@ class NewNoteViewController: UIViewController {
         noteBodyTextView.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(noteBodyTextView)
         let topConstraint = noteBodyTextView.topAnchor.constraint(
-            equalTo: noteHeaderTextField.bottomAnchor,
+            equalTo: dateField.bottomAnchor,
             constant: 8
         )
         let leadingConstraint = noteBodyTextView.leadingAnchor.constraint(
@@ -97,5 +102,62 @@ class NewNoteViewController: UIViewController {
                                      leadingConstraint,
                                      trailingConstraint,
                                      bottomConstraint])
+    }
+
+    private func setupDateField() {
+        dateField.borderStyle = .roundedRect
+        dateField.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(dateField)
+        let topConstraint = dateField.topAnchor.constraint(
+            equalTo: noteHeaderTextField.bottomAnchor,
+            constant: 8
+        )
+        let leadingConstraint = dateField.leadingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.leadingAnchor,
+            constant: 16
+        )
+        let trailingConstraint = dateField.trailingAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.trailingAnchor,
+            constant: -16
+        )
+        NSLayoutConstraint.activate([topConstraint,
+                                     leadingConstraint,
+                                     trailingConstraint])
+
+        dateField.inputView = datePicker
+        dateField.placeholder = getDate()
+        dateField.inputAccessoryView = setupToolbar()
+    }
+}
+
+// MARK: - Getting Data from DatePicker
+extension NewNoteViewController {
+    private func setupDatePicker() {
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
+    }
+    private func setupToolbar() -> UIToolbar {
+        let toolbar = UIToolbar()
+        toolbar.sizeToFit()
+        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(toolbarDoneAction))
+        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
+
+        toolbar.setItems([flexSpace, doneButton], animated: true)
+        return toolbar
+    }
+
+    @objc func toolbarDoneAction() {
+        dateField.text = getDate()
+        view.endEditing(true)
+    }
+
+    private func getDate() -> String {
+        let dateText: String
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "Дата: dd MMMM YYYY"
+        dateText = formatter.string(from: datePicker.date)
+        return dateText
     }
 }
