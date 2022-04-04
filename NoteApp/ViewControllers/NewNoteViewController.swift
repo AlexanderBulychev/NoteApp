@@ -26,11 +26,13 @@ class NewNoteViewController: UIViewController {
         setupDatePicker()
         setupNoteBodyTextView()
 
-        noteBodyTextView.becomeFirstResponder()
+        noteHeaderTextField.becomeFirstResponder()
+        noteHeaderTextField.delegate = self
 
         guard let note = StorageManager.shared.getNote() else { return }
         noteHeaderTextField.text = note.header
         noteBodyTextView.text = note.body
+        dateField.text = note.date
     }
 
     private func setupBarButtonItem() {
@@ -43,11 +45,16 @@ class NewNoteViewController: UIViewController {
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
 
-        guard let headerText = noteHeaderTextField.text,
-              let noteText = noteBodyTextView.text
-        else { return }
-        let note = Note(header: headerText, body: noteText)
-        StorageManager.shared.saveNote(note: note)
+        let note = Note(
+            header: noteHeaderTextField.text,
+            body: noteBodyTextView.text,
+            date: dateField.text ?? ""
+        )
+        if !note.isEmpty {
+            StorageManager.shared.saveNote(note: note)
+            return
+        }
+        showAlert()
     }
 
     private func setupNoteHeaderTextField() {
@@ -55,6 +62,7 @@ class NewNoteViewController: UIViewController {
         noteHeaderTextField.placeholder = "Введите заголовок заметки"
         noteHeaderTextField.font = .boldSystemFont(ofSize: 22)
         noteHeaderTextField.borderStyle = .roundedRect
+        noteHeaderTextField.returnKeyType = .next
 
         noteHeaderTextField.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(noteHeaderTextField)
@@ -107,6 +115,7 @@ class NewNoteViewController: UIViewController {
     private func setupDateField() {
         dateField.borderStyle = .roundedRect
         dateField.translatesAutoresizingMaskIntoConstraints = false
+
         view.addSubview(dateField)
         let topConstraint = dateField.topAnchor.constraint(
             equalTo: noteHeaderTextField.bottomAnchor,
@@ -130,6 +139,19 @@ class NewNoteViewController: UIViewController {
     }
 }
 
+extension NewNoteViewController {
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "Пустые поля",
+            message: "Заполните название и текст заметки",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+}
+
 // MARK: - Getting Data from DatePicker
 extension NewNoteViewController {
     private func setupDatePicker() {
@@ -150,6 +172,7 @@ extension NewNoteViewController {
     @objc func toolbarDoneAction() {
         dateField.text = getDate()
         view.endEditing(true)
+        noteBodyTextView.becomeFirstResponder()
     }
 
     private func getDate() -> String {
@@ -159,5 +182,11 @@ extension NewNoteViewController {
         formatter.dateFormat = "Дата: dd MMMM YYYY"
         dateText = formatter.string(from: datePicker.date)
         return dateText
+    }
+}
+
+extension NewNoteViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        dateField.becomeFirstResponder()
     }
 }

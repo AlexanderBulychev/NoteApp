@@ -10,9 +10,9 @@ import Foundation
 struct Note: Codable {
     let header: String?
     let body: String?
-    // let date: String? // temporary is optional
+    let date: String
 
     var isEmpty: Bool {
-            header == nil && body == nil
+            header == "" && body == ""
     }
 }
