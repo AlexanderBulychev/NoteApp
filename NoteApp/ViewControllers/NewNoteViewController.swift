@@ -20,11 +20,7 @@ class NewNoteViewController: UIViewController {
         view.backgroundColor = .white
         title = "Новая заметка"
 
-        setupBarButtonItem()
-        setupNoteHeaderTextField()
-        setupDateField()
-        setupDatePicker()
-        setupNoteBodyTextView()
+        setupUI()
 
         noteHeaderTextField.becomeFirstResponder()
         noteHeaderTextField.delegate = self
@@ -33,6 +29,14 @@ class NewNoteViewController: UIViewController {
         noteHeaderTextField.text = note.header
         noteBodyTextView.text = note.body
         dateField.text = note.date
+    }
+
+    private func setupUI() {
+        setupBarButtonItem()
+        setupNoteHeaderTextField()
+        setupDateField()
+        setupDatePicker()
+        setupNoteBodyTextView()
     }
 
     private func setupBarButtonItem() {
@@ -50,11 +54,8 @@ class NewNoteViewController: UIViewController {
             body: noteBodyTextView.text,
             date: dateField.text ?? ""
         )
-        if !note.isEmpty {
-            StorageManager.shared.saveNote(note: note)
-            return
-        }
-        showAlert()
+
+        checkIsEmpty(note: note)
     }
 
     private func setupNoteHeaderTextField() {
@@ -134,11 +135,42 @@ class NewNoteViewController: UIViewController {
                                      trailingConstraint])
 
         dateField.inputView = datePicker
-        dateField.placeholder = getDate()
-        dateField.inputAccessoryView = setupToolbar()
+        dateField.placeholder = formatDate(date: Date())
     }
 }
 
+// MARK: - Getting Data from DatePicker
+extension NewNoteViewController {
+    private func setupDatePicker() {
+        datePicker.preferredDatePickerStyle = .wheels
+        datePicker.datePickerMode = .date
+        datePicker.locale = Locale(identifier: "ru_RU")
+        //datePicker.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200)
+        datePicker.addTarget(self, action: #selector (dateChange(datePicker: )), for: UIControl.Event.valueChanged)
+    }
+
+    @objc func dateChange(datePicker: UIDatePicker) {
+        dateField.text = formatDate(date: datePicker.date)
+    }
+
+    private func formatDate(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "Дата: dd MMMM YYYY"
+        return formatter.string(from: date)
+    }
+}
+
+// MARK: - UIText Field Delegate
+extension NewNoteViewController: UITextFieldDelegate {
+    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
+        let newPosition = noteBodyTextView.endOfDocument
+        noteBodyTextView.selectedTextRange = noteBodyTextView.textRange(from: newPosition, to: newPosition)
+        return noteBodyTextView.becomeFirstResponder()
+    }
+}
+
+// MARK: - Private methods
 extension NewNoteViewController {
     private func showAlert() {
         let alert = UIAlertController(
@@ -150,43 +182,12 @@ extension NewNoteViewController {
         alert.addAction(okAction)
         present(alert, animated: true)
     }
-}
 
-// MARK: - Getting Data from DatePicker
-extension NewNoteViewController {
-    private func setupDatePicker() {
-        datePicker.preferredDatePickerStyle = .wheels
-        datePicker.datePickerMode = .date
-        datePicker.locale = Locale(identifier: "ru_RU")
-    }
-    private func setupToolbar() -> UIToolbar {
-        let toolbar = UIToolbar()
-        toolbar.sizeToFit()
-        let doneButton = UIBarButtonItem(barButtonSystemItem: .done, target: self, action: #selector(toolbarDoneAction))
-        let flexSpace = UIBarButtonItem(barButtonSystemItem: .flexibleSpace, target: nil, action: nil)
-
-        toolbar.setItems([flexSpace, doneButton], animated: true)
-        return toolbar
-    }
-
-    @objc func toolbarDoneAction() {
-        dateField.text = getDate()
-        view.endEditing(true)
-        noteBodyTextView.becomeFirstResponder()
-    }
-
-    private func getDate() -> String {
-        let dateText: String
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "Дата: dd MMMM YYYY"
-        dateText = formatter.string(from: datePicker.date)
-        return dateText
-    }
-}
-
-extension NewNoteViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        dateField.becomeFirstResponder()
+    private func checkIsEmpty(note: Note) {
+        if note.isEmpty {
+            showAlert()
+            return
+        }
+        StorageManager.shared.saveNote(note: note)
     }
 }
