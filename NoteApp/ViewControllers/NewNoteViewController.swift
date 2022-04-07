@@ -28,7 +28,11 @@ class NewNoteViewController: UIViewController {
         guard let note = StorageManager.shared.getNote() else { return }
         noteHeaderTextField.text = note.header
         noteBodyTextView.text = note.body
-        dateField.text = note.date
+        if let date = note.date {
+            dateField.text = formatDate(date: date)
+            return
+        }
+        dateField.text = ""
     }
 
     private func setupUI() {
@@ -50,11 +54,10 @@ class NewNoteViewController: UIViewController {
         view.endEditing(true)
 
         let note = Note(
-            header: noteHeaderTextField.text,
-            body: noteBodyTextView.text,
-            date: dateField.text ?? ""
+            header: noteHeaderTextField.text ?? "",
+            body: noteBodyTextView.text ?? "",
+            date: datePicker.date
         )
-
         checkIsEmpty(note: note)
     }
 
@@ -86,7 +89,7 @@ class NewNoteViewController: UIViewController {
 
     private func setupNoteBodyTextView() {
         noteBodyTextView.backgroundColor = .black.withAlphaComponent(0.1)
-        noteBodyTextView.text = "Добавьте текст заметки здесь"
+//        noteBodyTextView.text = "Добавьте текст заметки здесь"
         noteBodyTextView.font = .systemFont(ofSize: 14)
         noteBodyTextView.layer.cornerRadius = 8
 
@@ -133,7 +136,6 @@ class NewNoteViewController: UIViewController {
         NSLayoutConstraint.activate([topConstraint,
                                      leadingConstraint,
                                      trailingConstraint])
-
         dateField.inputView = datePicker
         dateField.placeholder = formatDate(date: Date())
     }
@@ -145,7 +147,6 @@ extension NewNoteViewController {
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .date
         datePicker.locale = Locale(identifier: "ru_RU")
-        //datePicker.frame = CGRect(x: 0, y: 0, width: UIScreen.main.bounds.width, height: 200)
         datePicker.addTarget(self, action: #selector (dateChange(datePicker: )), for: UIControl.Event.valueChanged)
     }
 
