@@ -56,7 +56,7 @@ class NewNoteViewController: UIViewController {
         let note = Note(
             header: noteHeaderTextField.text ?? "",
             body: noteBodyTextView.text ?? "",
-            date: datePicker.date
+            date: getDateToStore()
         )
         checkIsEmpty(note: note)
     }
@@ -118,6 +118,7 @@ class NewNoteViewController: UIViewController {
 
     private func setupDateField() {
         dateField.borderStyle = .roundedRect
+        dateField.clearButtonMode = .always
         dateField.translatesAutoresizingMaskIntoConstraints = false
 
         view.addSubview(dateField)
@@ -182,6 +183,13 @@ extension NewNoteViewController {
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
+    }
+
+    private func getDateToStore() -> Date? {
+        var dateToStore: Date?
+        guard dateField.text != "" else { return nil }
+        dateToStore = datePicker.date
+        return dateToStore
     }
 
     private func checkIsEmpty(note: Note) {
