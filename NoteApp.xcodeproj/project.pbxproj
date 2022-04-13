@@ -7,9 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		FC0FBBBB280401CC007CE4BB /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0FBBBA280401CC007CE4BB /* ListViewController.swift */; };
+		FC0FBBDD28060123007CE4BB /* NoteView.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0FBBDC28060123007CE4BB /* NoteView.swift */; };
 		FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9827EDF3A800F4CE6F /* AppDelegate.swift */; };
 		FC205D9B27EDF3A800F4CE6F /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9A27EDF3A800F4CE6F /* SceneDelegate.swift */; };
-		FC205D9D27EDF3A800F4CE6F /* NewNoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9C27EDF3A800F4CE6F /* NewNoteViewController.swift */; };
+		FC205D9D27EDF3A800F4CE6F /* NoteViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9C27EDF3A800F4CE6F /* NoteViewController.swift */; };
 		FC205DA227EDF3AB00F4CE6F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = FC205DA127EDF3AB00F4CE6F /* Assets.xcassets */; };
 		FC205DA527EDF3AB00F4CE6F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC205DA327EDF3AB00F4CE6F /* LaunchScreen.storyboard */; };
 		FC205DAF27EDF59F00F4CE6F /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205DAE27EDF59F00F4CE6F /* Note.swift */; };
@@ -17,10 +19,12 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		FC0FBBBA280401CC007CE4BB /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
+		FC0FBBDC28060123007CE4BB /* NoteView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteView.swift; sourceTree = "<group>"; };
 		FC205D9527EDF3A800F4CE6F /* NoteApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		FC205D9827EDF3A800F4CE6F /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		FC205D9A27EDF3A800F4CE6F /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
-		FC205D9C27EDF3A800F4CE6F /* NewNoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NewNoteViewController.swift; sourceTree = "<group>"; };
+		FC205D9C27EDF3A800F4CE6F /* NoteViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteViewController.swift; sourceTree = "<group>"; };
 		FC205DA127EDF3AB00F4CE6F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		FC205DA427EDF3AB00F4CE6F /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		FC205DA627EDF3AB00F4CE6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -71,7 +75,9 @@
 		FC205DAC27EDF56400F4CE6F /* ViewControllers */ = {
 			isa = PBXGroup;
 			children = (
-				FC205D9C27EDF3A800F4CE6F /* NewNoteViewController.swift */,
+				FC0FBBBA280401CC007CE4BB /* ListViewController.swift */,
+				FC205D9C27EDF3A800F4CE6F /* NoteViewController.swift */,
+				FC0FBBDC28060123007CE4BB /* NoteView.swift */,
 			);
 			path = ViewControllers;
 			sourceTree = "<group>";
@@ -209,10 +215,12 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				FC205D9D27EDF3A800F4CE6F /* NewNoteViewController.swift in Sources */,
+				FC205D9D27EDF3A800F4CE6F /* NoteViewController.swift in Sources */,
 				FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */,
+				FC0FBBBB280401CC007CE4BB /* ListViewController.swift in Sources */,
 				FC205DB527F19E8B00F4CE6F /* StorageManager.swift in Sources */,
 				FC205D9B27EDF3A800F4CE6F /* SceneDelegate.swift in Sources */,
+				FC0FBBDD28060123007CE4BB /* NoteView.swift in Sources */,
 				FC205DAF27EDF59F00F4CE6F /* Note.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

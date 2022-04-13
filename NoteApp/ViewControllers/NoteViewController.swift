@@ -7,13 +7,15 @@
 
 import UIKit
 
-class NewNoteViewController: UIViewController {
+class NoteViewController: UIViewController {
     private var readyBarButtonItem = UIBarButtonItem()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
     private var dateField = UITextField()
 
     private var datePicker = UIDatePicker()
+
+    private var delegate: NoteViewControllerDelegateProtocol!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -143,7 +145,7 @@ class NewNoteViewController: UIViewController {
 }
 
 // MARK: - Getting Data from DatePicker
-extension NewNoteViewController {
+extension NoteViewController {
     private func setupDatePicker() {
         datePicker.preferredDatePickerStyle = .wheels
         datePicker.datePickerMode = .date
@@ -164,7 +166,7 @@ extension NewNoteViewController {
 }
 
 // MARK: - UIText Field Delegate
-extension NewNoteViewController: UITextFieldDelegate {
+extension NoteViewController: UITextFieldDelegate {
     func textFieldShouldReturn(_ textField: UITextField) -> Bool {
         let newPosition = noteBodyTextView.endOfDocument
         noteBodyTextView.selectedTextRange = noteBodyTextView.textRange(from: newPosition, to: newPosition)
@@ -173,7 +175,7 @@ extension NewNoteViewController: UITextFieldDelegate {
 }
 
 // MARK: - Private methods
-extension NewNoteViewController {
+extension NoteViewController {
     private func showAlert() {
         let alert = UIAlertController(
             title: "Пустые поля",
