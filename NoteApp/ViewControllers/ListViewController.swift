@@ -14,6 +14,7 @@ protocol NoteViewControllerDelegateProtocol {
 class ListViewController: UIViewController {
     private var scrollView = UIScrollView()
     private var stackView = UIStackView()
+    private var createNewNoteButton = UIButton()
 
     private var notes: [Note] = [.init(header: "1", body: "1", date: .now),
                                  .init(header: "2", body: "2", date: .now),
@@ -27,16 +28,17 @@ class ListViewController: UIViewController {
         title = "Заметки"
 
         setupUI()
+        display(notes)
     }
 
     private func setupUI() {
         configureScrollView()
         configureStackView()
+        configureCreateNewNoteButton()
     }
 
     private func configureScrollView() {
         view.addSubview(scrollView)
-        scrollView.backgroundColor = .red
 
         scrollView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = scrollView.topAnchor.constraint(
@@ -89,19 +91,43 @@ class ListViewController: UIViewController {
                                     ])
     }
 
-    private func setupData(_ data: [Note]) {
+    private func configureCreateNewNoteButton() {
+        view.addSubview(createNewNoteButton)
+        let noteButtonImage = UIImage(named: "button")
+        createNewNoteButton.setImage(noteButtonImage, for: .normal)
+        createNewNoteButton.layer.cornerRadius = 25
+        createNewNoteButton.clipsToBounds = true
+
+        createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
+        let trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor, constant: -19
+        )
+        let bottomConstraint = createNewNoteButton.bottomAnchor.constraint(
+            equalTo: view.bottomAnchor, constant: -60
+        )
+        NSLayoutConstraint.activate([trailingConstraint,
+                                     bottomConstraint
+                                    ])
+        createNewNoteButton.addTarget(self, action: #selector(didTapCreateNewNoteButton), for: .touchUpInside)
+    }
+
+    @objc func didTapCreateNewNoteButton() {
+        let noteVC = NoteViewController()
+        navigationController?.pushViewController(noteVC, animated: true)
+    }
+
+    private func display(_ note: [Note]) {
         stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
 
-        data.forEach { note in
+        note.forEach { note in
             let noteView = NoteView()
             noteView.viewModel = note
+            stackView.addArrangedSubview(noteView)
 
             // noteView.addTarget(self, action: <#T##Selector#>, for: <#T##UIControl.Event#>)
             noteView.action = {
                 print("hello")
             }
-
-            stackView.addArrangedSubview(noteView)
         }
     }
 }

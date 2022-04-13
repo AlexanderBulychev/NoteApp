@@ -20,25 +20,22 @@ final class NoteView: UIView {
 
     private let noteHeaderLabel: UILabel = {
         let noteHeaderLabel = UILabel()
-        noteHeaderLabel.frame.size = CGSize(width: 326, height: 18)
-        noteHeaderLabel.font = UIFont(name: "SFProText-Medium", size: 16)
+        noteHeaderLabel.font = .systemFont(ofSize: 16)
         noteHeaderLabel.text = "aassdddddd"
         return noteHeaderLabel
     }()
 
     private let noteBodyLabel: UILabel = {
         let noteBodyLabel = UILabel()
-        noteBodyLabel.frame.size = CGSize(width: 326, height: 14)
-        noteBodyLabel.font = UIFont(name: "SFProText-Medium", size: 10)
-        noteBodyLabel.textColor = UIColor(red: 172, green: 172, blue: 172, alpha: 1)
+        noteBodyLabel.font = .systemFont(ofSize: 10)
+        noteBodyLabel.textColor = .lightGray
         noteBodyLabel.text = "sdffffdffdfd"
         return noteBodyLabel
     }()
 
     private let noteDateLabel: UILabel = {
         let noteDateLabel = UILabel()
-        noteDateLabel.frame.size = CGSize(width: 68, height: 10)
-        noteDateLabel.font = UIFont(name: "SFProText-Medium", size: 10)
+        noteDateLabel.font = .systemFont(ofSize: 10)
         noteDateLabel.text = "assdddsds"
         return noteDateLabel
     }()
@@ -50,17 +47,82 @@ final class NoteView: UIView {
 
         translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            self.widthAnchor.constraint(equalToConstant: 358),
-            self.heightAnchor.constraint(equalToConstant: 90)
+            widthAnchor.constraint(equalToConstant: 358),
+            heightAnchor.constraint(equalToConstant: 90)
         ])
+
+        setupLabels()
     }
 
-    // What does this method mean?
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    private func setupLabels() {
+        self.addSubview(noteHeaderLabel)
+        noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
+            equalTo: self.topAnchor, constant: 10
+        )
+        let leadingHeaderConstraint = noteHeaderLabel.leadingAnchor.constraint(
+            equalTo: self.leadingAnchor, constant: 16
+        )
+        let trailingHeaderConstraint = noteHeaderLabel.trailingAnchor.constraint(
+            equalTo: self.trailingAnchor, constant: -16
+        )
+        let heighHeaderConstraint = noteHeaderLabel.heightAnchor.constraint(
+            equalToConstant: 18
+        )
+        NSLayoutConstraint.activate([topHeaderConstraint,
+                                     leadingHeaderConstraint,
+                                     trailingHeaderConstraint,
+                                     heighHeaderConstraint
+                                    ])
+
+        self.addSubview(noteBodyLabel)
+        noteBodyLabel.translatesAutoresizingMaskIntoConstraints = false
+        let topBodyConstraint = noteBodyLabel.topAnchor.constraint(
+            equalTo: noteHeaderLabel.bottomAnchor, constant: 4
+        )
+        let leadingBodyConstraint = noteBodyLabel.leadingAnchor.constraint(
+            equalTo: self.leadingAnchor, constant: 16
+        )
+        let trailingBodyConstraint = noteBodyLabel.trailingAnchor.constraint(
+            equalTo: self.trailingAnchor, constant: -16
+        )
+        let heighBodyConstraint = noteBodyLabel.heightAnchor.constraint(
+            equalToConstant: 14
+        )
+        NSLayoutConstraint.activate([topBodyConstraint,
+                                     leadingBodyConstraint,
+                                     trailingBodyConstraint,
+                                     heighBodyConstraint
+                                    ])
+
+        self.addSubview(noteDateLabel)
+        noteDateLabel.translatesAutoresizingMaskIntoConstraints = false
+        let topDateConstraint = noteDateLabel.topAnchor.constraint(
+            equalTo: noteBodyLabel.bottomAnchor, constant: 24
+        )
+        let leadingDateConstraint = noteDateLabel.leadingAnchor.constraint(
+            equalTo: self.leadingAnchor, constant: 16
+        )
+        let widthDateConstraint = noteDateLabel.widthAnchor.constraint(
+            equalToConstant: 68
+        )
+        let heighDateConstraint = noteDateLabel.heightAnchor.constraint(
+            equalToConstant: 10
+        )
+        NSLayoutConstraint.activate([topDateConstraint,
+                                     leadingDateConstraint,
+                                     widthDateConstraint,
+                                     heighDateConstraint
+                                    ])
+    }
+
     private func configureUI(_ viewModel: Note) {
-        action?()
+        noteHeaderLabel.text = viewModel.header
+        noteBodyLabel.text = viewModel.body
+//        noteDateLabel.text = String(viewModel.date)
     }
 }
