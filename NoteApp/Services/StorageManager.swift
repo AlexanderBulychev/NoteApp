@@ -15,14 +15,16 @@ class StorageManager {
 
     private init() {}
 
-    func saveNote(note: Note) {
-        guard let data = try? JSONEncoder().encode(note) else { return }
+    func save(note: Note) {
+        var notes = getNotes()
+        notes.append(note)
+        guard let data = try? JSONEncoder().encode(notes) else { return }
         userDefaults.set(data, forKey: key)
     }
 
-    func getNote() -> Note? {
-        guard let data = userDefaults.data(forKey: key) else { return nil }
-        guard let note = try? JSONDecoder().decode(Note.self, from: data) else { return nil }
-        return note
+    func getNotes() -> [Note] {
+        guard let data = userDefaults.data(forKey: key) else { return [] }
+        guard let notes = try? JSONDecoder().decode([Note].self, from: data) else { return [] }
+        return notes
     }
 }

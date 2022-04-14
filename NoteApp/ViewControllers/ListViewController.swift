@@ -20,6 +20,18 @@ class ListViewController: UIViewController {
                                  .init(header: "2", body: "2", date: .now),
                                  .init(header: "3", body: "3", date: .now),
                                  .init(header: "4", body: "4", date: .now),
+                                 .init(header: "5", body: "5", date: .now),
+                                 .init(header: "1", body: "1", date: .now),
+                                 .init(header: "2", body: "2", date: .now),
+                                 .init(header: "1", body: "1", date: .now),
+                                 .init(header: "2", body: "2", date: .now),
+                                 .init(header: "3", body: "3", date: .now),
+                                 .init(header: "4", body: "4", date: .now),
+                                 .init(header: "5", body: "5", date: .now),
+                                 .init(header: "1", body: "1", date: .now),
+                                 .init(header: "2", body: "2", date: .now),
+                                 .init(header: "3", body: "3", date: .now),
+                                 .init(header: "4", body: "4", date: .now),
                                  .init(header: "5", body: "5", date: .now)]
 
     override func viewDidLoad() {
@@ -28,6 +40,7 @@ class ListViewController: UIViewController {
         title = "Заметки"
 
         setupUI()
+        notes = StorageManager.shared.getNotes()
         display(notes)
     }
 
@@ -38,6 +51,7 @@ class ListViewController: UIViewController {
     }
 
     private func configureScrollView() {
+        scrollView.alwaysBounceVertical = true
         view.addSubview(scrollView)
 
         scrollView.translatesAutoresizingMaskIntoConstraints = false
@@ -108,11 +122,15 @@ class ListViewController: UIViewController {
         NSLayoutConstraint.activate([trailingConstraint,
                                      bottomConstraint
                                     ])
-        createNewNoteButton.addTarget(self, action: #selector(didTapCreateNewNoteButton), for: .touchUpInside)
+        createNewNoteButton.addTarget(self, action: #selector(createNewNoteButtonPressed), for: .touchUpInside)
     }
 
-    @objc func didTapCreateNewNoteButton() {
+    @objc func createNewNoteButtonPressed() {
         let noteVC = NoteViewController()
+
+//        noteVC.text = "ewkjfkjwehf"
+//        noteVC.closure = { note, string, someInt in
+//        }
         navigationController?.pushViewController(noteVC, animated: true)
     }
 
@@ -135,5 +153,6 @@ class ListViewController: UIViewController {
 extension ListViewController: NoteViewControllerDelegateProtocol {
     func saveNote(_ note: Note) {
         notes.append(note)
+        display(notes)
     }
 }
