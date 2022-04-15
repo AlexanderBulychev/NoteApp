@@ -10,7 +10,7 @@ import Foundation
 struct Note: Codable {
     let header: String
     let body: String
-    let date: Date?
+    let date: Date
 
     var isEmpty: Bool {
             header == "" && body == ""

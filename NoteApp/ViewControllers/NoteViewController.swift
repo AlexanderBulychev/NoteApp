@@ -8,65 +8,40 @@
 import UIKit
 
 class NoteViewController: UIViewController {
+    var delegate: NoteViewControllerDelegateProtocol!
+
     private var dateLabel = UILabel()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
 
     private var readyBarButtonItem = UIBarButtonItem()
-    private lazy var backBarButton: UIBarButtonItem = {
-        let button = UIBarButtonItem(
-            image: .init(named: "back"),
-            style: .plain,
-            target: self,
-            action: #selector(someFunc)
-        )
-        return button
-    }()
+    private var backBarButtonItem = UIBarButtonItem()
 
-    private var delegate: NoteViewControllerDelegateProtocol!
     private var note: Note!
-
-//    var closure: ((Note, String?, Int?) -> Void)?
-//    func saveAction() {
-//        let note = Note(header: "1", body: "", date: nil)
-//        closure?(note, nil, 5)
-//    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
-        print(self.navigationItem)
 
         setupUI()
 
         noteBodyTextView.becomeFirstResponder()
         noteHeaderTextField.delegate = self
-
-        // get out from this controller
-//        guard let note = StorageManager.shared.getNote() else { return }
-//        noteHeaderTextField.text = note.header
-//        noteBodyTextView.text = note.body
-//        if let date = note.date {
-//            dateLabel.text = formatDate(date: date)
-//            return
-//        }
-//        dateLabel.text = formatDate(date: Date())
     }
 
-    override func viewDidAppear(_ animated: Bool) {
-        super.viewDidAppear(animated)
-        print(#function)
-    }
-    override func viewDidDisappear(_ animated: Bool) {
-        super.viewDidDisappear(animated)
-        print(#function)
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        guard let note = note else { return }
+        StorageManager.shared.save(note: note)
+        delegate.saveNote(note)
     }
 
     private func setupUI() {
         setupDateLabel()
         setupNoteHeaderTextField()
         setupNoteBodyTextView()
-        setupBackButtonItem()
+        setupBarButtonItem()
+//        setupBackButtonItem()
     }
 
     private func setupDateLabel() {
@@ -169,20 +144,20 @@ class NoteViewController: UIViewController {
         checkIsEmpty(note: note)
     }
     private func setupBackButtonItem() {
-//        backBarButton.title = "1223"
-//        backBarButton.target = self
-//        backBarButton.action = #selector(someFunc)
-//        self.navigationController?.navigationBar.topItem?.backBarButtonItem = backBarButton
-//        self.navigationController?.navigationBar.backItem?.backBarButtonItem = backBarButton
-        navigationItem.leftBarButtonItem = backBarButton
-
-//        let button = self.navigationController?.navigationBar.backItem?.backBarButtonItem
-//        button?.target = self
-//        button?.action = #selector(someFunc)
+        backBarButtonItem.title = "<"
+        backBarButtonItem.style = .plain
+        backBarButtonItem.target = self
+        backBarButtonItem.action = #selector(leftBarButtonItemAction)
+        navigationItem.leftBarButtonItem = backBarButtonItem
     }
 
-    @objc func someFunc() {
-        print("Ok")
+    @objc func leftBarButtonItemAction() {
+        guard let note = note else { return }
+//        navigationController?.popToRootViewController(animated: true)
+//        navigationController?.viewControllers.first
+//        navigationController?.popViewController(animated: true)
+//        navigationController?.topViewController(listVC)
+//        navigationController?.popToViewController(listVC, animated: true)
         StorageManager.shared.save(note: note)
         delegate.saveNote(note)
     }

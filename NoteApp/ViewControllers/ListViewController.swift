@@ -16,23 +16,7 @@ class ListViewController: UIViewController {
     private var stackView = UIStackView()
     private var createNewNoteButton = UIButton()
 
-    private var notes: [Note] = [.init(header: "1", body: "1", date: .now),
-                                 .init(header: "2", body: "2", date: .now),
-                                 .init(header: "3", body: "3", date: .now),
-                                 .init(header: "4", body: "4", date: .now),
-                                 .init(header: "5", body: "5", date: .now),
-                                 .init(header: "1", body: "1", date: .now),
-                                 .init(header: "2", body: "2", date: .now),
-                                 .init(header: "1", body: "1", date: .now),
-                                 .init(header: "2", body: "2", date: .now),
-                                 .init(header: "3", body: "3", date: .now),
-                                 .init(header: "4", body: "4", date: .now),
-                                 .init(header: "5", body: "5", date: .now),
-                                 .init(header: "1", body: "1", date: .now),
-                                 .init(header: "2", body: "2", date: .now),
-                                 .init(header: "3", body: "3", date: .now),
-                                 .init(header: "4", body: "4", date: .now),
-                                 .init(header: "5", body: "5", date: .now)]
+    private var notes: [Note] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -79,7 +63,6 @@ class ListViewController: UIViewController {
         stackView.alignment = .center
         stackView.distribution = .fillProportionally
         stackView.spacing = 4
-        stackView.backgroundColor = .yellow
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = stackView.topAnchor.constraint(
@@ -127,10 +110,7 @@ class ListViewController: UIViewController {
 
     @objc func createNewNoteButtonPressed() {
         let noteVC = NoteViewController()
-
-//        noteVC.text = "ewkjfkjwehf"
-//        noteVC.closure = { note, string, someInt in
-//        }
+        noteVC.delegate = self
         navigationController?.pushViewController(noteVC, animated: true)
     }
 
@@ -141,11 +121,6 @@ class ListViewController: UIViewController {
             let noteView = NoteView()
             noteView.viewModel = note
             stackView.addArrangedSubview(noteView)
-
-            // noteView.addTarget(self, action: <#T##Selector#>, for: <#T##UIControl.Event#>)
-            noteView.action = {
-                print("hello")
-            }
         }
     }
 }

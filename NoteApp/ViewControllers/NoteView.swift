@@ -8,7 +8,6 @@
 import UIKit
 
 final class NoteView: UIView {
-    var action: (() -> Void)?
     var viewModel: Note? {
         didSet {
             guard let viewModel = viewModel else {
@@ -17,11 +16,11 @@ final class NoteView: UIView {
             configureUI(viewModel)
         }
     }
+    private var tapCompletion: ((Note) -> Void)?
 
     private let noteHeaderLabel: UILabel = {
         let noteHeaderLabel = UILabel()
         noteHeaderLabel.font = .systemFont(ofSize: 16)
-        noteHeaderLabel.text = "aassdddddd"
         return noteHeaderLabel
     }()
 
@@ -29,14 +28,12 @@ final class NoteView: UIView {
         let noteBodyLabel = UILabel()
         noteBodyLabel.font = .systemFont(ofSize: 10)
         noteBodyLabel.textColor = .lightGray
-        noteBodyLabel.text = "sdffffdffdfd"
         return noteBodyLabel
     }()
 
     private let noteDateLabel: UILabel = {
         let noteDateLabel = UILabel()
         noteDateLabel.font = .systemFont(ofSize: 10)
-        noteDateLabel.text = "assdddsds"
         return noteDateLabel
     }()
 
@@ -123,6 +120,30 @@ final class NoteView: UIView {
     private func configureUI(_ viewModel: Note) {
         noteHeaderLabel.text = viewModel.header
         noteBodyLabel.text = viewModel.body
-//        noteDateLabel.text = String(viewModel.date)
+        noteDateLabel.text = formatDate(date: viewModel.date)
+    }
+
+    private func tapObserver() {
+        let tap = UIGestureRecognizer(target: self, action: #selector(tapAction))
+        self.addGestureRecognizer(tap)
+    }
+
+    @objc private func tapAction() {
+//        let noteVC = NoteViewController()
+
+//        noteVC.text = "ewkjfkjwehf"
+//        noteVC.closure = { note, string, someInt in
+//        }
+//    navigationController?.pushViewController(noteVC, animated: true)
+    }
+}
+
+// MARK: - Preparing Date for label
+extension NoteView {
+    private func formatDate(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "dd.MM.YYYY"
+        return formatter.string(from: date)
     }
 }
