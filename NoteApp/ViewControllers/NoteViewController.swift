@@ -8,32 +8,35 @@
 import UIKit
 
 class NoteViewController: UIViewController {
-    var delegate: NoteViewControllerDelegateProtocol!
+    weak var delegate: NoteViewControllerDelegateProtocol?
+    var note: Note?
+    var bottomConstraint: NSLayoutConstraint!
 
     private var dateLabel = UILabel()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
 
     private var readyBarButtonItem = UIBarButtonItem()
-    private var backBarButtonItem = UIBarButtonItem()
-
-    private var note: Note!
 
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
 
         setupUI()
-
         noteBodyTextView.becomeFirstResponder()
-        noteHeaderTextField.delegate = self
+        noteBodyTextView.delegate = self
+
+        noteHeaderTextField.text = note?.header
+        noteBodyTextView.text = note?.body
+        guard let noteDate = note?.date else { return }
+        dateLabel.text = formatDate(date: noteDate)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         guard let note = note else { return }
         StorageManager.shared.save(note: note)
-        delegate.saveNote(note)
+        delegate?.saveNote(note)
     }
 
     private func setupUI() {
@@ -41,7 +44,7 @@ class NoteViewController: UIViewController {
         setupNoteHeaderTextField()
         setupNoteBodyTextView()
         setupBarButtonItem()
-//        setupBackButtonItem()
+        registerForKeyboardNotifications()
     }
 
     private func setupDateLabel() {
@@ -106,7 +109,7 @@ class NoteViewController: UIViewController {
         view.addSubview(noteBodyTextView)
         noteBodyTextView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = noteBodyTextView.topAnchor.constraint(
-            equalTo: noteHeaderTextField.bottomAnchor,
+            equalTo: noteHeaderTextField.topAnchor,
             constant: 28
         )
         let leadingConstraint = noteBodyTextView.leadingAnchor.constraint(
@@ -117,9 +120,9 @@ class NoteViewController: UIViewController {
             equalTo: view.safeAreaLayoutGuide.trailingAnchor,
             constant: -20
         )
-        let bottomConstraint = noteBodyTextView.bottomAnchor.constraint(
+        bottomConstraint = noteBodyTextView.bottomAnchor.constraint(
             equalTo: view.bottomAnchor,
-            constant: 145
+            constant: -145
         )
         NSLayoutConstraint.activate([topConstraint,
                                      leadingConstraint,
@@ -141,25 +144,11 @@ class NoteViewController: UIViewController {
             body: noteBodyTextView.text ?? "",
             date: .now
         )
-        checkIsEmpty(note: note)
-    }
-    private func setupBackButtonItem() {
-        backBarButtonItem.title = "<"
-        backBarButtonItem.style = .plain
-        backBarButtonItem.target = self
-        backBarButtonItem.action = #selector(leftBarButtonItemAction)
-        navigationItem.leftBarButtonItem = backBarButtonItem
-    }
+        guard let note = note else {
+            return
+        }
 
-    @objc func leftBarButtonItemAction() {
-        guard let note = note else { return }
-//        navigationController?.popToRootViewController(animated: true)
-//        navigationController?.viewControllers.first
-//        navigationController?.popViewController(animated: true)
-//        navigationController?.topViewController(listVC)
-//        navigationController?.popToViewController(listVC, animated: true)
-        StorageManager.shared.save(note: note)
-        delegate.saveNote(note)
+        checkIsEmpty(note: note)
     }
 }
 
@@ -170,15 +159,6 @@ extension NoteViewController {
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.YYYY EEEE HH:MM"
         return formatter.string(from: date)
-    }
-}
-
-// MARK: - UIText Field Delegate
-extension NoteViewController: UITextFieldDelegate {
-    func textFieldShouldReturn(_ textField: UITextField) -> Bool {
-        let newPosition = noteBodyTextView.endOfDocument
-        noteBodyTextView.selectedTextRange = noteBodyTextView.textRange(from: newPosition, to: newPosition)
-        return noteBodyTextView.becomeFirstResponder()
     }
 }
 
@@ -199,6 +179,56 @@ extension NoteViewController {
         if note.isEmpty {
             showAlert()
             return
+        }
+    }
+}
+
+// MARK: - UITextView Delegate
+extension NoteViewController: UITextViewDelegate {
+    func textViewDidBeginEditing(_ textView: UITextView) {
+        let newPosition = noteBodyTextView.endOfDocument
+        noteBodyTextView.selectedTextRange = noteBodyTextView.textRange(from: newPosition, to: newPosition)
+    }
+
+    func textViewDidEndEditing(_ textView: UITextView) {
+    }
+}
+
+// MARK: - Configure keyboard Notifications
+extension NoteViewController {
+    private func registerForKeyboardNotifications() {
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updatenoteBodyTextView(notification: )),
+            name: UIResponder.keyboardWillShowNotification,
+            object: nil
+        )
+        NotificationCenter.default.addObserver(
+            self,
+            selector: #selector(updatenoteBodyTextView(notification: )),
+            name: UIResponder.keyboardWillHideNotification,
+            object: nil
+        )
+    }
+
+    @objc func updatenoteBodyTextView(notification: Notification) {
+        if let keyboardFrame: NSValue = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue {
+            let keyboardHeight = keyboardFrame.cgRectValue.height
+
+            if notification.name == UIResponder.keyboardWillHideNotification {
+                noteBodyTextView.contentInset = UIEdgeInsets.zero
+                readyBarButtonItem.isEnabled = false
+            } else {
+                noteBodyTextView.contentInset = UIEdgeInsets(
+                    top: 0,
+                    left: 0,
+                    bottom: keyboardHeight + (bottomConstraint.constant + 10),
+                    right: 0
+                )
+                readyBarButtonItem.isEnabled = true
+                noteBodyTextView.scrollIndicatorInsets = noteBodyTextView.contentInset
+            }
+            noteBodyTextView.scrollRangeToVisible(noteBodyTextView.selectedRange)
         }
     }
 }

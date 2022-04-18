@@ -16,7 +16,7 @@ final class NoteView: UIView {
             configureUI(viewModel)
         }
     }
-    private var tapCompletion: ((Note) -> Void)?
+    var tapCompletion: ((Note?) -> Void)?
 
     private let noteHeaderLabel: UILabel = {
         let noteHeaderLabel = UILabel()
@@ -49,6 +49,7 @@ final class NoteView: UIView {
         ])
 
         setupLabels()
+        tapObserver()
     }
 
     required init?(coder: NSCoder) {
@@ -124,17 +125,12 @@ final class NoteView: UIView {
     }
 
     private func tapObserver() {
-        let tap = UIGestureRecognizer(target: self, action: #selector(tapAction))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(tapAction))
         self.addGestureRecognizer(tap)
     }
 
     @objc private func tapAction() {
-//        let noteVC = NoteViewController()
-
-//        noteVC.text = "ewkjfkjwehf"
-//        noteVC.closure = { note, string, someInt in
-//        }
-//    navigationController?.pushViewController(noteVC, animated: true)
+        tapCompletion?(viewModel)
     }
 }
 

@@ -7,7 +7,7 @@
 
 import UIKit
 
-protocol NoteViewControllerDelegateProtocol {
+protocol NoteViewControllerDelegateProtocol: AnyObject {
     func saveNote(_ note: Note)
 }
 
@@ -22,6 +22,7 @@ class ListViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
         title = "Заметки"
+        navigationItem.backButtonTitle = ""
 
         setupUI()
         notes = StorageManager.shared.getNotes()
@@ -120,6 +121,14 @@ class ListViewController: UIViewController {
         note.forEach { note in
             let noteView = NoteView()
             noteView.viewModel = note
+
+            noteView.tapCompletion = { [weak self] note in
+                let noteVC = NoteViewController()
+                noteVC.note = note
+                noteVC.delegate = self
+
+                self?.navigationController?.pushViewController(noteVC, animated: true)
+            }
             stackView.addArrangedSubview(noteView)
         }
     }
