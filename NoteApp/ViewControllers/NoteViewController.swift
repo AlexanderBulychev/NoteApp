@@ -147,7 +147,6 @@ class NoteViewController: UIViewController {
         guard let note = note else {
             return
         }
-
         checkIsEmpty(note: note)
     }
 }

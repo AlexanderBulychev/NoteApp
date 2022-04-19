@@ -67,7 +67,8 @@ class ListViewController: UIViewController {
 
         stackView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = stackView.topAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.topAnchor
+            equalTo: scrollView.contentLayoutGuide.topAnchor,
+            constant: 16
         )
         let leadingConstraint = stackView.leadingAnchor.constraint(
             equalTo: scrollView.contentLayoutGuide.leadingAnchor
@@ -93,8 +94,8 @@ class ListViewController: UIViewController {
         view.addSubview(createNewNoteButton)
         let noteButtonImage = UIImage(named: "button")
         createNewNoteButton.setImage(noteButtonImage, for: .normal)
-        createNewNoteButton.layer.cornerRadius = 25
-        createNewNoteButton.clipsToBounds = true
+//        createNewNoteButton.layer.cornerRadius = 25
+//        createNewNoteButton.clipsToBounds = true
 
         createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
         let trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
@@ -136,6 +137,10 @@ class ListViewController: UIViewController {
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
     func saveNote(_ note: Note) {
+        if notes.contains(note) {
+            display(notes)
+            return
+        }
         notes.append(note)
         display(notes)
     }

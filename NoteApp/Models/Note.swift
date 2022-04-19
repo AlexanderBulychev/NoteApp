@@ -7,12 +7,24 @@
 
 import Foundation
 
-struct Note: Codable {
+class Note: Codable {
     let header: String
     let body: String
     let date: Date
 
     var isEmpty: Bool {
             header == "" && body == ""
+    }
+    init(header: String, body: String, date: Date) {
+        self.header = header
+        self.body = body
+        self.date = date
+    }
+}
+
+extension Note: Equatable {
+    static func == (lhs: Note, rhs: Note) -> Bool {
+        lhs.header == rhs.header &&
+        lhs.body == rhs.body
     }
 }
