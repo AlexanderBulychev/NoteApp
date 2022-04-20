@@ -137,10 +137,10 @@ class ListViewController: UIViewController {
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
     func saveNote(_ note: Note) {
-        if notes.contains(note) {
-            display(notes)
-            return
-        }
+//        if notes.contains(note) {
+//            display(notes)
+//            return
+//        }
         notes.append(note)
         display(notes)
     }

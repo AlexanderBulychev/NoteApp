@@ -34,7 +34,12 @@ class NoteViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        guard let note = note else { return }
+        let note = Note(
+            header: noteHeaderTextField.text ?? "",
+            body: noteBodyTextView.text ?? "",
+            date: .now
+        )
+        guard let note ===
         StorageManager.shared.save(note: note)
         delegate?.saveNote(note)
     }
