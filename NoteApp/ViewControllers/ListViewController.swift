@@ -12,11 +12,12 @@ protocol NoteViewControllerDelegateProtocol: AnyObject {
 }
 
 class ListViewController: UIViewController {
-    private var scrollView = UIScrollView()
+    var tableView = UITableView()
+
+    var notes: [Note] = []
+
     private var stackView = UIStackView()
     private var createNewNoteButton = UIButton()
-
-    private var notes: [Note] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -24,32 +25,37 @@ class ListViewController: UIViewController {
         title = "Заметки"
         navigationItem.backButtonTitle = ""
 
+        tableView.register(NoteTableViewCell.self, forCellReuseIdentifier: "NoteCell")
+        tableView.dataSource = self
+        tableView.delegate = self
+
         setupUI()
         notes = StorageManager.shared.getNotes()
-        display(notes)
+//        display(notes)
     }
 
     private func setupUI() {
-        configureScrollView()
-        configureStackView()
+        configureTableView()
         configureCreateNewNoteButton()
     }
 
-    private func configureScrollView() {
-        scrollView.alwaysBounceVertical = true
-        view.addSubview(scrollView)
-
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = scrollView.topAnchor.constraint(
-            equalTo: view.topAnchor
+    private func configureTableView() {
+        view.addSubview(tableView)
+        tableView.alpha = 0
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        let topConstraint = tableView.topAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.topAnchor,
+            constant: 16
         )
-        let leadingConstraint = scrollView.leadingAnchor.constraint(
-            equalTo: view.leadingAnchor
+        let leadingConstraint = tableView.leadingAnchor.constraint(
+            equalTo: view.leadingAnchor,
+            constant: 16
         )
-        let trailingConstraint = scrollView.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor
+        let trailingConstraint = tableView.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor,
+            constant: -16
         )
-        let bottomConstraint = scrollView.bottomAnchor.constraint(
+        let bottomConstraint = tableView.bottomAnchor.constraint(
             equalTo: view.bottomAnchor
         )
         NSLayoutConstraint.activate([topConstraint,
@@ -58,44 +64,10 @@ class ListViewController: UIViewController {
                                      bottomConstraint])
     }
 
-    private func configureStackView() {
-        scrollView.addSubview(stackView)
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .fillProportionally
-        stackView.spacing = 4
-
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = stackView.topAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.topAnchor,
-            constant: 16
-        )
-        let leadingConstraint = stackView.leadingAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.leadingAnchor
-        )
-        let trailingConstraint = stackView.trailingAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.trailingAnchor
-        )
-        let bottomConstraint = stackView.bottomAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.bottomAnchor
-        )
-        let widthConstraint = stackView.widthAnchor.constraint(
-            equalTo: scrollView.widthAnchor
-        )
-        NSLayoutConstraint.activate([topConstraint,
-                                     leadingConstraint,
-                                     trailingConstraint,
-                                     bottomConstraint,
-                                     widthConstraint
-                                    ])
-    }
-
     private func configureCreateNewNoteButton() {
         view.addSubview(createNewNoteButton)
         let noteButtonImage = UIImage(named: "button")
         createNewNoteButton.setImage(noteButtonImage, for: .normal)
-//        createNewNoteButton.layer.cornerRadius = 25
-//        createNewNoteButton.clipsToBounds = true
 
         createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
         let trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
@@ -137,11 +109,34 @@ class ListViewController: UIViewController {
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
     func saveNote(_ note: Note) {
-        if notes.contains(note) {
+        if !notes.contains(note) {
+            StorageManager.shared.save(note: note)
+            notes.append(note)
             display(notes)
             return
         }
-        notes.append(note)
         display(notes)
+    }
+}
+
+// MARK: - UITableViewDataSource
+extension ListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        notes.count
+    }
+
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: "NoteCell",
+            for: indexPath
+        ) as? NoteTableViewCell else { return UITableViewCell() }
+        cell.backgroundColor = .green
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension ListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
     }
 }

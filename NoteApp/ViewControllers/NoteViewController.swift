@@ -35,7 +35,6 @@ class NoteViewController: UIViewController {
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
         guard let note = note else { return }
-        StorageManager.shared.save(note: note)
         delegate?.saveNote(note)
     }
 
