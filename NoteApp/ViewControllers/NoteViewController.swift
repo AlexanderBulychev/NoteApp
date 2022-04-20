@@ -156,7 +156,7 @@ extension NoteViewController {
     private func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.YYYY EEEE HH:MM"
+        formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
         return formatter.string(from: date)
     }
 }
