@@ -13,8 +13,11 @@ protocol NoteViewControllerDelegateProtocol: AnyObject {
 
 class ListViewController: UIViewController {
     var tableView = UITableView()
-
     var notes: [Note] = []
+
+    struct Cells {
+        static let noteCell = "NoteCell"
+    }
 
     private var stackView = UIStackView()
     private var createNewNoteButton = UIButton()
@@ -24,10 +27,6 @@ class ListViewController: UIViewController {
         view.backgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
         title = "Заметки"
         navigationItem.backButtonTitle = ""
-
-        tableView.register(NoteTableViewCell.self, forCellReuseIdentifier: "NoteCell")
-        tableView.dataSource = self
-        tableView.delegate = self
 
         setupUI()
         notes = StorageManager.shared.getNotes()
@@ -41,7 +40,13 @@ class ListViewController: UIViewController {
 
     private func configureTableView() {
         view.addSubview(tableView)
-        tableView.alpha = 0
+
+        tableView.register(NoteCell.self, forCellReuseIdentifier: Cells.noteCell)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = 90
+
+        tableView.backgroundColor = view.backgroundColor
         tableView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = tableView.topAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.topAnchor,
@@ -127,10 +132,16 @@ extension ListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: "NoteCell",
+            withIdentifier: Cells.noteCell,
             for: indexPath
-        ) as? NoteTableViewCell else { return UITableViewCell() }
-        cell.backgroundColor = .green
+        ) as? NoteCell else { return UITableViewCell() }
+
+        cell.backgroundColor = .white
+        cell.layer.cornerRadius = 14
+
+        let note = notes[indexPath.row]
+        cell.viewModel = note
+
         return cell
     }
 }
