@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NoteViewController: UIViewController {
+final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
     var bottomConstraint: NSLayoutConstraint!
@@ -15,6 +15,8 @@ class NoteViewController: UIViewController {
     private var dateLabel = UILabel()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
+
+    private var isEditingNote: Bool = false
 
     private var readyBarButtonItem = UIBarButtonItem()
 
@@ -25,6 +27,7 @@ class NoteViewController: UIViewController {
         setupUI()
         noteBodyTextView.becomeFirstResponder()
         noteBodyTextView.delegate = self
+        isEditingNote = note != nil ? true : false
 
         noteHeaderTextField.text = note?.header
         noteBodyTextView.text = note?.body
@@ -34,14 +37,12 @@ class NoteViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        let note = Note(
-            header: noteHeaderTextField.text ?? "",
-            body: noteBodyTextView.text ?? "",
-            date: .now
-        )
-        guard let note ===
+
+        guard let note = note else {
+            return
+        }
         StorageManager.shared.save(note: note)
-        delegate?.saveNote(note)
+        delegate?.addNote(note, isEditing: isEditingNote)
     }
 
     private func setupUI() {
@@ -144,14 +145,20 @@ class NoteViewController: UIViewController {
 
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
-        note = Note(
-            header: noteHeaderTextField.text ?? "",
-            body: noteBodyTextView.text ?? "",
-            date: .now
-        )
-        guard let note = note else {
-            return
+
+        if isEditingNote {
+            note?.header = noteHeaderTextField.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
+            note?.date = .now
+        } else {
+            note = Note(
+                header: noteHeaderTextField.text ?? "",
+                body: noteBodyTextView.text ?? "",
+                date: .now
+            )
         }
+
+        guard let note = note else { return }
         checkIsEmpty(note: note)
     }
 }

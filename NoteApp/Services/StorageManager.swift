@@ -17,7 +17,15 @@ final class StorageManager {
 
     func save(note: Note) {
         var notes = getNotes()
-        notes.append(note)
+
+        let index = notes.firstIndex { $0.id == note.id }
+
+        if let index = index {
+            notes[index] = note
+        } else {
+            notes.append(note)
+        }
+
         guard let data = try? JSONEncoder().encode(notes) else { return }
         userDefaults.set(data, forKey: key)
     }

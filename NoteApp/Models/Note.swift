@@ -8,9 +8,10 @@
 import Foundation
 
 class Note: Codable {
-    let header: String
-    let body: String
-    let date: Date
+    let id: String
+    var header: String
+    var body: String
+    var date: Date
 
     var isEmpty: Bool {
             header == "" && body == ""
@@ -19,12 +20,6 @@ class Note: Codable {
         self.header = header
         self.body = body
         self.date = date
-    }
-}
-
-extension Note: Equatable {
-    static func == (lhs: Note, rhs: Note) -> Bool {
-        lhs.header == rhs.header &&
-        lhs.body == rhs.body
+        self.id = UUID().uuidString
     }
 }

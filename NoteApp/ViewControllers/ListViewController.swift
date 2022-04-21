@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
-    func saveNote(_ note: Note)
+    func addNote(_ note: Note, isEditing: Bool)
 }
 
 class ListViewController: UIViewController {
@@ -94,8 +94,6 @@ class ListViewController: UIViewController {
         view.addSubview(createNewNoteButton)
         let noteButtonImage = UIImage(named: "button")
         createNewNoteButton.setImage(noteButtonImage, for: .normal)
-//        createNewNoteButton.layer.cornerRadius = 25
-//        createNewNoteButton.clipsToBounds = true
 
         createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
         let trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
@@ -105,8 +103,7 @@ class ListViewController: UIViewController {
             equalTo: view.bottomAnchor, constant: -60
         )
         NSLayoutConstraint.activate([trailingConstraint,
-                                     bottomConstraint
-                                    ])
+                                     bottomConstraint])
         createNewNoteButton.addTarget(self, action: #selector(createNewNoteButtonPressed), for: .touchUpInside)
     }
 
@@ -136,12 +133,12 @@ class ListViewController: UIViewController {
 }
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
-    func saveNote(_ note: Note) {
-//        if notes.contains(note) {
-//            display(notes)
-//            return
-//        }
-        notes.append(note)
+    func addNote(_ note: Note, isEditing: Bool) {
+        if !isEditing {
+            notes.append(note)
+            display(notes)
+            return
+        }
         display(notes)
     }
 }
