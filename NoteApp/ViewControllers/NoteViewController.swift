@@ -156,10 +156,9 @@ final class NoteViewController: UIViewController {
                 body: noteBodyTextView.text ?? "",
                 date: .now
             )
+            guard let note = note else { return }
+            checkIsEmpty(note: note)
         }
-
-        guard let note = note else { return }
-        checkIsEmpty(note: note)
     }
 }
 
