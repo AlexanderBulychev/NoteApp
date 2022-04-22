@@ -145,7 +145,7 @@ extension ListViewController: UITableViewDelegate {
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
     func saveNote(_ note: Note, _ isEditing: Bool) {
-        !isEditing {
+        if !isEditing {
             notes.append(note)
             tableView.reloadData()
             return
