@@ -8,6 +8,7 @@
 import Foundation
 
 class Note: Codable {
+    let id: String
     var header: String
     var body: String
     var date: Date
@@ -19,5 +20,6 @@ class Note: Codable {
         self.header = header
         self.body = body
         self.date = date
+        self.id = UUID().uuidString
     }
 }
