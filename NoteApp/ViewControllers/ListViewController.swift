@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
-    func saveNote(_ note: Note)
+    func saveNote(_ note: Note, _ isEditing: Bool)
 }
 
 class ListViewController: UIViewController {
@@ -19,18 +19,18 @@ class ListViewController: UIViewController {
         static let noteCell = "NoteCell"
     }
 
+    private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
     private var stackView = UIStackView()
     private var createNewNoteButton = UIButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
+        view.backgroundColor = viewBackgroundColor
         title = "Заметки"
         navigationItem.backButtonTitle = ""
 
         setupUI()
         notes = StorageManager.shared.getNotes()
-//        display(notes)
     }
 
     private func setupUI() {
@@ -44,21 +44,20 @@ class ListViewController: UIViewController {
         tableView.register(NoteCell.self, forCellReuseIdentifier: Cells.noteCell)
         tableView.dataSource = self
         tableView.delegate = self
-        tableView.rowHeight = 90
+        tableView.rowHeight = 94
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = viewBackgroundColor
 
-        tableView.backgroundColor = view.backgroundColor
         tableView.translatesAutoresizingMaskIntoConstraints = false
         let topConstraint = tableView.topAnchor.constraint(
             equalTo: view.safeAreaLayoutGuide.topAnchor,
             constant: 16
         )
         let leadingConstraint = tableView.leadingAnchor.constraint(
-            equalTo: view.leadingAnchor,
-            constant: 16
+            equalTo: view.leadingAnchor
         )
         let trailingConstraint = tableView.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor,
-            constant: -16
+            equalTo: view.trailingAnchor
         )
         let bottomConstraint = tableView.bottomAnchor.constraint(
             equalTo: view.bottomAnchor
@@ -112,18 +111,6 @@ class ListViewController: UIViewController {
     }
 }
 
-extension ListViewController: NoteViewControllerDelegateProtocol {
-    func saveNote(_ note: Note) {
-        if !notes.contains(note) {
-            StorageManager.shared.save(note: note)
-            notes.append(note)
-            display(notes)
-            return
-        }
-        display(notes)
-    }
-}
-
 // MARK: - UITableViewDataSource
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -136,11 +123,9 @@ extension ListViewController: UITableViewDataSource {
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
 
-        cell.backgroundColor = .white
-        cell.layer.cornerRadius = 14
-
         let note = notes[indexPath.row]
         cell.viewModel = note
+        cell.backgroundColor = viewBackgroundColor
 
         return cell
     }
@@ -149,5 +134,22 @@ extension ListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let note = notes[indexPath.row]
+        let noteVC = NoteViewController()
+        noteVC.note = note
+        noteVC.delegate = self
+
+        navigationController?.pushViewController(noteVC, animated: true)
+    }
+}
+
+extension ListViewController: NoteViewControllerDelegateProtocol {
+    func saveNote(_ note: Note, _ isEditing: Bool) {
+        !isEditing {
+            notes.append(note)
+            tableView.reloadData()
+            return
+        }
+        tableView.reloadData()
     }
 }

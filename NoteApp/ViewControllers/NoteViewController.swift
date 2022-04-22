@@ -10,6 +10,7 @@ import UIKit
 class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
+    var noteIsEditing: Bool = false
     var bottomConstraint: NSLayoutConstraint!
 
     private var dateLabel = UILabel()
@@ -138,15 +139,20 @@ class NoteViewController: UIViewController {
 
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
-        note = Note(
-            header: noteHeaderTextField.text ?? "",
-            body: noteBodyTextView.text ?? "",
-            date: .now
-        )
-        guard let note = note else {
-            return
+        noteIsEditing = (note != nil) ? true : false
+
+        if noteIsEditing {
+            note?.header = noteHeaderTextField.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
+            note?.date = .now
+        } else {
+            let note = Note(
+                header: noteHeaderTextField.text ?? "",
+                body: noteBodyTextView.text ?? "",
+                date: .now
+            )
+            checkIsEmpty(note: note)
         }
-        checkIsEmpty(note: note)
     }
 }
 

@@ -17,6 +17,13 @@ final class NoteCell: UITableViewCell {
         }
     }
 
+    private let noteView: UIView = {
+        let noteViewCell = UIView()
+        noteViewCell.backgroundColor = .white
+        noteViewCell.layer.cornerRadius = 14
+        return noteViewCell
+    }()
+
     private let noteHeaderLabel: UILabel = {
         let noteHeaderLabel = UILabel()
         noteHeaderLabel.font = .systemFont(ofSize: 16)
@@ -38,24 +45,44 @@ final class NoteCell: UITableViewCell {
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
-        setupLabels()
+        setupUI()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupLabels() {
-        self.addSubview(noteHeaderLabel)
-        noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
-        let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
-            equalTo: self.topAnchor, constant: 10
+    private func setupUI() {
+        addSubview(noteView)
+        noteView.translatesAutoresizingMaskIntoConstraints = false
+        let topViewConstraint = noteView.topAnchor.constraint(
+            equalTo: self.topAnchor
         )
-        let leadingHeaderConstraint = noteHeaderLabel.leadingAnchor.constraint(
+        let leadingViewConstraint = noteView.leadingAnchor.constraint(
             equalTo: self.leadingAnchor, constant: 16
         )
-        let trailingHeaderConstraint = noteHeaderLabel.trailingAnchor.constraint(
+        let trailingViewConstraint = noteView.trailingAnchor.constraint(
             equalTo: self.trailingAnchor, constant: -16
+        )
+        let bottomViewConstraint = noteView.bottomAnchor.constraint(
+            equalTo: self.bottomAnchor, constant: -4
+        )
+        NSLayoutConstraint.activate([topViewConstraint,
+                                     leadingViewConstraint,
+                                     trailingViewConstraint,
+                                     bottomViewConstraint
+                                    ])
+
+        noteView.addSubview(noteHeaderLabel)
+        noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
+            equalTo: noteView.topAnchor, constant: 10
+        )
+        let leadingHeaderConstraint = noteHeaderLabel.leadingAnchor.constraint(
+            equalTo: noteView.leadingAnchor, constant: 16
+        )
+        let trailingHeaderConstraint = noteHeaderLabel.trailingAnchor.constraint(
+            equalTo: noteView.trailingAnchor, constant: -16
         )
         let heighHeaderConstraint = noteHeaderLabel.heightAnchor.constraint(
             equalToConstant: 18
@@ -66,16 +93,16 @@ final class NoteCell: UITableViewCell {
                                      heighHeaderConstraint
                                     ])
 
-        self.addSubview(noteBodyLabel)
+        noteView.addSubview(noteBodyLabel)
         noteBodyLabel.translatesAutoresizingMaskIntoConstraints = false
         let topBodyConstraint = noteBodyLabel.topAnchor.constraint(
             equalTo: noteHeaderLabel.bottomAnchor, constant: 4
         )
         let leadingBodyConstraint = noteBodyLabel.leadingAnchor.constraint(
-            equalTo: self.leadingAnchor, constant: 16
+            equalTo: noteView.leadingAnchor, constant: 16
         )
         let trailingBodyConstraint = noteBodyLabel.trailingAnchor.constraint(
-            equalTo: self.trailingAnchor, constant: -16
+            equalTo: noteView.trailingAnchor, constant: -16
         )
         let heighBodyConstraint = noteBodyLabel.heightAnchor.constraint(
             equalToConstant: 14
@@ -86,13 +113,13 @@ final class NoteCell: UITableViewCell {
                                      heighBodyConstraint
                                     ])
 
-        self.addSubview(noteDateLabel)
+        noteView.addSubview(noteDateLabel)
         noteDateLabel.translatesAutoresizingMaskIntoConstraints = false
         let topDateConstraint = noteDateLabel.topAnchor.constraint(
             equalTo: noteBodyLabel.bottomAnchor, constant: 24
         )
         let leadingDateConstraint = noteDateLabel.leadingAnchor.constraint(
-            equalTo: self.leadingAnchor, constant: 16
+            equalTo: noteView.leadingAnchor, constant: 16
         )
         let widthDateConstraint = noteDateLabel.widthAnchor.constraint(
             equalToConstant: 68
