@@ -37,7 +37,7 @@ final class NoteViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-
+        saveNote()
         guard let note = note else {
             return
         }
@@ -145,20 +145,7 @@ final class NoteViewController: UIViewController {
 
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
-
-        if isEditingNote {
-            note?.header = noteHeaderTextField.text ?? ""
-            note?.body = noteBodyTextView.text ?? ""
-            note?.date = .now
-        } else {
-            note = Note(
-                header: noteHeaderTextField.text ?? "",
-                body: noteBodyTextView.text ?? "",
-                date: .now
-            )
-            guard let note = note else { return }
-            checkIsEmpty(note: note)
-        }
+        saveNote()
     }
 }
 
@@ -174,6 +161,27 @@ extension NoteViewController {
 
 // MARK: - Private methods
 extension NoteViewController {
+    private func saveNote() {
+        if isEditingNote {
+            note?.header = noteHeaderTextField.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
+            note?.date = .now
+        } else {
+            if noteHeaderTextField.text != "" ||
+                noteBodyTextView.text != "" {
+                note = Note(
+                    header: noteHeaderTextField.text ?? "",
+                    body: noteBodyTextView.text ?? "",
+                    date: .now
+                )
+            }
+            else {
+                guard let note = note else { return }
+                checkIsEmpty(note: note)
+            }
+        }
+    }
+
     private func showAlert() {
         let alert = UIAlertController(
             title: "Пустые поля",
@@ -182,13 +190,15 @@ extension NoteViewController {
         )
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
+        present(alert, animated: UIView.areAnimationsEnabled) {
+            print(self)
+        }
         present(alert, animated: true)
     }
 
     private func checkIsEmpty(note: Note) {
         if note.isEmpty {
             showAlert()
-            return
         }
     }
 }
