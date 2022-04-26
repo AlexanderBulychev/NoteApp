@@ -13,9 +13,6 @@ class Note: Codable {
     var body: String
     var date: Date
 
-    var isEmpty: Bool {
-            header == "" && body == ""
-    }
     init(header: String, body: String, date: Date) {
         self.header = header
         self.body = body

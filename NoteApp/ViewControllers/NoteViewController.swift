@@ -37,13 +37,27 @@ final class NoteViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        saveNote()
-        guard let note = note else {
-            return
+
+        if isEditingNote {
+            note?.header = noteHeaderTextField.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
+            note?.date = .now
+        } else {
+            if noteHeaderTextField.text != "" ||
+                noteBodyTextView.text != "" {
+                note = Note(
+                    header: noteHeaderTextField.text ?? "",
+                    body: noteBodyTextView.text ?? "",
+                    date: .now
+                )
+            }
         }
-        StorageManager.shared.save(note: note)
-        delegate?.addNote(note, isEditing: isEditingNote)
-    }
+            guard let note = note else {
+                return
+            }
+            StorageManager.shared.save(note: note)
+            delegate?.addNote(note, isEditing: isEditingNote)
+        }
 
     private func setupUI() {
         setupDateLabel()
@@ -145,7 +159,23 @@ final class NoteViewController: UIViewController {
 
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
-        saveNote()
+
+        if isEditingNote {
+            note?.header = noteHeaderTextField.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
+            note?.date = .now
+        } else {
+            if noteHeaderTextField.text != "" ||
+                noteBodyTextView.text != "" {
+                note = Note(
+                    header: noteHeaderTextField.text ?? "",
+                    body: noteBodyTextView.text ?? "",
+                    date: .now
+                )
+            } else {
+                showAlert()
+            }
+        }
     }
 }
 
@@ -161,27 +191,6 @@ extension NoteViewController {
 
 // MARK: - Private methods
 extension NoteViewController {
-    private func saveNote() {
-        if isEditingNote {
-            note?.header = noteHeaderTextField.text ?? ""
-            note?.body = noteBodyTextView.text ?? ""
-            note?.date = .now
-        } else {
-            if noteHeaderTextField.text != "" ||
-                noteBodyTextView.text != "" {
-                note = Note(
-                    header: noteHeaderTextField.text ?? "",
-                    body: noteBodyTextView.text ?? "",
-                    date: .now
-                )
-            }
-            else {
-                guard let note = note else { return }
-                checkIsEmpty(note: note)
-            }
-        }
-    }
-
     private func showAlert() {
         let alert = UIAlertController(
             title: "Пустые поля",
@@ -190,16 +199,7 @@ extension NoteViewController {
         )
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
-        present(alert, animated: UIView.areAnimationsEnabled) {
-            print(self)
-        }
-        present(alert, animated: true)
-    }
-
-    private func checkIsEmpty(note: Note) {
-        if note.isEmpty {
-            showAlert()
-        }
+    present(alert, animated: UIView.areAnimationsEnabled)
     }
 }
 
