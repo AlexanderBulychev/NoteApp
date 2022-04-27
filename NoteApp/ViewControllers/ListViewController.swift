@@ -8,7 +8,7 @@
 import UIKit
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
-    func saveNote(_ note: Note, _ isEditing: Bool)
+    func addNote(_ note: Note, _ isEditing: Bool)
 }
 
 class ListViewController: UIViewController {
@@ -91,24 +91,6 @@ class ListViewController: UIViewController {
         noteVC.delegate = self
         navigationController?.pushViewController(noteVC, animated: true)
     }
-
-    private func display(_ note: [Note]) {
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
-
-        note.forEach { note in
-            let noteView = NoteView()
-            noteView.viewModel = note
-
-            noteView.tapCompletion = { [weak self] note in
-                let noteVC = NoteViewController()
-                noteVC.note = note
-                noteVC.delegate = self
-
-                self?.navigationController?.pushViewController(noteVC, animated: true)
-            }
-            stackView.addArrangedSubview(noteView)
-        }
-    }
 }
 
 // MARK: - UITableViewDataSource
@@ -144,7 +126,7 @@ extension ListViewController: UITableViewDelegate {
 }
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
-    func saveNote(_ note: Note, _ isEditing: Bool) {
+    func addNote(_ note: Note, _ isEditing: Bool) {
         if !isEditing {
             notes.append(note)
             tableView.reloadData()

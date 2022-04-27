@@ -37,10 +37,27 @@ class NoteViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        guard let note = note else { return }
-        delegate?.saveNote(note, isEditingNote)
-        StorageManager.shared.save(note: note)
-    }
+
+        if isEditingNote {
+            note?.header = noteHeaderTextField.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
+            note?.date = .now
+        } else {
+            if noteHeaderTextField.text != "" ||
+                noteBodyTextView.text != "" {
+                note = Note(
+                    header: noteHeaderTextField.text ?? "",
+                    body: noteBodyTextView.text ?? "",
+                    date: .now
+                )
+            }
+        }
+            guard let note = note else {
+                return
+            }
+            StorageManager.shared.save(note: note)
+        delegate?.addNote(note, isEditingNote)
+        }
 
     private func setupUI() {
         setupDateLabel()
@@ -152,8 +169,6 @@ class NoteViewController: UIViewController {
                 body: noteBodyTextView.text ?? "",
                 date: .now
             )
-            guard let note = note else { return }
-            checkIsEmpty(note: note)
         }
     }
 }
@@ -179,13 +194,6 @@ extension NoteViewController {
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
-    }
-
-    private func checkIsEmpty(note: Note) {
-        if note.isEmpty {
-            showAlert()
-            return
-        }
     }
 }
 
