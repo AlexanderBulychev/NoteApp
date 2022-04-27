@@ -27,7 +27,7 @@ class NoteViewController: UIViewController {
         noteBodyTextView.becomeFirstResponder()
         noteBodyTextView.delegate = self
 
-        isEditingNote = note != nil ? true : false
+        isEditingNote = (note != nil) ? true : false
 
         noteHeaderTextField.text = note?.header
         noteBodyTextView.text = note?.body

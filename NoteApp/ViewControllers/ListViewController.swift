@@ -15,12 +15,8 @@ class ListViewController: UIViewController {
     var tableView = UITableView()
     var notes: [Note] = []
 
-    struct Cells {
-        static let noteCell = "NoteCell"
-    }
-
+    private let noteCellName = "NoteCell"
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
-    private var stackView = UIStackView()
     private var createNewNoteButton = UIButton()
 
     override func viewDidLoad() {
@@ -41,7 +37,7 @@ class ListViewController: UIViewController {
     private func configureTableView() {
         view.addSubview(tableView)
 
-        tableView.register(NoteCell.self, forCellReuseIdentifier: Cells.noteCell)
+        tableView.register(NoteCell.self, forCellReuseIdentifier: noteCellName)
         tableView.dataSource = self
         tableView.delegate = self
         tableView.rowHeight = 94
@@ -101,7 +97,7 @@ extension ListViewController: UITableViewDataSource {
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
-            withIdentifier: Cells.noteCell,
+            withIdentifier: noteCellName,
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
 
