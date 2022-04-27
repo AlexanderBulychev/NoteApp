@@ -159,16 +159,22 @@ class NoteViewController: UIViewController {
 
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
+
         if isEditingNote {
             note?.header = noteHeaderTextField.text ?? ""
             note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
-            note = Note(
-                header: noteHeaderTextField.text ?? "",
-                body: noteBodyTextView.text ?? "",
-                date: .now
-            )
+            if noteHeaderTextField.text != "" ||
+                noteBodyTextView.text != "" {
+                note = Note(
+                    header: noteHeaderTextField.text ?? "",
+                    body: noteBodyTextView.text ?? "",
+                    date: .now
+                )
+            } else {
+                showAlert()
+            }
         }
     }
 }
