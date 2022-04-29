@@ -102,7 +102,7 @@ extension ListViewController: UITableViewDataSource {
         ) as? NoteCell else { return UITableViewCell() }
 
         let note = notes[indexPath.row]
-        cell.viewModel = note
+        cell.configureCell(from: note)
         cell.backgroundColor = viewBackgroundColor
 
         return cell
@@ -125,8 +125,6 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
     func addNote(_ note: Note, _ isEditing: Bool) {
         if !isEditing {
             notes.append(note)
-            tableView.reloadData()
-            return
         }
         tableView.reloadData()
     }

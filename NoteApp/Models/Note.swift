@@ -11,6 +11,9 @@ class Note: Codable {
     let id: String
     var header: String
     var body: String
+    var isEmpty: Bool {
+        header == "" && body == ""
+    }
     var date: Date
 
     init(header: String, body: String, date: Date) {

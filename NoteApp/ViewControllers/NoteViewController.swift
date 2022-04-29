@@ -31,8 +31,7 @@ class NoteViewController: UIViewController {
 
         noteHeaderTextField.text = note?.header
         noteBodyTextView.text = note?.body
-        guard let noteDate = note?.date else { return }
-        dateLabel.text = formatDate(date: noteDate)
+        dateLabel.text = formatDate(date: note?.date)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -52,12 +51,12 @@ class NoteViewController: UIViewController {
                 )
             }
         }
-            guard let note = note else {
-                return
-            }
-            StorageManager.shared.save(note: note)
-        delegate?.addNote(note, isEditingNote)
+        guard let note = note else {
+            return
         }
+        StorageManager.shared.save(note: note)
+        delegate?.addNote(note, isEditingNote)
+    }
 
     private func setupUI() {
         setupDateLabel()
@@ -93,7 +92,6 @@ class NoteViewController: UIViewController {
                                      leadingConstraint,
                                      trailingConstraint,
                                      heightConstraint])
-        dateLabel.text = formatDate(date: Date())
     }
 
     private func setupNoteHeaderTextField() {
@@ -165,15 +163,15 @@ class NoteViewController: UIViewController {
             note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
-            if noteHeaderTextField.text != "" ||
-                noteBodyTextView.text != "" {
-                note = Note(
-                    header: noteHeaderTextField.text ?? "",
-                    body: noteBodyTextView.text ?? "",
-                    date: .now
-                )
-            } else {
+            note = Note(
+                header: noteHeaderTextField.text ?? "",
+                body: noteBodyTextView.text ?? "",
+                date: .now
+            )
+            guard let note = note else { return }
+            if note.isEmpty {
                 showAlert()
+                return
             }
         }
     }
@@ -181,11 +179,15 @@ class NoteViewController: UIViewController {
 
 // MARK: - Preparing Date for label
 extension NoteViewController {
-    private func formatDate(date: Date) -> String {
+    private func formatDate(date: Date?) -> String {
+        if let date = date {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
-        return formatter.string(from: date)
+            return formatter.string(from: date)
+        } else {
+            return ""
+        }
     }
 }
 
@@ -200,6 +202,13 @@ extension NoteViewController {
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
         present(alert, animated: true)
+    }
+
+    private func checkIsEmpty(note: Note) {
+        if note.isEmpty {
+            showAlert()
+            return
+        }
     }
 }
 

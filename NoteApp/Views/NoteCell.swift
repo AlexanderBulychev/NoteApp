@@ -8,14 +8,16 @@
 import UIKit
 
 final class NoteCell: UITableViewCell {
-    var viewModel: Note? {
-        didSet {
-            guard let viewModel = viewModel else {
-                return
-            }
-            configureUI(viewModel)
-        }
-    }
+//    var viewModel: Note? {
+//        didSet {
+//            guard let viewModel = viewModel else {
+//                return
+//            }
+//            configureUI(viewModel)
+//        }
+//    }
+
+    private var note: Note?
 
     private let noteView: UIView = {
         let noteViewCell = UIView()
@@ -134,10 +136,10 @@ final class NoteCell: UITableViewCell {
                                     ])
     }
 
-    private func configureUI(_ viewModel: Note) {
-        noteHeaderLabel.text = viewModel.header
-        noteBodyLabel.text = viewModel.body
-        noteDateLabel.text = formatDate(date: viewModel.date)
+    func configureCell(from note: Note) {
+        noteHeaderLabel.text = note.header
+        noteBodyLabel.text = note.body
+        noteDateLabel.text = formatDate(date: note.date)
     }
 }
 
