@@ -42,16 +42,18 @@ class NoteViewController: UIViewController {
             note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
-            if noteHeaderTextField.text != "" ||
-                noteBodyTextView.text != "" {
-                note = Note(
-                    header: noteHeaderTextField.text ?? "",
-                    body: noteBodyTextView.text ?? "",
-                    date: .now
-                )
-            }
+            note = Note(
+                header: noteHeaderTextField.text ?? "",
+                body: noteBodyTextView.text ?? "",
+                date: .now
+            )
+//            if noteHeaderTextField.text == "" ||
+//                noteBodyTextView.text == "" {
+//                return
+//            }
         }
-        guard let note = note else {
+        guard let note = note,
+        !note.isEmpty else {
             return
         }
         StorageManager.shared.save(note: note)
@@ -168,12 +170,12 @@ class NoteViewController: UIViewController {
                 body: noteBodyTextView.text ?? "",
                 date: .now
             )
-            guard let note = note else { return }
-            if note.isEmpty {
-                showAlert()
-                return
-            }
         }
+        guard let note = note,
+              !note.isEmpty else {
+                  showAlert()
+                  return
+              }
     }
 }
 
@@ -217,9 +219,6 @@ extension NoteViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         let newPosition = noteBodyTextView.endOfDocument
         noteBodyTextView.selectedTextRange = noteBodyTextView.textRange(from: newPosition, to: newPosition)
-    }
-
-    func textViewDidEndEditing(_ textView: UITextView) {
     }
 }
 
