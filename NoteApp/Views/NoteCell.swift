@@ -8,17 +8,6 @@
 import UIKit
 
 final class NoteCell: UITableViewCell {
-//    var viewModel: Note? {
-//        didSet {
-//            guard let viewModel = viewModel else {
-//                return
-//            }
-//            configureUI(viewModel)
-//        }
-//    }
-
-    private var note: Note?
-
     private let noteView: UIView = {
         let noteViewCell = UIView()
         noteViewCell.backgroundColor = .white
@@ -52,6 +41,12 @@ final class NoteCell: UITableViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    func configureCell(from note: Note) {
+        noteHeaderLabel.text = note.header
+        noteBodyLabel.text = note.body
+        noteDateLabel.text = formatDate(date: note.date)
     }
 
     private func setupUI() {
@@ -134,12 +129,6 @@ final class NoteCell: UITableViewCell {
                                      widthDateConstraint,
                                      heighDateConstraint
                                     ])
-    }
-
-    func configureCell(from note: Note) {
-        noteHeaderLabel.text = note.header
-        noteBodyLabel.text = note.body
-        noteDateLabel.text = formatDate(date: note.date)
     }
 }
 

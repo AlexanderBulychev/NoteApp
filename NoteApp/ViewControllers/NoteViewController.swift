@@ -47,10 +47,6 @@ class NoteViewController: UIViewController {
                 body: noteBodyTextView.text ?? "",
                 date: .now
             )
-//            if noteHeaderTextField.text == "" ||
-//                noteBodyTextView.text == "" {
-//                return
-//            }
         }
         guard let note = note,
         !note.isEmpty else {
@@ -182,14 +178,11 @@ class NoteViewController: UIViewController {
 // MARK: - Preparing Date for label
 extension NoteViewController {
     private func formatDate(date: Date?) -> String {
-        if let date = date {
+        guard let date = date else { return "" }
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
-            return formatter.string(from: date)
-        } else {
-            return ""
-        }
+        return formatter.string(from: date)
     }
 }
 
