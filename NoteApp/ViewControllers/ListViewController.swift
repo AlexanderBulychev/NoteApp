@@ -29,6 +29,34 @@ class ListViewController: UIViewController {
         notes = StorageManager.shared.getNotes()
     }
 
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+
+//        createNewNoteButton.frame.origin.x += 70
+//        createNewNoteButton.frame.origin.y += 110
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        testAnimate()
+    }
+
+    private func testAnimate() {
+        UIView.animate(withDuration: 1) {
+//            self.createNewNoteButton.frame.origin.x -= 70
+//            self.createNewNoteButton.frame.origin.y -= 110
+            self.trailingConstraint.constant -= 70
+            self.bottomConstraint.constant -= 100
+            self.view.layoutIfNeeded()
+        }
+//        UIView.transition(
+//            with: createNewNoteButton,
+//            duration: 7,
+//            options: .transitionCrossDissolve) {
+//                self.createNewNoteButton.setTitle("Jr", for: .normal)
+//        }
+    }
+
     private func setupUI() {
         configureTableView()
         configureCreateNewNoteButton()
@@ -49,9 +77,9 @@ class ListViewController: UIViewController {
             equalTo: view.safeAreaLayoutGuide.topAnchor,
             constant: 16
         )
-        let leadingConstraint = tableView.leadingAnchor.constraint(
-            equalTo: view.leadingAnchor
-        )
+//        let leadingConstraint = tableView.leadingAnchor.constraint(
+//            equalTo: view.leadingAnchor
+//        )
         let trailingConstraint = tableView.trailingAnchor.constraint(
             equalTo: view.trailingAnchor
         )
@@ -59,10 +87,13 @@ class ListViewController: UIViewController {
             equalTo: view.bottomAnchor
         )
         NSLayoutConstraint.activate([topConstraint,
-                                     leadingConstraint,
+                                     tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
                                      trailingConstraint,
                                      bottomConstraint])
     }
+
+    var trailingConstraint: NSLayoutConstraint!
+    var bottomConstraint: NSLayoutConstraint!
 
     private func configureCreateNewNoteButton() {
         view.addSubview(createNewNoteButton)
@@ -70,10 +101,10 @@ class ListViewController: UIViewController {
         createNewNoteButton.setImage(noteButtonImage, for: .normal)
 
         createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
-        let trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor, constant: -19
+        trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor, constant: -20
         )
-        let bottomConstraint = createNewNoteButton.bottomAnchor.constraint(
+        bottomConstraint = createNewNoteButton.bottomAnchor.constraint(
             equalTo: view.bottomAnchor, constant: -60
         )
         NSLayoutConstraint.activate([trailingConstraint,
