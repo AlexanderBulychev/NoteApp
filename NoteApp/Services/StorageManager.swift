@@ -19,7 +19,6 @@ final class StorageManager {
         var notes = getNotes()
 
         let index = notes.firstIndex { $0.id == note.id }
-
         if let index = index {
             notes[index] = note
         } else {

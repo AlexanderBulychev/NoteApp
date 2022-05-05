@@ -1,22 +1,19 @@
 //
-//  NoteView.swift
+//  NoteTableViewCell.swift
 //  NoteApp
 //
-//  Created by asbul on 12.04.2022.
+//  Created by asbul on 19.04.2022.
 //
 
 import UIKit
 
-final class NoteView: UIView {
-    var viewModel: Note? {
-        didSet {
-            guard let viewModel = viewModel else {
-                return
-            }
-            configureUI(viewModel)
-        }
-    }
-    var tapCompletion: ((Note?) -> Void)?
+final class NoteCell: UITableViewCell {
+    private let noteView: UIView = {
+        let noteViewCell = UIView()
+        noteViewCell.backgroundColor = .white
+        noteViewCell.layer.cornerRadius = 14
+        return noteViewCell
+    }()
 
     private let noteHeaderLabel: UILabel = {
         let noteHeaderLabel = UILabel()
@@ -37,36 +34,52 @@ final class NoteView: UIView {
         return noteDateLabel
     }()
 
-    override init(frame: CGRect) {
-        super.init(frame: .zero)
-        backgroundColor = .white
-        layer.cornerRadius = 14
-
-        translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            widthAnchor.constraint(equalToConstant: 358),
-            heightAnchor.constraint(equalToConstant: 90)
-        ])
-
-        setupLabels()
-        tapObserver()
+    override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
+        super.init(style: style, reuseIdentifier: reuseIdentifier)
+        setupUI()
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
-    private func setupLabels() {
-        self.addSubview(noteHeaderLabel)
-        noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
-        let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
-            equalTo: self.topAnchor, constant: 10
+    func configureCell(from note: Note) {
+        noteHeaderLabel.text = note.header
+        noteBodyLabel.text = note.body
+        noteDateLabel.text = formatDate(date: note.date)
+    }
+
+    private func setupUI() {
+        addSubview(noteView)
+        noteView.translatesAutoresizingMaskIntoConstraints = false
+        let topViewConstraint = noteView.topAnchor.constraint(
+            equalTo: self.topAnchor
         )
-        let leadingHeaderConstraint = noteHeaderLabel.leadingAnchor.constraint(
+        let leadingViewConstraint = noteView.leadingAnchor.constraint(
             equalTo: self.leadingAnchor, constant: 16
         )
-        let trailingHeaderConstraint = noteHeaderLabel.trailingAnchor.constraint(
+        let trailingViewConstraint = noteView.trailingAnchor.constraint(
             equalTo: self.trailingAnchor, constant: -16
+        )
+        let bottomViewConstraint = noteView.bottomAnchor.constraint(
+            equalTo: self.bottomAnchor, constant: -4
+        )
+        NSLayoutConstraint.activate([topViewConstraint,
+                                     leadingViewConstraint,
+                                     trailingViewConstraint,
+                                     bottomViewConstraint
+                                    ])
+
+        noteView.addSubview(noteHeaderLabel)
+        noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
+        let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
+            equalTo: noteView.topAnchor, constant: 10
+        )
+        let leadingHeaderConstraint = noteHeaderLabel.leadingAnchor.constraint(
+            equalTo: noteView.leadingAnchor, constant: 16
+        )
+        let trailingHeaderConstraint = noteHeaderLabel.trailingAnchor.constraint(
+            equalTo: noteView.trailingAnchor, constant: -16
         )
         let heighHeaderConstraint = noteHeaderLabel.heightAnchor.constraint(
             equalToConstant: 18
@@ -77,16 +90,16 @@ final class NoteView: UIView {
                                      heighHeaderConstraint
                                     ])
 
-        self.addSubview(noteBodyLabel)
+        noteView.addSubview(noteBodyLabel)
         noteBodyLabel.translatesAutoresizingMaskIntoConstraints = false
         let topBodyConstraint = noteBodyLabel.topAnchor.constraint(
             equalTo: noteHeaderLabel.bottomAnchor, constant: 4
         )
         let leadingBodyConstraint = noteBodyLabel.leadingAnchor.constraint(
-            equalTo: self.leadingAnchor, constant: 16
+            equalTo: noteView.leadingAnchor, constant: 16
         )
         let trailingBodyConstraint = noteBodyLabel.trailingAnchor.constraint(
-            equalTo: self.trailingAnchor, constant: -16
+            equalTo: noteView.trailingAnchor, constant: -16
         )
         let heighBodyConstraint = noteBodyLabel.heightAnchor.constraint(
             equalToConstant: 14
@@ -97,13 +110,13 @@ final class NoteView: UIView {
                                      heighBodyConstraint
                                     ])
 
-        self.addSubview(noteDateLabel)
+        noteView.addSubview(noteDateLabel)
         noteDateLabel.translatesAutoresizingMaskIntoConstraints = false
         let topDateConstraint = noteDateLabel.topAnchor.constraint(
             equalTo: noteBodyLabel.bottomAnchor, constant: 24
         )
         let leadingDateConstraint = noteDateLabel.leadingAnchor.constraint(
-            equalTo: self.leadingAnchor, constant: 16
+            equalTo: noteView.leadingAnchor, constant: 16
         )
         let widthDateConstraint = noteDateLabel.widthAnchor.constraint(
             equalToConstant: 68
@@ -117,25 +130,10 @@ final class NoteView: UIView {
                                      heighDateConstraint
                                     ])
     }
-
-    private func configureUI(_ viewModel: Note) {
-        noteHeaderLabel.text = viewModel.header
-        noteBodyLabel.text = viewModel.body
-        noteDateLabel.text = formatDate(date: viewModel.date)
-    }
-
-    private func tapObserver() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(tapAction))
-        self.addGestureRecognizer(tap)
-    }
-
-    @objc private func tapAction() {
-        tapCompletion?(viewModel)
-    }
 }
 
 // MARK: - Preparing Date for label
-extension NoteView {
+extension NoteCell {
     private func formatDate(date: Date) -> String {
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")

@@ -8,86 +8,60 @@
 import UIKit
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
-    func addNote(_ note: Note, isEditing: Bool)
+    func addNote(_ note: Note, _ isEditing: Bool)
 }
 
 class ListViewController: UIViewController {
-    private var scrollView = UIScrollView()
-    private var stackView = UIStackView()
-    private var createNewNoteButton = UIButton()
+    var tableView = UITableView()
+    var notes: [Note] = []
 
-    private var notes: [Note] = []
+    private let noteCellName = "NoteCell"
+    private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
+    private var createNewNoteButton = UIButton()
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
+        view.backgroundColor = viewBackgroundColor
         title = "Заметки"
         navigationItem.backButtonTitle = ""
 
         setupUI()
         notes = StorageManager.shared.getNotes()
-        display(notes)
     }
 
     private func setupUI() {
-        configureScrollView()
-        configureStackView()
+        configureTableView()
         configureCreateNewNoteButton()
     }
 
-    private func configureScrollView() {
-        scrollView.alwaysBounceVertical = true
-        view.addSubview(scrollView)
+    private func configureTableView() {
+        view.addSubview(tableView)
 
-        scrollView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = scrollView.topAnchor.constraint(
-            equalTo: view.topAnchor
+        tableView.register(NoteCell.self, forCellReuseIdentifier: noteCellName)
+        tableView.dataSource = self
+        tableView.delegate = self
+        tableView.rowHeight = 94
+        tableView.separatorStyle = .none
+        tableView.backgroundColor = viewBackgroundColor
+
+        tableView.translatesAutoresizingMaskIntoConstraints = false
+        let topConstraint = tableView.topAnchor.constraint(
+            equalTo: view.safeAreaLayoutGuide.topAnchor,
+            constant: 16
         )
-        let leadingConstraint = scrollView.leadingAnchor.constraint(
+        let leadingConstraint = tableView.leadingAnchor.constraint(
             equalTo: view.leadingAnchor
         )
-        let trailingConstraint = scrollView.trailingAnchor.constraint(
+        let trailingConstraint = tableView.trailingAnchor.constraint(
             equalTo: view.trailingAnchor
         )
-        let bottomConstraint = scrollView.bottomAnchor.constraint(
+        let bottomConstraint = tableView.bottomAnchor.constraint(
             equalTo: view.bottomAnchor
         )
         NSLayoutConstraint.activate([topConstraint,
                                      leadingConstraint,
                                      trailingConstraint,
                                      bottomConstraint])
-    }
-
-    private func configureStackView() {
-        scrollView.addSubview(stackView)
-        stackView.axis = .vertical
-        stackView.alignment = .center
-        stackView.distribution = .fillProportionally
-        stackView.spacing = 4
-
-        stackView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = stackView.topAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.topAnchor,
-            constant: 16
-        )
-        let leadingConstraint = stackView.leadingAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.leadingAnchor
-        )
-        let trailingConstraint = stackView.trailingAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.trailingAnchor
-        )
-        let bottomConstraint = stackView.bottomAnchor.constraint(
-            equalTo: scrollView.contentLayoutGuide.bottomAnchor
-        )
-        let widthConstraint = stackView.widthAnchor.constraint(
-            equalTo: scrollView.widthAnchor
-        )
-        NSLayoutConstraint.activate([topConstraint,
-                                     leadingConstraint,
-                                     trailingConstraint,
-                                     bottomConstraint,
-                                     widthConstraint
-                                    ])
     }
 
     private func configureCreateNewNoteButton() {
@@ -112,33 +86,45 @@ class ListViewController: UIViewController {
         noteVC.delegate = self
         navigationController?.pushViewController(noteVC, animated: true)
     }
+}
 
-    private func display(_ note: [Note]) {
-        stackView.arrangedSubviews.forEach { $0.removeFromSuperview() }
+// MARK: - UITableViewDataSource
+extension ListViewController: UITableViewDataSource {
+    func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
+        notes.count
+    }
 
-        note.forEach { note in
-            let noteView = NoteView()
-            noteView.viewModel = note
+    func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: noteCellName,
+            for: indexPath
+        ) as? NoteCell else { return UITableViewCell() }
 
-            noteView.tapCompletion = { [weak self] note in
-                let noteVC = NoteViewController()
-                noteVC.note = note
-                noteVC.delegate = self
+        let note = notes[indexPath.row]
+        cell.configureCell(from: note)
+        cell.backgroundColor = viewBackgroundColor
 
-                self?.navigationController?.pushViewController(noteVC, animated: true)
-            }
-            stackView.addArrangedSubview(noteView)
-        }
+        return cell
+    }
+}
+
+// MARK: - UITableViewDelegate
+extension ListViewController: UITableViewDelegate {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        let note = notes[indexPath.row]
+        let noteVC = NoteViewController()
+        noteVC.note = note
+        noteVC.delegate = self
+
+        navigationController?.pushViewController(noteVC, animated: true)
     }
 }
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
-    func addNote(_ note: Note, isEditing: Bool) {
+    func addNote(_ note: Note, _ isEditing: Bool) {
         if !isEditing {
             notes.append(note)
-            display(notes)
-            return
         }
-        display(notes)
+        tableView.reloadData()
     }
 }

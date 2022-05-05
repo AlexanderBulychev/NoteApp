@@ -10,6 +10,7 @@ import UIKit
 final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
+    var isEditingNote: Bool = false
     var bottomConstraint: NSLayoutConstraint!
 
     private var dateLabel = UILabel()
@@ -27,12 +28,12 @@ final class NoteViewController: UIViewController {
         setupUI()
         noteBodyTextView.becomeFirstResponder()
         noteBodyTextView.delegate = self
-        isEditingNote = note != nil ? true : false
+
+        isEditingNote = (note != nil) ? true : false
 
         noteHeaderTextField.text = note?.header
         noteBodyTextView.text = note?.body
-        guard let noteDate = note?.date else { return }
-        dateLabel.text = formatDate(date: noteDate)
+        dateLabel.text = formatDate(date: note?.date)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -43,21 +44,19 @@ final class NoteViewController: UIViewController {
             note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
-            if noteHeaderTextField.text != "" ||
-                noteBodyTextView.text != "" {
-                note = Note(
-                    header: noteHeaderTextField.text ?? "",
-                    body: noteBodyTextView.text ?? "",
-                    date: .now
-                )
-            }
+            note = Note(
+                header: noteHeaderTextField.text ?? "",
+                body: noteBodyTextView.text ?? "",
+                date: .now
+            )
         }
-            guard let note = note else {
-                return
-            }
-            StorageManager.shared.save(note: note)
-            delegate?.addNote(note, isEditing: isEditingNote)
+        guard let note = note,
+        !note.isEmpty else {
+            return
         }
+        StorageManager.shared.save(note: note)
+        delegate?.addNote(note, isEditingNote)
+    }
 
     private func setupUI() {
         setupDateLabel()
@@ -93,7 +92,6 @@ final class NoteViewController: UIViewController {
                                      leadingConstraint,
                                      trailingConstraint,
                                      heightConstraint])
-        dateLabel.text = formatDate(date: Date())
     }
 
     private func setupNoteHeaderTextField() {
@@ -165,23 +163,24 @@ final class NoteViewController: UIViewController {
             note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
-            if noteHeaderTextField.text != "" ||
-                noteBodyTextView.text != "" {
-                note = Note(
-                    header: noteHeaderTextField.text ?? "",
-                    body: noteBodyTextView.text ?? "",
-                    date: .now
-                )
-            } else {
-                showAlert()
-            }
+            note = Note(
+                header: noteHeaderTextField.text ?? "",
+                body: noteBodyTextView.text ?? "",
+                date: .now
+            )
         }
+        guard let note = note,
+              !note.isEmpty else {
+                  showAlert()
+                  return
+              }
     }
 }
 
 // MARK: - Preparing Date for label
 extension NoteViewController {
-    private func formatDate(date: Date) -> String {
+    private func formatDate(date: Date?) -> String {
+        guard let date = date else { return "" }
         let formatter = DateFormatter()
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
@@ -208,9 +207,6 @@ extension NoteViewController: UITextViewDelegate {
     func textViewDidBeginEditing(_ textView: UITextView) {
         let newPosition = noteBodyTextView.endOfDocument
         noteBodyTextView.selectedTextRange = noteBodyTextView.textRange(from: newPosition, to: newPosition)
-    }
-
-    func textViewDidEndEditing(_ textView: UITextView) {
     }
 }
 
