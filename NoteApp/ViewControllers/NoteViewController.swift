@@ -11,8 +11,8 @@ class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
     var isEditingNote: Bool = false
-    var bottomConstraint: NSLayoutConstraint!
 
+    private var bottomConstraint: NSLayoutConstraint!
     private var dateLabel = UILabel()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()

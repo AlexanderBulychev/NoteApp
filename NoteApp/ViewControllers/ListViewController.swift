@@ -18,6 +18,8 @@ class ListViewController: UIViewController {
     private let noteCellName = "NoteCell"
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
     private var createNewNoteButton = UIButton()
+    private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
+    private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -31,30 +33,89 @@ class ListViewController: UIViewController {
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
-
-//        createNewNoteButton.frame.origin.x += 70
-//        createNewNoteButton.frame.origin.y += 110
+        createNewNoteButtonTrailingConstraint.constant += 70
+        createNewNoteButtonBottomConstraint.constant += 110
     }
 
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
-        testAnimate()
+        animateAppearance()
     }
 
-    private func testAnimate() {
-        UIView.animate(withDuration: 1) {
-//            self.createNewNoteButton.frame.origin.x -= 70
-//            self.createNewNoteButton.frame.origin.y -= 110
-            self.trailingConstraint.constant -= 70
-            self.bottomConstraint.constant -= 100
-            self.view.layoutIfNeeded()
+    private func animateAppearance() {
+        UIView.animate(
+            withDuration: 2,
+            delay: 0,
+            usingSpringWithDamping: 0.5,
+            initialSpringVelocity: 3,
+            options: []) { [ weak self ] in
+                self?.createNewNoteButtonTrailingConstraint.constant -= 70
+                self?.createNewNoteButtonBottomConstraint.constant -= 110
+                self?.view.layoutIfNeeded()
         }
+
 //        UIView.transition(
 //            with: createNewNoteButton,
-//            duration: 7,
-//            options: .transitionCrossDissolve) {
-//                self.createNewNoteButton.setTitle("Jr", for: .normal)
+//            duration: 3,
+//            options: [.transitionFlipFromRight, .repeat, .autoreverse]) {
+//                let noteButtonImage = UIImage(named: "deleteButton")
+//                self.createNewNoteButton.setImage(noteButtonImage, for: .normal)
 //        }
+
+//        let animation = CABasicAnimation(keyPath: #keyPath(CALayer.position))
+//        animation.fromValue = createNewNoteButton.layer.bounds.origin
+//        animation.toValue = createNewNoteButton.layer.bounds.offsetBy(dx: -5, dy: -5)
+//        animation.duration = 2
+//        animation.fillMode = .forwards
+//        animation.isRemovedOnCompletion = false
+//        createNewNoteButton.layer.add(animation, forKey: nil)
+    }
+
+    private func animatePushing() {
+//        let animation = CABasicAnimation(keyPath: "position")
+//        animation.fromValue = [0, 0]
+//        animation.toValue = [300, 300]
+//        animation.duration = 3
+//        animation.fillMode = .forwards
+//        animation.isRemovedOnCompletion = false
+//        createNewNoteButton.layer.add(animation, forKey: nil)
+//
+//        let animationOp = CABasicAnimation(keyPath: "opacity")
+//        animationOp.fromValue = 1
+//        animationOp.toValue = 0
+//        animationOp.duration = 3
+//        animationOp.beginTime = CACurrentMediaTime() + 3
+//        animationOp.fillMode = .forwards
+//        animationOp.isRemovedOnCompletion = false
+//        animation.
+//        createNewNoteButton.layer.add(animationOp, forKey: nil)
+
+        UIView.animateKeyframes(
+            withDuration: 10,
+            delay: 0,
+            options: [.repeat],
+            animations: {
+                self.addKeyFrames()
+            }
+//            completion: { _ in
+//                let noteVC = NoteViewController()
+//                noteVC.delegate = self
+//                self.navigationController?.pushViewController(noteVC, animated: true)
+//            }
+        )
+    }
+
+    private func addKeyFrames() {
+        UIView.addKeyframe(
+            withRelativeStartTime: 2,
+            relativeDuration: 0.25) {
+                self.createNewNoteButtonBottomConstraint.constant -= 10
+        }
+        UIView.addKeyframe(
+            withRelativeStartTime: 0.25,
+            relativeDuration: 0.75) {
+                self.createNewNoteButtonBottomConstraint.constant += 120
+        }
     }
 
     private func setupUI() {
@@ -92,31 +153,28 @@ class ListViewController: UIViewController {
                                      bottomConstraint])
     }
 
-    var trailingConstraint: NSLayoutConstraint!
-    var bottomConstraint: NSLayoutConstraint!
-
     private func configureCreateNewNoteButton() {
         view.addSubview(createNewNoteButton)
         let noteButtonImage = UIImage(named: "button")
         createNewNoteButton.setImage(noteButtonImage, for: .normal)
 
         createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
-        trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
+        createNewNoteButtonTrailingConstraint = createNewNoteButton.trailingAnchor.constraint(
             equalTo: view.trailingAnchor, constant: -20
         )
-        bottomConstraint = createNewNoteButton.bottomAnchor.constraint(
+        createNewNoteButtonBottomConstraint = createNewNoteButton.bottomAnchor.constraint(
             equalTo: view.bottomAnchor, constant: -60
         )
-        NSLayoutConstraint.activate([trailingConstraint,
-                                     bottomConstraint
-                                    ])
+        NSLayoutConstraint.activate([createNewNoteButtonTrailingConstraint,
+                                     createNewNoteButtonBottomConstraint])
         createNewNoteButton.addTarget(self, action: #selector(createNewNoteButtonPressed), for: .touchUpInside)
     }
 
     @objc func createNewNoteButtonPressed() {
-        let noteVC = NoteViewController()
-        noteVC.delegate = self
-        navigationController?.pushViewController(noteVC, animated: true)
+        animatePushing()
+//        let noteVC = NoteViewController()
+//        noteVC.delegate = self
+//        navigationController?.pushViewController(noteVC, animated: true)
     }
 }
 
