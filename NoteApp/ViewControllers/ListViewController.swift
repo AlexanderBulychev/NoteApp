@@ -18,6 +18,8 @@ class ListViewController: UIViewController {
     private let noteCellName = "NoteCell"
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
     private var createNewNoteButton = UIButton()
+    private var rightBarButtonItem = UIBarButtonItem()
+
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
     private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
 
@@ -40,6 +42,11 @@ class ListViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateAppearance()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        createNewNoteButtonBottomConstraint.constant -= 110
     }
 
     private func animateAppearance() {
@@ -72,55 +79,38 @@ class ListViewController: UIViewController {
     }
 
     private func animatePushing() {
-//        let animation = CABasicAnimation(keyPath: "position")
-//        animation.fromValue = [0, 0]
-//        animation.toValue = [300, 300]
-//        animation.duration = 3
-//        animation.fillMode = .forwards
-//        animation.isRemovedOnCompletion = false
-//        createNewNoteButton.layer.add(animation, forKey: nil)
-//
-//        let animationOp = CABasicAnimation(keyPath: "opacity")
-//        animationOp.fromValue = 1
-//        animationOp.toValue = 0
-//        animationOp.duration = 3
-//        animationOp.beginTime = CACurrentMediaTime() + 3
-//        animationOp.fillMode = .forwards
-//        animationOp.isRemovedOnCompletion = false
-//        animation.
-//        createNewNoteButton.layer.add(animationOp, forKey: nil)
-
         UIView.animateKeyframes(
-            withDuration: 10,
+            withDuration: 1,
             delay: 0,
-            options: [.repeat],
-            animations: {
-                self.addKeyFrames()
-            }
-//            completion: { _ in
-//                let noteVC = NoteViewController()
-//                noteVC.delegate = self
-//                self.navigationController?.pushViewController(noteVC, animated: true)
-//            }
-        )
+            options: []
+        ) {
+            self.addKeyFrames()
+        } completion: { _ in
+            let noteVC = NoteViewController()
+            noteVC.delegate = self
+            self.navigationController?.pushViewController(noteVC, animated: true)
+        }
     }
 
     private func addKeyFrames() {
         UIView.addKeyframe(
-            withRelativeStartTime: 2,
-            relativeDuration: 0.25) {
-                self.createNewNoteButtonBottomConstraint.constant -= 10
+            withRelativeStartTime: 0,
+            relativeDuration: 0.5) { [ weak self ] in
+                self?.createNewNoteButtonBottomConstraint.constant -= 10
+                self?.view.layoutIfNeeded()
         }
         UIView.addKeyframe(
             withRelativeStartTime: 0.25,
-            relativeDuration: 0.75) {
-                self.createNewNoteButtonBottomConstraint.constant += 120
+            relativeDuration: 0.5) { [ weak self ] in
+                self?.createNewNoteButtonBottomConstraint.constant += 120
+                self?.view.layoutIfNeeded()
         }
     }
 
     private func setupUI() {
         configureTableView()
         configureCreateNewNoteButton()
+        configureRightBarButtonItem()
     }
 
     private func configureTableView() {
@@ -176,6 +166,20 @@ class ListViewController: UIViewController {
 //        noteVC.delegate = self
 //        navigationController?.pushViewController(noteVC, animated: true)
     }
+
+    private func configureRightBarButtonItem() {
+        rightBarButtonItem.title = "Выбрать"
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+        rightBarButtonItem.target = self
+        rightBarButtonItem.action = #selector(rightBarButtonItemAction)
+    }
+
+    @objc func rightBarButtonItemAction() {
+        rightBarButtonItem.title = "Готово"
+        // методы практически равнозначны
+        tableView.setEditing(true, animated: true)
+//        tableView.isEditing = true
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -207,6 +211,43 @@ extension ListViewController: UITableViewDelegate {
         noteVC.delegate = self
 
         navigationController?.pushViewController(noteVC, animated: true)
+    }
+
+//    func tableView(
+//        _ tableView: UITableView,
+//        editingStyleForRowAt indexPath: IndexPath
+//    ) -> UITableViewCell.EditingStyle {
+//        return .delete
+//    }
+
+    func tableView(
+        _ tableView: UITableView,
+        commit editingStyle: UITableViewCell.EditingStyle,
+        forRowAt indexPath: IndexPath
+    ) {
+        if editingStyle == .delete {
+            print("Hu")
+        } else {
+            print("Uh")
+        }
+    }
+    func tableView(
+        _ tableView: UITableView,
+        leadingSwipeActionsConfigurationForRowAt indexPath: IndexPath
+    ) -> UISwipeActionsConfiguration? {
+        let choice = deleteAction(at: indexPath)
+        return UISwipeActionsConfiguration(actions: [choice])
+    }
+
+    func deleteAction(at indexPath: IndexPath) -> UIContextualAction {
+        let action = UIContextualAction(
+            style: .normal,
+            title: "") { _, _, completion in
+                self.tableView.deleteRows(at: [indexPath], with: .automatic)
+                completion(true)
+        }
+        action.image = UIImage(named: "checkmarkEmpty")
+        return action
     }
 }
 
