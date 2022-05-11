@@ -23,6 +23,8 @@ class ListViewController: UIViewController {
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
     private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
 
+    private var isEditingStyle: Bool = false
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = viewBackgroundColor
@@ -60,22 +62,6 @@ class ListViewController: UIViewController {
                 self?.createNewNoteButtonBottomConstraint.constant -= 110
                 self?.view.layoutIfNeeded()
         }
-
-//        UIView.transition(
-//            with: createNewNoteButton,
-//            duration: 3,
-//            options: [.transitionFlipFromRight, .repeat, .autoreverse]) {
-//                let noteButtonImage = UIImage(named: "deleteButton")
-//                self.createNewNoteButton.setImage(noteButtonImage, for: .normal)
-//        }
-
-//        let animation = CABasicAnimation(keyPath: #keyPath(CALayer.position))
-//        animation.fromValue = createNewNoteButton.layer.bounds.origin
-//        animation.toValue = createNewNoteButton.layer.bounds.offsetBy(dx: -5, dy: -5)
-//        animation.duration = 2
-//        animation.fillMode = .forwards
-//        animation.isRemovedOnCompletion = false
-//        createNewNoteButton.layer.add(animation, forKey: nil)
     }
 
     private func animatePushing() {
@@ -104,6 +90,16 @@ class ListViewController: UIViewController {
             relativeDuration: 0.5) { [ weak self ] in
                 self?.createNewNoteButtonBottomConstraint.constant += 120
                 self?.view.layoutIfNeeded()
+        }
+    }
+
+    private func animateSelection() {
+        UIView.transition(
+            with: createNewNoteButton,
+            duration: 0.5,
+            options: [.transitionFlipFromRight]) {
+                let noteButtonImage = UIImage(named: "deleteButton")
+                self.createNewNoteButton.setImage(noteButtonImage, for: .normal)
         }
     }
 
@@ -162,9 +158,6 @@ class ListViewController: UIViewController {
 
     @objc func createNewNoteButtonPressed() {
         animatePushing()
-//        let noteVC = NoteViewController()
-//        noteVC.delegate = self
-//        navigationController?.pushViewController(noteVC, animated: true)
     }
 
     private func configureRightBarButtonItem() {
@@ -176,9 +169,7 @@ class ListViewController: UIViewController {
 
     @objc func rightBarButtonItemAction() {
         rightBarButtonItem.title = "Готово"
-        // методы практически равнозначны
-        tableView.setEditing(true, animated: true)
-//        tableView.isEditing = true
+        animateSelection()
     }
 }
 
