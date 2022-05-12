@@ -41,27 +41,15 @@ final class NoteCell: UITableViewCell {
     }()
     private var leadingLabelsViewConstraint: NSLayoutConstraint!
 
-    private lazy var checkmarkButton: UIButton = {
-        let checkmarkButton = UIButton()
-        let checkmarkEmptyImage = UIImage(named: "checkmarkEmpty")
-        checkmarkButton.setImage(checkmarkEmptyImage, for: .normal)
-        checkmarkButton.addTarget(self, action: #selector(checkmarkButtonAction), for: .touchUpInside)
-        return checkmarkButton
+    private var checkmarkImageView: UIImageView = {
+        var checkmarkImageView = UIImageView()
+        checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
+        return checkmarkImageView
     }()
     private var leadingCheckMarkButtonConstraint: NSLayoutConstraint!
 
-    var isEdit: Bool = false {
-        didSet {
-            animateCellContent()
-            checkmarkButton.isHidden = !isEdit
-        }
-    }
-
-    var didTap: ((String) -> Void)?
-
-    @objc func checkmarkButtonAction() {
-        didTap?(noteId)
-    }
+    private var isChosen: Bool = false
+    private var isEdited: Bool = false
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -77,13 +65,38 @@ final class NoteCell: UITableViewCell {
         print(#function)
     }
 
-    private var noteId: String = ""
+//    override func prepareForReuse() {
+//        super.prepareForReuse()
+//
+//        isEdit = false
+//        leadingLabelsViewConstraint.constant = 16
+//    }
 
-    func configureCell(from note: Note) {
+    private var isShifted: Bool {
+        leadingLabelsViewConstraint.constant > 16
+    }
+
+    func configureCell(from viewModel: CellViewModel) {
+        let note = viewModel.note
         noteHeaderLabel.text = note.header
         noteBodyLabel.text = note.body
         noteDateLabel.text = formatDate(date: note.date)
-        noteId = note.id
+        self.isEdited = viewModel.isEdited
+        self.isChosen = viewModel.isChosen
+
+        if isEdited && !isShifted {
+            animateCellContent()
+        } else if !isEdited && isShifted {
+            animateCellContentBack()
+        }
+    }
+
+    func changeCheckmarkImage(_ isChosen: Bool) {
+        if isChosen {
+            checkmarkImageView.image = UIImage(named: "checkmarkFilled")
+        } else {
+            checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
+        }
     }
 
     private func animateCellContent() {
@@ -91,15 +104,19 @@ final class NoteCell: UITableViewCell {
             withDuration: 0.5,
             delay: 0,
             options: []) {
-                print("ER")
+                self.leadingLabelsViewConstraint.constant += 44
+                self.leadingCheckMarkButtonConstraint.constant += 56
+                self.layoutIfNeeded()
+        }
+    }
 
-                if self.isEdit {
-                    self.leadingLabelsViewConstraint.constant += 44
-                    self.leadingCheckMarkButtonConstraint.constant += 56
-                } else {
-                    self.leadingLabelsViewConstraint.constant = 16
-                    self.leadingCheckMarkButtonConstraint.constant = 16
-                }
+    private func animateCellContentBack() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            options: []) {
+                self.leadingLabelsViewConstraint.constant -= 44
+                self.leadingCheckMarkButtonConstraint.constant -= 56
                 self.layoutIfNeeded()
         }
     }
@@ -211,12 +228,12 @@ final class NoteCell: UITableViewCell {
     }
 
     private func configureCheckMarkButton() {
-        noteView.addSubview(checkmarkButton)
-        checkmarkButton.translatesAutoresizingMaskIntoConstraints = false
-        let topButtonConstraint = checkmarkButton.topAnchor.constraint(
+        noteView.addSubview(checkmarkImageView)
+        checkmarkImageView.translatesAutoresizingMaskIntoConstraints = false
+        let topButtonConstraint = checkmarkImageView.topAnchor.constraint(
             equalTo: noteView.topAnchor, constant: 37
         )
-        leadingCheckMarkButtonConstraint = checkmarkButton.leadingAnchor.constraint(
+        leadingCheckMarkButtonConstraint = checkmarkImageView.leadingAnchor.constraint(
             equalTo: self.leadingAnchor, constant: -16
         )
         NSLayoutConstraint.activate([topButtonConstraint,
