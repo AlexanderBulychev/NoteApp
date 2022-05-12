@@ -25,6 +25,9 @@ class ListViewController: UIViewController {
 
     private var isEditingStyle: Bool = false
 
+    private var tableIsEdit: Bool = false
+    private var selectedCells: [String] = []
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = viewBackgroundColor
@@ -48,7 +51,9 @@ class ListViewController: UIViewController {
 
     override func viewDidDisappear(_ animated: Bool) {
         super.viewDidDisappear(animated)
-        createNewNoteButtonBottomConstraint.constant -= 110
+        if createNewNoteButtonBottomConstraint.constant == 50 {
+            createNewNoteButtonBottomConstraint.constant -= 110
+        }
     }
 
     private func animateAppearance() {
@@ -170,6 +175,10 @@ class ListViewController: UIViewController {
     @objc func rightBarButtonItemAction() {
         rightBarButtonItem.title = "Готово"
         animateSelection()
+        tableIsEdit = !tableIsEdit
+        tableView.reloadData()
+//        guard let cell = tableView.dequeueReusableCell(withIdentifier: noteCellName) as? NoteCell else { return }
+//        cell.animateCellContent()
     }
 }
 
@@ -188,6 +197,10 @@ extension ListViewController: UITableViewDataSource {
         let note = notes[indexPath.row]
         cell.configureCell(from: note)
         cell.backgroundColor = viewBackgroundColor
+        cell.isEdit = tableIsEdit
+//        cell.didTap = { [weak self] noteId in
+//            self.selectedCells.append(nodeId)
+//        }
 
         return cell
     }
