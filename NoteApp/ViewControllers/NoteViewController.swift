@@ -188,7 +188,7 @@ extension NoteViewController {
 
 // MARK: - Private methods
 extension NoteViewController {
-    private func showAlert() {
+    private func showAlert(with title: String, message: String) {
         let alert = UIAlertController(
             title: "Пустые поля",
             message: "Заполните название и текст заметки",

@@ -36,7 +36,7 @@ final class NoteCell: UITableViewCell {
 
     private let labelsView: UIView = {
         let labelsView = UIView()
-        labelsView.backgroundColor = .systemPink
+//        labelsView.backgroundColor = .systemPink
         return labelsView
     }()
     private var leadingLabelsViewConstraint: NSLayoutConstraint!
@@ -81,43 +81,23 @@ final class NoteCell: UITableViewCell {
         noteHeaderLabel.text = note.header
         noteBodyLabel.text = note.body
         noteDateLabel.text = formatDate(date: note.date)
-        self.isEdited = viewModel.isEdited
+        self.isEdited = CellViewModel.isEdited
         self.isChosen = viewModel.isChosen
 
         if isEdited && !isShifted {
             animateCellContent()
         } else if !isEdited && isShifted {
             animateCellContentBack()
+            isChosen = false
         }
+        changeCheckmarkImage(isChosen)
     }
 
-    func changeCheckmarkImage(_ isChosen: Bool) {
+    private func changeCheckmarkImage(_ isChosen: Bool) {
         if isChosen {
             checkmarkImageView.image = UIImage(named: "checkmarkFilled")
         } else {
             checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
-        }
-    }
-
-    private func animateCellContent() {
-        UIView.animate(
-            withDuration: 0.5,
-            delay: 0,
-            options: []) {
-                self.leadingLabelsViewConstraint.constant += 44
-                self.leadingCheckMarkButtonConstraint.constant += 56
-                self.layoutIfNeeded()
-        }
-    }
-
-    private func animateCellContentBack() {
-        UIView.animate(
-            withDuration: 0.5,
-            delay: 0,
-            options: []) {
-                self.leadingLabelsViewConstraint.constant -= 44
-                self.leadingCheckMarkButtonConstraint.constant -= 56
-                self.layoutIfNeeded()
         }
     }
 
@@ -241,6 +221,30 @@ final class NoteCell: UITableViewCell {
     }
 }
 
+// MARK: - Animation Methods
+extension NoteCell {
+    private func animateCellContent() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            options: []) {
+                self.leadingLabelsViewConstraint.constant += 44
+                self.leadingCheckMarkButtonConstraint.constant += 56
+                self.layoutIfNeeded()
+        }
+    }
+
+    private func animateCellContentBack() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            options: []) {
+                self.leadingLabelsViewConstraint.constant -= 44
+                self.leadingCheckMarkButtonConstraint.constant -= 56
+                self.layoutIfNeeded()
+        }
+    }
+}
 // MARK: - Preparing Date for label
 extension NoteCell {
     private func formatDate(date: Date) -> String {

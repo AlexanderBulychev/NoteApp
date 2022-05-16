@@ -15,6 +15,7 @@ class ListViewController: UIViewController {
     var tableView = UITableView()
     var notes: [Note] = []
     private var tableViewModel: TableViewModel = TableViewModel(notes: [])
+    private var selectedNotesId: [String] = []
 
     private let noteCellName = "NoteCell"
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
@@ -23,8 +24,6 @@ class ListViewController: UIViewController {
 
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
     private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
-
-    private var selectedCells: [String] = []
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -103,13 +102,16 @@ class ListViewController: UIViewController {
         )
         NSLayoutConstraint.activate([createNewNoteButtonTrailingConstraint,
                                      createNewNoteButtonBottomConstraint])
-        switchableButton.addTarget(self, action: #selector(switchableButtonPressed), for: .touchUpInside)
+        switchableButton.addTarget(self, action: #selector(createNewDeleteButtonPressed), for: .touchUpInside)
     }
 
-    @objc func switchableButtonPressed() {
+    @objc func createNewDeleteButtonPressed() {
         if !tableViewModel.isEditTable {
             animatePushing()
         } else {
+            tableViewModel.viewModels = tableViewModel.viewModels.filter { !selectedNotesId.contains($0.note.id) }
+            StorageManager.shared.deleteNotes(at: selectedNotesId)
+            tableView.reloadData()
             tableViewModel.isEditTable.toggle()
             switchMode(tableViewModel.isEditTable)
         }
@@ -124,8 +126,9 @@ class ListViewController: UIViewController {
 
     @objc func rightBarButtonItemAction() {
         tableViewModel.isEditTable.toggle()
-        switchMode(tableViewModel.isEditTable)
+//        tableViewModel.switchOffIsChosen()
         tableView.reloadData()
+        switchMode(tableViewModel.isEditTable)
     }
 
     private func switchMode(_ isEdit: Bool) {
@@ -143,18 +146,28 @@ extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tableViewModel.cellsCount
     }
-
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: noteCellName,
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
-
 //        let note = notes[indexPath.row]
 //        cell.configureCell(from: note, isEdit: tableIsEdit)
         cell.configureCell(from: tableViewModel.viewModel(indexPath))
         cell.backgroundColor = viewBackgroundColor
         return cell
+    }
+
+    func updateSelectedNotesId(indexPath: IndexPath) {
+        let idForChosenNote = tableViewModel.viewModel(indexPath).note.id
+        if tableViewModel.isChosen(indexPath) {
+            selectedNotesId.append(idForChosenNote)
+        } else {
+           let idx = selectedNotesId.firstIndex { $0 == idForChosenNote }
+            if let idx = idx {
+                selectedNotesId.remove(at: idx)
+            }
+        }
     }
 }
 
@@ -163,14 +176,16 @@ extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableViewModel.isEditTable {
             tableViewModel.selectCell(indexPath)
+            updateSelectedNotesId(indexPath: indexPath)
             let cell = tableView.cellForRow(at: indexPath) as? NoteCell
             cell?.configureCell(from: tableViewModel.viewModel(indexPath))
+            tableView.reloadData()
         } else {
-        let note = notes[indexPath.row]
-        let noteVC = NoteViewController()
-        noteVC.note = note
-        noteVC.delegate = self
-        navigationController?.pushViewController(noteVC, animated: true)
+            let note = notes[indexPath.row]
+            let noteVC = NoteViewController()
+            noteVC.note = note
+            noteVC.delegate = self
+            navigationController?.pushViewController(noteVC, animated: true)
         }
     }
 }

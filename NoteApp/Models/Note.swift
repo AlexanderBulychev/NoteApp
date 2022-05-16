@@ -8,13 +8,18 @@
 import Foundation
 
 struct TableViewModel {
-    var isEditTable: Bool = false
+    var isEditTable: Bool = false {
+        didSet {
+            CellViewModel.isEdited = isEditTable
+        }
+    }
+
     var cellsCount: Int {
         viewModels.count
     }
 
     private var notes: [Note]
-    private var viewModels: [CellViewModel]
+    var viewModels: [CellViewModel]
 
     init(notes: [Note]) {
         self.notes = notes
@@ -26,19 +31,29 @@ struct TableViewModel {
     }
 
     mutating func selectCell(_ indexPath: IndexPath) {
-        viewModels[indexPath.row].isChosen = true
+        viewModels[indexPath.row].isChosen.toggle()
     }
 
     mutating func addNote(_ note: Note) {
         notes.append(note)
         viewModels.append(.init(note: note))
     }
+
+    func isChosen(_ indexPath: IndexPath) -> Bool {
+        viewModels[indexPath.row].isChosen == true
+    }
+
+//    func switchOfIsChosen() {
+//        viewModels.forEach { viewModel in
+//            viewModel.isChosen = false
+//        }
+//    }
 }
 
 struct CellViewModel {
     var note: Note
     var isShifted: Bool = false
-    var isEdited: Bool = false
+    static var isEdited: Bool = false
     var isChosen: Bool = false
 }
 

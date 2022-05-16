@@ -34,4 +34,11 @@ final class StorageManager {
         guard let notes = try? JSONDecoder().decode([Note].self, from: data) else { return [] }
         return notes
     }
+
+    func deleteNotes(at ids: [String]) {
+        var notes = getNotes()
+        notes = notes.filter { !ids.contains($0.id) }
+        guard let data = try? JSONEncoder().encode(notes) else { return }
+        userDefaults.set(data, forKey: key)
+    }
 }
