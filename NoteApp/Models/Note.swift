@@ -8,39 +8,37 @@
 import Foundation
 
 struct TableViewModel {
+    var cellViewModels: [CellViewModel]
     var isEditTable: Bool = false {
         didSet {
             CellViewModel.isEdited = isEditTable
         }
     }
-
     var cellsCount: Int {
-        viewModels.count
+        cellViewModels.count
     }
-
     private var notes: [Note]
-    var viewModels: [CellViewModel]
 
     init(notes: [Note]) {
         self.notes = notes
-        self.viewModels = notes.map { CellViewModel(note: $0) }
+        self.cellViewModels = notes.map { CellViewModel(note: $0) }
     }
 
-    func viewModel(_ indexPath: IndexPath) -> CellViewModel {
-        viewModels[indexPath.row]
+    func getCurrentCellViewModel(_ indexPath: IndexPath) -> CellViewModel {
+        cellViewModels[indexPath.row]
     }
 
-    mutating func selectCell(_ indexPath: IndexPath) {
-        viewModels[indexPath.row].isChosen.toggle()
+    mutating func toggleCellSelection(_ indexPath: IndexPath) {
+        cellViewModels[indexPath.row].isChosen.toggle()
     }
 
     mutating func addNote(_ note: Note) {
         notes.append(note)
-        viewModels.append(.init(note: note))
+        cellViewModels.append(.init(note: note))
     }
 
     func isChosen(_ indexPath: IndexPath) -> Bool {
-        viewModels[indexPath.row].isChosen == true
+        cellViewModels[indexPath.row].isChosen == true
     }
 
 //    func switchOfIsChosen() {

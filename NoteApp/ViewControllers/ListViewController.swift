@@ -109,12 +109,29 @@ class ListViewController: UIViewController {
         if !tableViewModel.isEditTable {
             animatePushing()
         } else {
-            tableViewModel.viewModels = tableViewModel.viewModels.filter { !selectedNotesId.contains($0.note.id) }
+            if !selectedNotesId.isEmpty {
+            tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter { !selectedNotesId.contains($0.note.id) }
             StorageManager.shared.deleteNotes(at: selectedNotesId)
+            selectedNotesId.removeAll()
             tableView.reloadData()
+            } else {
+                showAlert()
+                return
+            }
             tableViewModel.isEditTable.toggle()
             switchMode(tableViewModel.isEditTable)
         }
+    }
+
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "",
+            message: "Вы не выбрали ни одной заметки",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
     }
 
     private func configureRightBarButtonItem() {
@@ -153,13 +170,13 @@ extension ListViewController: UITableViewDataSource {
         ) as? NoteCell else { return UITableViewCell() }
 //        let note = notes[indexPath.row]
 //        cell.configureCell(from: note, isEdit: tableIsEdit)
-        cell.configureCell(from: tableViewModel.viewModel(indexPath))
+        cell.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
         cell.backgroundColor = viewBackgroundColor
         return cell
     }
 
     func updateSelectedNotesId(indexPath: IndexPath) {
-        let idForChosenNote = tableViewModel.viewModel(indexPath).note.id
+        let idForChosenNote = tableViewModel.getCurrentCellViewModel(indexPath).note.id
         if tableViewModel.isChosen(indexPath) {
             selectedNotesId.append(idForChosenNote)
         } else {
@@ -175,10 +192,10 @@ extension ListViewController: UITableViewDataSource {
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
         if tableViewModel.isEditTable {
-            tableViewModel.selectCell(indexPath)
+            tableViewModel.toggleCellSelection(indexPath)
             updateSelectedNotesId(indexPath: indexPath)
             let cell = tableView.cellForRow(at: indexPath) as? NoteCell
-            cell?.configureCell(from: tableViewModel.viewModel(indexPath))
+            cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
             tableView.reloadData()
         } else {
             let note = notes[indexPath.row]

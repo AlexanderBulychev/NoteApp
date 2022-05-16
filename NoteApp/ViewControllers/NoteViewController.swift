@@ -188,7 +188,7 @@ extension NoteViewController {
 
 // MARK: - Private methods
 extension NoteViewController {
-    private func showAlert(with title: String, message: String) {
+    private func showAlert() {
         let alert = UIAlertController(
             title: "Пустые поля",
             message: "Заполните название и текст заметки",
@@ -199,12 +199,12 @@ extension NoteViewController {
         present(alert, animated: true)
     }
 
-    private func checkIsEmpty(note: Note) {
-        if note.isEmpty {
-            showAlert()
-            return
-        }
-    }
+//    private func checkIsEmpty(note: Note) {
+//        if note.isEmpty {
+//            showAlert(with: "Пустые поля", message: "Заполните название и текст заметки")
+//            return
+//        }
+//    }
 }
 
 // MARK: - UITextView Delegate
