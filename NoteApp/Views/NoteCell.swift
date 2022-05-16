@@ -60,18 +60,6 @@ final class NoteCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    override func layoutSubviews() {
-        super.layoutSubviews()
-        print(#function)
-    }
-
-//    override func prepareForReuse() {
-//        super.prepareForReuse()
-//
-//        isEdit = false
-//        leadingLabelsViewConstraint.constant = 16
-//    }
-
     private var isShifted: Bool {
         leadingLabelsViewConstraint.constant > 16
     }

@@ -19,7 +19,7 @@ class ListViewController: UIViewController {
 
     private let noteCellName = "NoteCell"
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
-    private var switchableButton = UIButton()
+    private var createNewDeleteButton = UIButton()
     private var rightBarButtonItem = UIBarButtonItem()
 
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
@@ -57,7 +57,7 @@ class ListViewController: UIViewController {
 
     private func setupUI() {
         configureTableView()
-        configureCreateNewNoteButton()
+        configureCreateNewDeleteButton()
         configureRightBarButtonItem()
     }
 
@@ -88,21 +88,21 @@ class ListViewController: UIViewController {
                                      bottomConstraint])
     }
 
-    private func configureCreateNewNoteButton() {
-        view.addSubview(switchableButton)
+    private func configureCreateNewDeleteButton() {
+        view.addSubview(createNewDeleteButton)
         let noteButtonImage = UIImage(named: "button")
-        switchableButton.setImage(noteButtonImage, for: .normal)
+        createNewDeleteButton.setImage(noteButtonImage, for: .normal)
 
-        switchableButton.translatesAutoresizingMaskIntoConstraints = false
-        createNewNoteButtonTrailingConstraint = switchableButton.trailingAnchor.constraint(
+        createNewDeleteButton.translatesAutoresizingMaskIntoConstraints = false
+        createNewNoteButtonTrailingConstraint = createNewDeleteButton.trailingAnchor.constraint(
             equalTo: view.trailingAnchor, constant: -20
         )
-        createNewNoteButtonBottomConstraint = switchableButton.bottomAnchor.constraint(
+        createNewNoteButtonBottomConstraint = createNewDeleteButton.bottomAnchor.constraint(
             equalTo: view.bottomAnchor, constant: -60
         )
         NSLayoutConstraint.activate([createNewNoteButtonTrailingConstraint,
                                      createNewNoteButtonBottomConstraint])
-        switchableButton.addTarget(self, action: #selector(createNewDeleteButtonPressed), for: .touchUpInside)
+        createNewDeleteButton.addTarget(self, action: #selector(createNewDeleteButtonPressed), for: .touchUpInside)
     }
 
     @objc func createNewDeleteButtonPressed() {
@@ -110,10 +110,12 @@ class ListViewController: UIViewController {
             animatePushing()
         } else {
             if !selectedNotesId.isEmpty {
-            tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter { !selectedNotesId.contains($0.note.id) }
-            StorageManager.shared.deleteNotes(at: selectedNotesId)
-            selectedNotesId.removeAll()
-            tableView.reloadData()
+                tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter {
+                    !selectedNotesId.contains($0.note.id)
+                }
+                StorageManager.shared.deleteNotes(at: selectedNotesId)
+                selectedNotesId.removeAll()
+                tableView.reloadData()
             } else {
                 showAlert()
                 return
@@ -143,7 +145,6 @@ class ListViewController: UIViewController {
 
     @objc func rightBarButtonItemAction() {
         tableViewModel.isEditTable.toggle()
-//        tableViewModel.switchOffIsChosen()
         tableView.reloadData()
         switchMode(tableViewModel.isEditTable)
     }
@@ -198,9 +199,9 @@ extension ListViewController: UITableViewDelegate {
             cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
             tableView.reloadData()
         } else {
-            let note = notes[indexPath.row]
+            let noteCell = tableViewModel.getCurrentCellViewModel(indexPath)
             let noteVC = NoteViewController()
-            noteVC.note = note
+            noteVC.note = noteCell.note
             noteVC.delegate = self
             navigationController?.pushViewController(noteVC, animated: true)
         }
@@ -262,15 +263,15 @@ extension ListViewController {
 
     private func animateSelection(_ isEdit: Bool) {
         UIView.transition(
-            with: switchableButton,
+            with: createNewDeleteButton,
             duration: 0.5,
             options: [.transitionFlipFromRight]) {
                 if isEdit {
                     let noteButtonImage = UIImage(named: "deleteButton")
-                    self.switchableButton.setImage(noteButtonImage, for: .normal)
+                    self.createNewDeleteButton.setImage(noteButtonImage, for: .normal)
                 } else {
                     let noteButtonImage = UIImage(named: "button")
-                    self.switchableButton.setImage(noteButtonImage, for: .normal)
+                    self.createNewDeleteButton.setImage(noteButtonImage, for: .normal)
                 }
         }
     }

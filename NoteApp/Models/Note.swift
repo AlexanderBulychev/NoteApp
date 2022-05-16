@@ -41,11 +41,10 @@ struct TableViewModel {
         cellViewModels[indexPath.row].isChosen == true
     }
 
-//    func switchOfIsChosen() {
-//        viewModels.forEach { viewModel in
-//            viewModel.isChosen = false
-//        }
-//    }
+    mutating func switchOfIsChosen(indexPath: IndexPath) {
+        cellViewModels[indexPath.row].isChosen = false
+       cellViewModels.map { $0.isChosen = false }
+    }
 }
 
 struct CellViewModel {
