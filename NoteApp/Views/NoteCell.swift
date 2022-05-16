@@ -36,20 +36,23 @@ final class NoteCell: UITableViewCell {
 
     private let labelsView: UIView = {
         let labelsView = UIView()
-//        labelsView.backgroundColor = .systemPink
         return labelsView
     }()
-    private var leadingLabelsViewConstraint: NSLayoutConstraint!
 
     private var checkmarkImageView: UIImageView = {
         var checkmarkImageView = UIImageView()
         checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
         return checkmarkImageView
     }()
+
+    private var leadingLabelsViewConstraint: NSLayoutConstraint!
     private var leadingCheckMarkButtonConstraint: NSLayoutConstraint!
 
     private var isChosen: Bool = false
     private var isEdited: Bool = false
+    private var isShifted: Bool {
+        leadingLabelsViewConstraint.constant > 16
+    }
 
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
@@ -58,10 +61,6 @@ final class NoteCell: UITableViewCell {
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
-    }
-
-    private var isShifted: Bool {
-        leadingLabelsViewConstraint.constant > 16
     }
 
     func configureCell(from viewModel: CellViewModel) {
@@ -76,20 +75,42 @@ final class NoteCell: UITableViewCell {
             animateCellContent()
         } else if !isEdited && isShifted {
             animateCellContentBack()
-            isChosen = false
         }
         changeCheckmarkImage(isChosen)
     }
 
-    private func changeCheckmarkImage(_ isChosen: Bool) {
-        if isChosen {
-            checkmarkImageView.image = UIImage(named: "checkmarkFilled")
-        } else {
-            checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
-        }
+    // MARK: - Configure UI Methods
+    private func setupUI() {
+        configureNoteView()
+        configureLabelsView()
+        configureNoteHeaderLabel()
+        configureNoteBodyLabel()
+        configureNoteDateLabel()
+        configureCheckMarkButton()
     }
 
-    private func setupUI() {
+    private func configureLabelsView() {
+        noteView.addSubview(labelsView)
+        labelsView.translatesAutoresizingMaskIntoConstraints = false
+        let topLabelsViewConstraint = labelsView.topAnchor.constraint(
+            equalTo: noteView.topAnchor, constant: 10
+        )
+        leadingLabelsViewConstraint = labelsView.leadingAnchor.constraint(
+            equalTo: noteView.leadingAnchor, constant: 16
+        )
+        let trailingLabelsViewConstraint = labelsView.trailingAnchor.constraint(
+            equalTo: noteView.trailingAnchor, constant: -16
+        )
+        let bottomLabelsViewConstraint = labelsView.bottomAnchor.constraint(
+            equalTo: noteView.bottomAnchor, constant: -10
+        )
+        NSLayoutConstraint.activate([topLabelsViewConstraint,
+                                     leadingLabelsViewConstraint,
+                                     trailingLabelsViewConstraint,
+                                     bottomLabelsViewConstraint])
+    }
+
+    private func configureNoteView() {
         addSubview(noteView)
         noteView.translatesAutoresizingMaskIntoConstraints = false
         let topViewConstraint = noteView.topAnchor.constraint(
@@ -109,31 +130,9 @@ final class NoteCell: UITableViewCell {
                                      trailingViewConstraint,
                                      bottomViewConstraint
                                     ])
-
-        noteView.addSubview(labelsView)
-        labelsView.translatesAutoresizingMaskIntoConstraints = false
-        let topLabelsViewConstraint = labelsView.topAnchor.constraint(
-            equalTo: noteView.topAnchor, constant: 10
-        )
-        leadingLabelsViewConstraint = labelsView.leadingAnchor.constraint(
-            equalTo: noteView.leadingAnchor, constant: 16
-        )
-        let trailingLabelsViewConstraint = labelsView.trailingAnchor.constraint(
-            equalTo: noteView.trailingAnchor, constant: -16
-        )
-        let bottomLabelsViewConstraint = labelsView.bottomAnchor.constraint(
-            equalTo: noteView.bottomAnchor, constant: -10
-        )
-        NSLayoutConstraint.activate([topLabelsViewConstraint,
-                                     leadingLabelsViewConstraint,
-                                     trailingLabelsViewConstraint,
-                                     bottomLabelsViewConstraint])
-
-        configureLabels()
-        configureCheckMarkButton()
     }
 
-    private func configureLabels() {
+    private func configureNoteHeaderLabel() {
         labelsView.addSubview(noteHeaderLabel)
         noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
         let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
@@ -153,7 +152,9 @@ final class NoteCell: UITableViewCell {
                                      trailingHeaderConstraint,
                                      heighHeaderConstraint
                                     ])
+    }
 
+    private func configureNoteBodyLabel() {
         labelsView.addSubview(noteBodyLabel)
         noteBodyLabel.translatesAutoresizingMaskIntoConstraints = false
         let topBodyConstraint = noteBodyLabel.topAnchor.constraint(
@@ -173,7 +174,9 @@ final class NoteCell: UITableViewCell {
                                      trailingBodyConstraint,
                                      heighBodyConstraint
                                     ])
+    }
 
+    private func configureNoteDateLabel() {
         labelsView.addSubview(noteDateLabel)
         noteDateLabel.translatesAutoresizingMaskIntoConstraints = false
         let topDateConstraint = noteDateLabel.topAnchor.constraint(
@@ -207,6 +210,14 @@ final class NoteCell: UITableViewCell {
         NSLayoutConstraint.activate([topButtonConstraint,
                                      leadingCheckMarkButtonConstraint])
     }
+
+    private func changeCheckmarkImage(_ isChosen: Bool) {
+        if isChosen {
+            checkmarkImageView.image = UIImage(named: "checkmarkFilled")
+        } else {
+            checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
+        }
+    }
 }
 
 // MARK: - Animation Methods
@@ -233,6 +244,7 @@ extension NoteCell {
         }
     }
 }
+
 // MARK: - Preparing Date for label
 extension NoteCell {
     private func formatDate(date: Date) -> String {

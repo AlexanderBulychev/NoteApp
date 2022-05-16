@@ -43,13 +43,20 @@ struct TableViewModel {
 
     mutating func switchOfIsChosen(indexPath: IndexPath) {
         cellViewModels[indexPath.row].isChosen = false
-       cellViewModels.map { $0.isChosen = false }
+//       cellViewModels.map { $0.isChosen = false }
+    }
+
+    mutating func deselectCells() {
+//        cellViewModels = cellViewModels.map { CellViewModel(note: $0.note, isShifted: $0.isShifted, isChosen: false) }
+        for index in cellViewModels.indices {
+            cellViewModels[index].isChosen = false
+        }
     }
 }
 
 struct CellViewModel {
     var note: Note
-    var isShifted: Bool = false
+//    var isShifted: Bool = false
     static var isEdited: Bool = false
     var isChosen: Bool = false
 }

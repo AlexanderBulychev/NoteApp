@@ -61,6 +61,7 @@ class ListViewController: UIViewController {
         configureRightBarButtonItem()
     }
 
+// MARK: - Configure UI Methods
     private func configureTableView() {
         view.addSubview(tableView)
 
@@ -72,20 +73,12 @@ class ListViewController: UIViewController {
         tableView.backgroundColor = viewBackgroundColor
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = tableView.topAnchor.constraint(
-            equalTo: view.safeAreaLayoutGuide.topAnchor,
-            constant: 16
-        )
-        let trailingConstraint = tableView.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor
-        )
-        let bottomConstraint = tableView.bottomAnchor.constraint(
-            equalTo: view.bottomAnchor
-        )
-        NSLayoutConstraint.activate([topConstraint,
-                                     tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-                                     trailingConstraint,
-                                     bottomConstraint])
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
     private func configureCreateNewDeleteButton() {
@@ -105,6 +98,14 @@ class ListViewController: UIViewController {
         createNewDeleteButton.addTarget(self, action: #selector(createNewDeleteButtonPressed), for: .touchUpInside)
     }
 
+    private func configureRightBarButtonItem() {
+        rightBarButtonItem.title = "Выбрать"
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+        rightBarButtonItem.target = self
+        rightBarButtonItem.action = #selector(rightBarButtonItemAction)
+    }
+
+// MARK: - @objc methods
     @objc func createNewDeleteButtonPressed() {
         if !tableViewModel.isEditTable {
             animatePushing()
@@ -121,10 +122,18 @@ class ListViewController: UIViewController {
                 return
             }
             tableViewModel.isEditTable.toggle()
-            switchMode(tableViewModel.isEditTable)
+            switchMode(for: tableViewModel.isEditTable)
         }
     }
 
+    @objc func rightBarButtonItemAction() {
+        tableViewModel.isEditTable.toggle()
+        tableViewModel.deselectCells()
+        tableView.reloadData()
+        switchMode(for: tableViewModel.isEditTable)
+    }
+
+// MARK: - Private methods
     private func showAlert() {
         let alert = UIAlertController(
             title: "",
@@ -136,25 +145,24 @@ class ListViewController: UIViewController {
         present(alert, animated: true)
     }
 
-    private func configureRightBarButtonItem() {
-        rightBarButtonItem.title = "Выбрать"
-        navigationItem.rightBarButtonItem = rightBarButtonItem
-        rightBarButtonItem.target = self
-        rightBarButtonItem.action = #selector(rightBarButtonItemAction)
-    }
-
-    @objc func rightBarButtonItemAction() {
-        tableViewModel.isEditTable.toggle()
-        tableView.reloadData()
-        switchMode(tableViewModel.isEditTable)
-    }
-
-    private func switchMode(_ isEdit: Bool) {
+    private func switchMode(for isEdit: Bool) {
         animateSelection(isEdit)
         if isEdit {
             rightBarButtonItem.title = "Готово"
         } else {
             rightBarButtonItem.title = "Выбрать"
+        }
+    }
+
+    private func updateSelectedNotesId(indexPath: IndexPath) {
+        let idForChosenNote = tableViewModel.getCurrentCellViewModel(indexPath).note.id
+        if tableViewModel.isChosen(indexPath) {
+            selectedNotesId.append(idForChosenNote)
+        } else {
+            let idx = selectedNotesId.firstIndex { $0 == idForChosenNote }
+            if let idx = idx {
+                selectedNotesId.remove(at: idx)
+            }
         }
     }
 }
@@ -164,28 +172,15 @@ extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         tableViewModel.cellsCount
     }
+
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         guard let cell = tableView.dequeueReusableCell(
             withIdentifier: noteCellName,
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
-//        let note = notes[indexPath.row]
-//        cell.configureCell(from: note, isEdit: tableIsEdit)
         cell.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
         cell.backgroundColor = viewBackgroundColor
         return cell
-    }
-
-    func updateSelectedNotesId(indexPath: IndexPath) {
-        let idForChosenNote = tableViewModel.getCurrentCellViewModel(indexPath).note.id
-        if tableViewModel.isChosen(indexPath) {
-            selectedNotesId.append(idForChosenNote)
-        } else {
-           let idx = selectedNotesId.firstIndex { $0 == idForChosenNote }
-            if let idx = idx {
-                selectedNotesId.remove(at: idx)
-            }
-        }
     }
 }
 
@@ -205,15 +200,6 @@ extension ListViewController: UITableViewDelegate {
             noteVC.delegate = self
             navigationController?.pushViewController(noteVC, animated: true)
         }
-    }
-}
-
-extension ListViewController: NoteViewControllerDelegateProtocol {
-    func addNote(_ note: Note, _ isEditing: Bool) {
-        if !isEditing {
-            tableViewModel.addNote(note)
-        }
-        tableView.reloadData()
     }
 }
 
@@ -237,8 +223,8 @@ extension ListViewController {
             withDuration: 1,
             delay: 0,
             options: []
-        ) {
-            self.addKeyFrames()
+        ) { [ weak self ] in
+            self?.addKeyFrames()
         } completion: { _ in
             let noteVC = NoteViewController()
             noteVC.delegate = self
@@ -274,5 +260,14 @@ extension ListViewController {
                     self.createNewDeleteButton.setImage(noteButtonImage, for: .normal)
                 }
         }
+    }
+}
+
+extension ListViewController: NoteViewControllerDelegateProtocol {
+    func addNote(_ note: Note, _ isEditing: Bool) {
+        if !isEditing {
+            tableViewModel.addNote(note)
+        }
+        tableView.reloadData()
     }
 }
