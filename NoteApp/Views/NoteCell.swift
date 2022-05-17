@@ -34,6 +34,26 @@ final class NoteCell: UITableViewCell {
         return noteDateLabel
     }()
 
+    private let labelsView: UIView = {
+        let labelsView = UIView()
+        return labelsView
+    }()
+
+    private var checkmarkImageView: UIImageView = {
+        var checkmarkImageView = UIImageView()
+        checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
+        return checkmarkImageView
+    }()
+
+    private var leadingLabelsViewConstraint: NSLayoutConstraint!
+    private var leadingCheckMarkButtonConstraint: NSLayoutConstraint!
+
+    private var isChosen: Bool = false
+    private var isEdited: Bool = false
+    private var isShifted: Bool {
+        leadingLabelsViewConstraint.constant > 16
+    }
+
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -43,13 +63,54 @@ final class NoteCell: UITableViewCell {
         fatalError("init(coder:) has not been implemented")
     }
 
-    func configureCell(from note: Note) {
+    func configureCell(from viewModel: CellViewModel) {
+        let note = viewModel.note
         noteHeaderLabel.text = note.header
         noteBodyLabel.text = note.body
         noteDateLabel.text = formatDate(date: note.date)
+        self.isEdited = CellViewModel.isEdited
+        self.isChosen = viewModel.isChosen
+
+        if isEdited && !isShifted {
+            animateCellContent()
+        } else if !isEdited && isShifted {
+            animateCellContentBack()
+        }
+        changeCheckmarkImage(isChosen)
     }
 
+    // MARK: - Configure UI Methods
     private func setupUI() {
+        configureNoteView()
+        configureLabelsView()
+        configureNoteHeaderLabel()
+        configureNoteBodyLabel()
+        configureNoteDateLabel()
+        configureCheckMarkButton()
+    }
+
+    private func configureLabelsView() {
+        noteView.addSubview(labelsView)
+        labelsView.translatesAutoresizingMaskIntoConstraints = false
+        let topLabelsViewConstraint = labelsView.topAnchor.constraint(
+            equalTo: noteView.topAnchor, constant: 10
+        )
+        leadingLabelsViewConstraint = labelsView.leadingAnchor.constraint(
+            equalTo: noteView.leadingAnchor, constant: 16
+        )
+        let trailingLabelsViewConstraint = labelsView.trailingAnchor.constraint(
+            equalTo: noteView.trailingAnchor, constant: -16
+        )
+        let bottomLabelsViewConstraint = labelsView.bottomAnchor.constraint(
+            equalTo: noteView.bottomAnchor, constant: -10
+        )
+        NSLayoutConstraint.activate([topLabelsViewConstraint,
+                                     leadingLabelsViewConstraint,
+                                     trailingLabelsViewConstraint,
+                                     bottomLabelsViewConstraint])
+    }
+
+    private func configureNoteView() {
         addSubview(noteView)
         noteView.translatesAutoresizingMaskIntoConstraints = false
         let topViewConstraint = noteView.topAnchor.constraint(
@@ -69,17 +130,19 @@ final class NoteCell: UITableViewCell {
                                      trailingViewConstraint,
                                      bottomViewConstraint
                                     ])
+    }
 
-        noteView.addSubview(noteHeaderLabel)
+    private func configureNoteHeaderLabel() {
+        labelsView.addSubview(noteHeaderLabel)
         noteHeaderLabel.translatesAutoresizingMaskIntoConstraints = false
         let topHeaderConstraint = noteHeaderLabel.topAnchor.constraint(
-            equalTo: noteView.topAnchor, constant: 10
+            equalTo: labelsView.topAnchor
         )
         let leadingHeaderConstraint = noteHeaderLabel.leadingAnchor.constraint(
-            equalTo: noteView.leadingAnchor, constant: 16
+            equalTo: labelsView.leadingAnchor
         )
         let trailingHeaderConstraint = noteHeaderLabel.trailingAnchor.constraint(
-            equalTo: noteView.trailingAnchor, constant: -16
+            equalTo: labelsView.trailingAnchor
         )
         let heighHeaderConstraint = noteHeaderLabel.heightAnchor.constraint(
             equalToConstant: 18
@@ -89,17 +152,19 @@ final class NoteCell: UITableViewCell {
                                      trailingHeaderConstraint,
                                      heighHeaderConstraint
                                     ])
+    }
 
-        noteView.addSubview(noteBodyLabel)
+    private func configureNoteBodyLabel() {
+        labelsView.addSubview(noteBodyLabel)
         noteBodyLabel.translatesAutoresizingMaskIntoConstraints = false
         let topBodyConstraint = noteBodyLabel.topAnchor.constraint(
             equalTo: noteHeaderLabel.bottomAnchor, constant: 4
         )
         let leadingBodyConstraint = noteBodyLabel.leadingAnchor.constraint(
-            equalTo: noteView.leadingAnchor, constant: 16
+            equalTo: labelsView.leadingAnchor
         )
         let trailingBodyConstraint = noteBodyLabel.trailingAnchor.constraint(
-            equalTo: noteView.trailingAnchor, constant: -16
+            equalTo: labelsView.trailingAnchor
         )
         let heighBodyConstraint = noteBodyLabel.heightAnchor.constraint(
             equalToConstant: 14
@@ -109,14 +174,16 @@ final class NoteCell: UITableViewCell {
                                      trailingBodyConstraint,
                                      heighBodyConstraint
                                     ])
+    }
 
-        noteView.addSubview(noteDateLabel)
+    private func configureNoteDateLabel() {
+        labelsView.addSubview(noteDateLabel)
         noteDateLabel.translatesAutoresizingMaskIntoConstraints = false
         let topDateConstraint = noteDateLabel.topAnchor.constraint(
             equalTo: noteBodyLabel.bottomAnchor, constant: 24
         )
         let leadingDateConstraint = noteDateLabel.leadingAnchor.constraint(
-            equalTo: noteView.leadingAnchor, constant: 16
+            equalTo: labelsView.leadingAnchor
         )
         let widthDateConstraint = noteDateLabel.widthAnchor.constraint(
             equalToConstant: 68
@@ -129,6 +196,52 @@ final class NoteCell: UITableViewCell {
                                      widthDateConstraint,
                                      heighDateConstraint
                                     ])
+    }
+
+    private func configureCheckMarkButton() {
+        noteView.addSubview(checkmarkImageView)
+        checkmarkImageView.translatesAutoresizingMaskIntoConstraints = false
+        let topButtonConstraint = checkmarkImageView.topAnchor.constraint(
+            equalTo: noteView.topAnchor, constant: 37
+        )
+        leadingCheckMarkButtonConstraint = checkmarkImageView.leadingAnchor.constraint(
+            equalTo: self.leadingAnchor, constant: -16
+        )
+        NSLayoutConstraint.activate([topButtonConstraint,
+                                     leadingCheckMarkButtonConstraint])
+    }
+
+    private func changeCheckmarkImage(_ isChosen: Bool) {
+        if isChosen {
+            checkmarkImageView.image = UIImage(named: "checkmarkFilled")
+        } else {
+            checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
+        }
+    }
+}
+
+// MARK: - Animation Methods
+extension NoteCell {
+    private func animateCellContent() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            options: []) {
+                self.leadingLabelsViewConstraint.constant += 44
+                self.leadingCheckMarkButtonConstraint.constant += 56
+                self.layoutIfNeeded()
+        }
+    }
+
+    private func animateCellContentBack() {
+        UIView.animate(
+            withDuration: 0.5,
+            delay: 0,
+            options: []) {
+                self.leadingLabelsViewConstraint.constant -= 44
+                self.leadingCheckMarkButtonConstraint.constant -= 56
+                self.layoutIfNeeded()
+        }
     }
 }
 

@@ -11,8 +11,8 @@ final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
     var isEditingNote: Bool = false
-    var bottomConstraint: NSLayoutConstraint!
 
+    private var bottomConstraint: NSLayoutConstraint!
     private var dateLabel = UILabel()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
@@ -198,8 +198,15 @@ extension NoteViewController {
         )
         let okAction = UIAlertAction(title: "Ok", style: .default)
         alert.addAction(okAction)
-    present(alert, animated: UIView.areAnimationsEnabled)
+        present(alert, animated: true)
     }
+
+//    private func checkIsEmpty(note: Note) {
+//        if note.isEmpty {
+//            showAlert(with: "Пустые поля", message: "Заполните название и текст заметки")
+//            return
+//        }
+//    }
 }
 
 // MARK: - UITextView Delegate

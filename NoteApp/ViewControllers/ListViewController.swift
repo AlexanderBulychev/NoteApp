@@ -14,10 +14,16 @@ protocol NoteViewControllerDelegateProtocol: AnyObject {
 class ListViewController: UIViewController {
     var tableView = UITableView()
     var notes: [Note] = []
+    private var tableViewModel: TableViewModel = TableViewModel(notes: [])
+    private var selectedNotesId: [String] = []
 
     private let noteCellName = "NoteCell"
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
-    private var createNewNoteButton = UIButton()
+    private var createNewDeleteButton = UIButton()
+    private var rightBarButtonItem = UIBarButtonItem()
+
+    private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
+    private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -26,14 +32,36 @@ class ListViewController: UIViewController {
         navigationItem.backButtonTitle = ""
 
         setupUI()
+
         notes = StorageManager.shared.getNotes()
+        tableViewModel = TableViewModel(notes: notes)
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        createNewNoteButtonTrailingConstraint.constant += 70
+        createNewNoteButtonBottomConstraint.constant += 110
+    }
+
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        animateAppearance()
+    }
+
+    override func viewDidDisappear(_ animated: Bool) {
+        super.viewDidDisappear(animated)
+        if createNewNoteButtonBottomConstraint.constant == 50 {
+            createNewNoteButtonBottomConstraint.constant -= 110
+        }
     }
 
     private func setupUI() {
         configureTableView()
-        configureCreateNewNoteButton()
+        configureCreateNewDeleteButton()
+        configureRightBarButtonItem()
     }
 
+// MARK: - Configure UI Methods
     private func configureTableView() {
         view.addSubview(tableView)
 
@@ -45,53 +73,105 @@ class ListViewController: UIViewController {
         tableView.backgroundColor = viewBackgroundColor
 
         tableView.translatesAutoresizingMaskIntoConstraints = false
-        let topConstraint = tableView.topAnchor.constraint(
-            equalTo: view.safeAreaLayoutGuide.topAnchor,
-            constant: 16
-        )
-        let leadingConstraint = tableView.leadingAnchor.constraint(
-            equalTo: view.leadingAnchor
-        )
-        let trailingConstraint = tableView.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor
-        )
-        let bottomConstraint = tableView.bottomAnchor.constraint(
-            equalTo: view.bottomAnchor
-        )
-        NSLayoutConstraint.activate([topConstraint,
-                                     leadingConstraint,
-                                     trailingConstraint,
-                                     bottomConstraint])
+        NSLayoutConstraint.activate([
+            tableView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 16),
+            tableView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            tableView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor)
+        ])
     }
 
-    private func configureCreateNewNoteButton() {
-        view.addSubview(createNewNoteButton)
+    private func configureCreateNewDeleteButton() {
+        view.addSubview(createNewDeleteButton)
         let noteButtonImage = UIImage(named: "button")
-        createNewNoteButton.setImage(noteButtonImage, for: .normal)
+        createNewDeleteButton.setImage(noteButtonImage, for: .normal)
 
-        createNewNoteButton.translatesAutoresizingMaskIntoConstraints = false
-        let trailingConstraint = createNewNoteButton.trailingAnchor.constraint(
-            equalTo: view.trailingAnchor, constant: -19
+        createNewDeleteButton.translatesAutoresizingMaskIntoConstraints = false
+        createNewNoteButtonTrailingConstraint = createNewDeleteButton.trailingAnchor.constraint(
+            equalTo: view.trailingAnchor, constant: -20
         )
-        let bottomConstraint = createNewNoteButton.bottomAnchor.constraint(
+        createNewNoteButtonBottomConstraint = createNewDeleteButton.bottomAnchor.constraint(
             equalTo: view.bottomAnchor, constant: -60
         )
-        NSLayoutConstraint.activate([trailingConstraint,
-                                     bottomConstraint])
-        createNewNoteButton.addTarget(self, action: #selector(createNewNoteButtonPressed), for: .touchUpInside)
+
+        NSLayoutConstraint.activate([createNewNoteButtonTrailingConstraint,
+                                     createNewNoteButtonBottomConstraint])
+        createNewDeleteButton.addTarget(self, action: #selector(createNewDeleteButtonPressed), for: .touchUpInside)
     }
 
-    @objc func createNewNoteButtonPressed() {
-        let noteVC = NoteViewController()
-        noteVC.delegate = self
-        navigationController?.pushViewController(noteVC, animated: true)
+    private func configureRightBarButtonItem() {
+        rightBarButtonItem.title = "Выбрать"
+        navigationItem.rightBarButtonItem = rightBarButtonItem
+        rightBarButtonItem.target = self
+        rightBarButtonItem.action = #selector(rightBarButtonItemAction)
+    }
+
+// MARK: - @objc methods
+    @objc func createNewDeleteButtonPressed() {
+        if !tableViewModel.isEditTable {
+            animatePushing()
+        } else {
+            if !selectedNotesId.isEmpty {
+                tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter {
+                    !selectedNotesId.contains($0.note.id)
+                }
+                StorageManager.shared.deleteNotes(at: selectedNotesId)
+                selectedNotesId.removeAll()
+                tableView.reloadData()
+            } else {
+                showAlert()
+                return
+            }
+            tableViewModel.isEditTable.toggle()
+            switchMode(for: tableViewModel.isEditTable)
+        }
+    }
+
+    @objc func rightBarButtonItemAction() {
+        tableViewModel.isEditTable.toggle()
+        tableViewModel.deselectCells()
+        tableView.reloadData()
+        switchMode(for: tableViewModel.isEditTable)
+    }
+
+// MARK: - Private methods
+    private func showAlert() {
+        let alert = UIAlertController(
+            title: "",
+            message: "Вы не выбрали ни одной заметки",
+            preferredStyle: .alert
+        )
+        let okAction = UIAlertAction(title: "Ok", style: .default)
+        alert.addAction(okAction)
+        present(alert, animated: true)
+    }
+
+    private func switchMode(for isEdit: Bool) {
+        animateSelection(isEdit)
+        if isEdit {
+            rightBarButtonItem.title = "Готово"
+        } else {
+            rightBarButtonItem.title = "Выбрать"
+        }
+    }
+
+    private func updateSelectedNotesId(indexPath: IndexPath) {
+        let idForChosenNote = tableViewModel.getCurrentCellViewModel(indexPath).note.id
+        if tableViewModel.isChosen(indexPath) {
+            selectedNotesId.append(idForChosenNote)
+        } else {
+            let idx = selectedNotesId.firstIndex { $0 == idForChosenNote }
+            if let idx = idx {
+                selectedNotesId.remove(at: idx)
+            }
+        }
     }
 }
 
 // MARK: - UITableViewDataSource
 extension ListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        notes.count
+        tableViewModel.cellsCount
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -99,11 +179,8 @@ extension ListViewController: UITableViewDataSource {
             withIdentifier: noteCellName,
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
-
-        let note = notes[indexPath.row]
-        cell.configureCell(from: note)
+        cell.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
         cell.backgroundColor = viewBackgroundColor
-
         return cell
     }
 }
@@ -111,19 +188,86 @@ extension ListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension ListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        let note = notes[indexPath.row]
-        let noteVC = NoteViewController()
-        noteVC.note = note
-        noteVC.delegate = self
+        if tableViewModel.isEditTable {
+            tableViewModel.toggleCellSelection(indexPath)
+            updateSelectedNotesId(indexPath: indexPath)
+            let cell = tableView.cellForRow(at: indexPath) as? NoteCell
+            cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
+            tableView.reloadData()
+        } else {
+            let noteCell = tableViewModel.getCurrentCellViewModel(indexPath)
+            let noteVC = NoteViewController()
+            noteVC.note = noteCell.note
+            noteVC.delegate = self
+            navigationController?.pushViewController(noteVC, animated: true)
+        }
+    }
+}
 
-        navigationController?.pushViewController(noteVC, animated: true)
+// MARK: - Animation Methods
+extension ListViewController {
+    private func animateAppearance() {
+        UIView.animate(
+            withDuration: 2,
+            delay: 0,
+            usingSpringWithDamping: 0.5,
+            initialSpringVelocity: 3,
+            options: []) { [ weak self ] in
+                self?.createNewNoteButtonTrailingConstraint.constant -= 70
+                self?.createNewNoteButtonBottomConstraint.constant -= 110
+                self?.view.layoutIfNeeded()
+        }
+    }
+
+    private func animatePushing() {
+        UIView.animateKeyframes(
+            withDuration: 1,
+            delay: 0,
+            options: []
+        ) { [ weak self ] in
+            self?.addKeyFrames()
+        } completion: { _ in
+            let noteVC = NoteViewController()
+            noteVC.delegate = self
+            self.navigationController?.pushViewController(noteVC, animated: true)
+        }
+    }
+
+    private func addKeyFrames() {
+        UIView.addKeyframe(
+            withRelativeStartTime: 0,
+            relativeDuration: 0.5) { [ weak self ] in
+                self?.createNewNoteButtonBottomConstraint.constant -= 10
+                self?.view.layoutIfNeeded()
+        }
+        UIView.addKeyframe(
+            withRelativeStartTime: 0.25,
+            relativeDuration: 0.5) { [ weak self ] in
+                self?.createNewNoteButtonBottomConstraint.constant += 120
+                self?.view.layoutIfNeeded()
+        }
+    }
+
+    private func animateSelection(_ isEdit: Bool) {
+        UIView.transition(
+            with: createNewDeleteButton,
+            duration: 0.5,
+            options: [.transitionFlipFromRight]) {
+                if isEdit {
+                    let noteButtonImage = UIImage(named: "deleteButton")
+                    self.createNewDeleteButton.setImage(noteButtonImage, for: .normal)
+                } else {
+                    let noteButtonImage = UIImage(named: "button")
+                    self.createNewDeleteButton.setImage(noteButtonImage, for: .normal)
+                }
+        }
     }
 }
 
 extension ListViewController: NoteViewControllerDelegateProtocol {
     func addNote(_ note: Note, _ isEditing: Bool) {
         if !isEditing {
-            notes.append(note)
+            tableViewModel.addNote(note)
         }
         tableView.reloadData()
     }
