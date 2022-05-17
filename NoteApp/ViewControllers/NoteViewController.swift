@@ -10,7 +10,7 @@ import UIKit
 final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
-    var isEditingNote: Bool = false
+//    var isEditingNote: Bool = false
 
     private var bottomConstraint: NSLayoutConstraint!
     private var dateLabel = UILabel()
