@@ -93,6 +93,7 @@ class ListViewController: UIViewController {
         createNewNoteButtonBottomConstraint = createNewDeleteButton.bottomAnchor.constraint(
             equalTo: view.bottomAnchor, constant: -60
         )
+
         NSLayoutConstraint.activate([createNewNoteButtonTrailingConstraint,
                                      createNewNoteButtonBottomConstraint])
         createNewDeleteButton.addTarget(self, action: #selector(createNewDeleteButtonPressed), for: .touchUpInside)

@@ -7,7 +7,7 @@
 
 import UIKit
 
-class NoteViewController: UIViewController {
+final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     var note: Note?
     var isEditingNote: Bool = false
@@ -16,6 +16,8 @@ class NoteViewController: UIViewController {
     private var dateLabel = UILabel()
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
+
+    private var isEditingNote: Bool = false
 
     private var readyBarButtonItem = UIBarButtonItem()
 
