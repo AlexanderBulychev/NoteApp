@@ -16,6 +16,7 @@
 		FC205DA527EDF3AB00F4CE6F /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = FC205DA327EDF3AB00F4CE6F /* LaunchScreen.storyboard */; };
 		FC205DAF27EDF59F00F4CE6F /* Note.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205DAE27EDF59F00F4CE6F /* Note.swift */; };
 		FC205DB527F19E8B00F4CE6F /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205DB427F19E8B00F4CE6F /* StorageManager.swift */; };
+		FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8674492834C0C40082F1F2 /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -30,6 +31,7 @@
 		FC205DA627EDF3AB00F4CE6F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		FC205DAE27EDF59F00F4CE6F /* Note.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Note.swift; sourceTree = "<group>"; };
 		FC205DB427F19E8B00F4CE6F /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
+		FC8674492834C0C40082F1F2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -128,6 +130,7 @@
 			isa = PBXGroup;
 			children = (
 				FC205DB427F19E8B00F4CE6F /* StorageManager.swift */,
+				FC8674492834C0C40082F1F2 /* NetworkManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -227,6 +230,7 @@
 				FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */,
 				FC0FBBBB280401CC007CE4BB /* ListViewController.swift in Sources */,
 				FC0FBBDF280EE714007CE4BB /* NoteCell.swift in Sources */,
+				FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */,
 				FC205DB527F19E8B00F4CE6F /* StorageManager.swift in Sources */,
 				FC205D9B27EDF3A800F4CE6F /* SceneDelegate.swift in Sources */,
 				FC205DAF27EDF59F00F4CE6F /* Note.swift in Sources */,

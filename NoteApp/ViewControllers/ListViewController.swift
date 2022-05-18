@@ -35,6 +35,8 @@ class ListViewController: UIViewController {
 
         notes = StorageManager.shared.getNotes()
         tableViewModel = TableViewModel(notes: notes)
+
+        fetchData()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -270,5 +272,31 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
             tableViewModel.addNote(note)
         }
         tableView.reloadData()
+    }
+}
+
+// MARK: - Fetch data from the Network
+extension ListViewController {
+    private func fetchData() {
+        Worker.shared.fetchDataWithResult { result in
+            switch result {
+            case .success(let networkNotes):
+                print(networkNotes)
+
+//                let dateForFirstNote = notes[2].date
+//                let dateForPrinting = self.formatDate(date: dateForFirstNote)
+//                print(dateForPrinting)
+            case .failure(let error):
+                print(error)
+            }
+        }
+    }
+
+    private func formatDate(date: Date?) -> String {
+        guard let date = date else { return "" }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
+        return formatter.string(from: date)
     }
 }
