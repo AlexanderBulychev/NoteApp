@@ -64,21 +64,21 @@ struct CellViewModel {
 final class Note: Codable {
     let id: String
     var header: String
-    var text: String
+    var body: String
     var isEmpty: Bool {
-        header == "" && text == ""
+        header == "" && body == ""
     }
     var date: Date
 
     init(header: String, body: String, date: Date) {
         self.header = header
-        self.text = body
+        self.body = body
         self.date = date
         self.id = UUID().uuidString
     }
 }
 
-struct NetworkNotes: Codable {
+struct NetworkNote: Codable {
     let header: String
     let text: String
     let date: Date

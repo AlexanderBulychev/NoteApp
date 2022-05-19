@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum NetworkError: Error {
-    case invalidURL
-    case noData
-    case decodingError
+enum NetworkError: String, Error {
+    case invalidURL = "Неверный/недоступный адрес URL"
+    case noData = "Нет данных"
+    case decodingError = "Ошибка декодирования"
 }
 
 class Worker {
@@ -29,7 +29,7 @@ class Worker {
         return urlComponents.url
     }
 
-    func fetchDataWithResult(with completion: @escaping(Result<[NetworkNotes], NetworkError>) -> Void) {
+    func fetchDataWithResult(with completion: @escaping(Result<[NetworkNote], NetworkError>) -> Void) {
         guard let url = createURLComponents() else {
             completion(.failure(.invalidURL))
             return
@@ -41,12 +41,32 @@ class Worker {
                 return
             }
             do {
-                let networkNotes = try JSONDecoder().decode([NetworkNotes].self, from: data)
+                let networkNotes = try JSONDecoder().decode([NetworkNote].self, from: data)
                 DispatchQueue.main.async {
                     completion(.success(networkNotes))
                 }
             } catch {
                 completion(.failure(.decodingError))
+            }
+        }.resume()
+    }
+
+    func fetchDataFromNetwork() {
+        guard let url = createURLComponents() else {
+            print(NetworkError.invalidURL.rawValue)
+            return
+        }
+        URLSession.shared.dataTask(with: url) { data, _, error in
+            guard let data = data else {
+                print(NetworkError.noData.rawValue)
+                print(error?.localizedDescription ?? "No error description")
+                return
+            }
+            do {
+                let networkNotes = try JSONDecoder().decode([Note].self, from: data)
+                print(networkNotes)
+            } catch {
+                print(error)
             }
         }.resume()
     }

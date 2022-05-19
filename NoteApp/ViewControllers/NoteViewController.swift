@@ -32,7 +32,7 @@ final class NoteViewController: UIViewController {
         isEditingNote = (note != nil) ? true : false
 
         noteHeaderTextField.text = note?.header
-        noteBodyTextView.text = note?.text
+        noteBodyTextView.text = note?.body
         dateLabel.text = formatDate(date: note?.date)
     }
 
@@ -41,7 +41,7 @@ final class NoteViewController: UIViewController {
 
         if isEditingNote {
             note?.header = noteHeaderTextField.text ?? ""
-            note?.text = noteBodyTextView.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
             note = Note(
@@ -160,7 +160,7 @@ final class NoteViewController: UIViewController {
 
         if isEditingNote {
             note?.header = noteHeaderTextField.text ?? ""
-            note?.text = noteBodyTextView.text ?? ""
+            note?.body = noteBodyTextView.text ?? ""
             note?.date = .now
         } else {
             note = Note(

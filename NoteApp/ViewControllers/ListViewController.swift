@@ -37,6 +37,7 @@ class ListViewController: UIViewController {
         tableViewModel = TableViewModel(notes: notes)
 
         fetchData()
+//        Worker.shared.fetchDataFromNetwork()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -168,6 +169,14 @@ class ListViewController: UIViewController {
             }
         }
     }
+
+    private func formatDate(date: Date?) -> String {
+        guard let date = date else { return "" }
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
+        return formatter.string(from: date)
+    }
 }
 
 // MARK: - UITableViewDataSource
@@ -282,7 +291,6 @@ extension ListViewController {
             switch result {
             case .success(let networkNotes):
                 print(networkNotes)
-
 //                let dateForFirstNote = notes[2].date
 //                let dateForPrinting = self.formatDate(date: dateForFirstNote)
 //                print(dateForPrinting)
@@ -290,13 +298,5 @@ extension ListViewController {
                 print(error)
             }
         }
-    }
-
-    private func formatDate(date: Date?) -> String {
-        guard let date = date else { return "" }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
-        return formatter.string(from: date)
     }
 }
