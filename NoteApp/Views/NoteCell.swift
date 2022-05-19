@@ -66,7 +66,7 @@ final class NoteCell: UITableViewCell {
     func configureCell(from viewModel: CellViewModel) {
         let note = viewModel.note
         noteHeaderLabel.text = note.header
-        noteBodyLabel.text = note.body
+        noteBodyLabel.text = note.text
         noteDateLabel.text = formatDate(date: note.date)
         self.isEdited = CellViewModel.isEdited
         self.isChosen = viewModel.isChosen

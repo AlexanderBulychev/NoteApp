@@ -52,6 +52,11 @@ struct TableViewModel {
             cellViewModels[index].isChosen = false
         }
     }
+
+    mutating func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
+        let newNotes = networkNotes.map { Note(header: $0.header, text: $0.text, date: $0.date) }
+        cellViewModels.append(contentsOf: newNotes.map { CellViewModel(note: $0) })
+    }
 }
 
 struct CellViewModel {
@@ -64,15 +69,15 @@ struct CellViewModel {
 final class Note: Codable {
     let id: String
     var header: String
-    var body: String
+    var text: String
     var isEmpty: Bool {
-        header == "" && body == ""
+        header == "" && text == ""
     }
     var date: Date
 
-    init(header: String, body: String, date: Date) {
+    init(header: String, text: String, date: Date) {
         self.header = header
-        self.body = body
+        self.text = text
         self.date = date
         self.id = UUID().uuidString
     }

@@ -50,24 +50,4 @@ class Worker {
             }
         }.resume()
     }
-
-    func fetchDataFromNetwork() {
-        guard let url = createURLComponents() else {
-            print(NetworkError.invalidURL.rawValue)
-            return
-        }
-        URLSession.shared.dataTask(with: url) { data, _, error in
-            guard let data = data else {
-                print(NetworkError.noData.rawValue)
-                print(error?.localizedDescription ?? "No error description")
-                return
-            }
-            do {
-                let networkNotes = try JSONDecoder().decode([Note].self, from: data)
-                print(networkNotes)
-            } catch {
-                print(error)
-            }
-        }.resume()
-    }
 }

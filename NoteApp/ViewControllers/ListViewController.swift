@@ -37,7 +37,6 @@ class ListViewController: UIViewController {
         tableViewModel = TableViewModel(notes: notes)
 
         fetchData()
-//        Worker.shared.fetchDataFromNetwork()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -287,13 +286,13 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
 // MARK: - Fetch data from the Network
 extension ListViewController {
     private func fetchData() {
-        Worker.shared.fetchDataWithResult { result in
+        Worker.shared.fetchDataWithResult { [weak self] result in
             switch result {
             case .success(let networkNotes):
-                print(networkNotes)
-//                let dateForFirstNote = notes[2].date
-//                let dateForPrinting = self.formatDate(date: dateForFirstNote)
-//                print(dateForPrinting)
+                DispatchQueue.main.async {
+                    self?.tableViewModel.appendNetworkNotes(networkNotes)
+                    self?.tableView.reloadData()
+                }
             case .failure(let error):
                 print(error)
             }
