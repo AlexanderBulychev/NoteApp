@@ -13,8 +13,8 @@ enum NetworkError: String, Error {
     case decodingError = "Ошибка декодирования"
 }
 
-class Worker {
-    static let shared = Worker()
+class NetworkManager {
+    static let shared = NetworkManager()
     private init() {}
 
     private func createURLComponents() -> URL? {
@@ -34,14 +34,17 @@ class Worker {
             completion(.failure(.invalidURL))
             return
         }
-        URLSession.shared.dataTask(with: url) { data, _, error in
+        URLSession.shared.dataTask(with: url) { data, _, _ in
             guard let data = data else {
                 completion(.failure(.noData))
-                print(error?.localizedDescription ?? "No error description")
+//                print(error?.localizedDescription ?? "No error description")
                 return
             }
             do {
-                let networkNotes = try JSONDecoder().decode([NetworkNote].self, from: data)
+                let decoder = JSONDecoder()
+                decoder.dateDecodingStrategy = .secondsSince1970
+                let networkNotes = try decoder.decode([NetworkNote].self, from: data)
+//                let networkNotes = try JSONDecoder().decode([NetworkNote].self, from: data)
                 DispatchQueue.main.async {
                     completion(.success(networkNotes))
                 }

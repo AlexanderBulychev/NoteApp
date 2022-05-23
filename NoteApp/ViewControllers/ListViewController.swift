@@ -286,7 +286,7 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
 // MARK: - Fetch data from the Network
 extension ListViewController {
     private func fetchData() {
-        Worker.shared.fetchDataWithResult { [weak self] result in
+        NetworkManager.shared.fetchDataWithResult { [weak self] result in
             switch result {
             case .success(let networkNotes):
                 DispatchQueue.main.async {
@@ -294,7 +294,7 @@ extension ListViewController {
                     self?.tableView.reloadData()
                 }
             case .failure(let error):
-                print(error)
+                print(error.localizedDescription)
             }
         }
     }
