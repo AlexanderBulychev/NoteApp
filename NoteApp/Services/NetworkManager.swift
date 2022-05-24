@@ -29,27 +29,27 @@ class NetworkManager {
         return urlComponents.url
     }
 
-    func fetchDataWithResult(with completion: @escaping(Result<[NetworkNote], NetworkError>) -> Void) {
+    func fetchNotes(
+        successCompletion: @escaping (([NetworkNote]) -> Void),
+        failureCompletion: @escaping ((NetworkError) -> Void)
+    ) {
         guard let url = createURLComponents() else {
-            completion(.failure(.invalidURL))
+            failureCompletion(.invalidURL)
             return
         }
-        URLSession.shared.dataTask(with: url) { data, _, _ in
+        URLSession.shared.dataTask(with: url) { data, _, error in
             guard let data = data else {
-                completion(.failure(.noData))
-//                print(error?.localizedDescription ?? "No error description")
+                failureCompletion(.noData)
+                print(error?.localizedDescription ?? "No error description")
                 return
             }
             do {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .secondsSince1970
                 let networkNotes = try decoder.decode([NetworkNote].self, from: data)
-//                let networkNotes = try JSONDecoder().decode([NetworkNote].self, from: data)
-                DispatchQueue.main.async {
-                    completion(.success(networkNotes))
-                }
+                successCompletion(networkNotes)
             } catch {
-                completion(.failure(.decodingError))
+                failureCompletion(.decodingError)
             }
         }.resume()
     }
