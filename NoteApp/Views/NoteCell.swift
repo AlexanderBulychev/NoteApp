@@ -57,10 +57,16 @@ final class NoteCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
+
+        print("created NoteCell class")
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        print("deallocated NoteCell class")
     }
 
     func configureCell(from viewModel: CellViewModel) {

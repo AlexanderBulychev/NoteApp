@@ -39,6 +39,19 @@ class ListViewController: UIViewController {
         fetchData()
     }
 
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        print("class ListVC has been created")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        print("class ListVC has been deallocated")
+    }
+
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
         createNewNoteButtonTrailingConstraint.constant += 70
@@ -222,10 +235,11 @@ extension ListViewController {
             delay: 0,
             usingSpringWithDamping: 0.5,
             initialSpringVelocity: 3,
-            options: []) { [ weak self ] in
-                self?.createNewNoteButtonTrailingConstraint.constant -= 70
-                self?.createNewNoteButtonBottomConstraint.constant -= 110
-                self?.view.layoutIfNeeded()
+            options: []) { [ unowned self ] in
+                // ссылка на класс не является опциональной
+                self.createNewNoteButtonTrailingConstraint.constant -= 70
+                self.createNewNoteButtonBottomConstraint.constant -= 110
+                self.view.layoutIfNeeded()
         }
     }
 
@@ -234,8 +248,9 @@ extension ListViewController {
             withDuration: 1,
             delay: 0,
             options: []
-        ) { [ weak self ] in
-            self?.addKeyFrames()
+        ) { [ unowned self ] in
+            // ссылка на класс не является опциональной
+            self.addKeyFrames()
         } completion: { _ in
             let noteVC = NoteViewController()
             noteVC.delegate = self
@@ -246,15 +261,17 @@ extension ListViewController {
     private func addKeyFrames() {
         UIView.addKeyframe(
             withRelativeStartTime: 0,
-            relativeDuration: 0.5) { [ weak self ] in
-                self?.createNewNoteButtonBottomConstraint.constant -= 10
-                self?.view.layoutIfNeeded()
+            relativeDuration: 0.5) { [ unowned self ] in
+                // ссылка на класс не является опциональной
+                self.createNewNoteButtonBottomConstraint.constant -= 10
+                self.view.layoutIfNeeded()
         }
         UIView.addKeyframe(
             withRelativeStartTime: 0.25,
-            relativeDuration: 0.5) { [ weak self ] in
-                self?.createNewNoteButtonBottomConstraint.constant += 120
-                self?.view.layoutIfNeeded()
+            relativeDuration: 0.5) { [ unowned self ] in
+                // ссылка на класс не является опциональной
+                self.createNewNoteButtonBottomConstraint.constant += 120
+                self.view.layoutIfNeeded()
         }
     }
 
@@ -286,10 +303,11 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
 // MARK: - Fetch data from the Network
 extension ListViewController {
     private func fetchData() {
-        NetworkManager.shared.fetchNotes { [weak self] networkNotes in
+        NetworkManager.shared.fetchNotes { [unowned self] networkNotes in
+            // ссылка на класс не является опциональной
             DispatchQueue.main.async {
-                self?.tableViewModel.appendNetworkNotes(networkNotes)
-                self?.tableView.reloadData()
+                self.tableViewModel.appendNetworkNotes(networkNotes)
+                self.tableView.reloadData()
             }
         } failureCompletion: { error in
             print(error)

@@ -75,11 +75,17 @@ final class Note: Codable {
     }
     var date: Date
 
-    init(header: String, text: String, date: Date) {
+    required init(header: String, text: String, date: Date) {
         self.header = header
         self.text = text
         self.date = date
         self.id = UUID().uuidString
+
+        print("Class Note was created")
+    }
+
+    deinit {
+        print("Class Note has been deallocated")
     }
 }
 
