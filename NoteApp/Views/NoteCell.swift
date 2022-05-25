@@ -39,6 +39,14 @@ final class NoteCell: UITableViewCell {
         return labelsView
     }()
 
+    private let noteIconImageView: UIImageView = {
+        let noteIcon = UIImageView()
+        noteIcon.backgroundColor = .red
+        noteIcon.frame.size = CGSize(width: 24, height: 24)
+        noteIcon.layer.cornerRadius = noteIcon.frame.width / 2
+        return noteIcon
+    }()
+
     private var checkmarkImageView: UIImageView = {
         var checkmarkImageView = UIImageView()
         checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
@@ -93,6 +101,7 @@ final class NoteCell: UITableViewCell {
         configureNoteBodyLabel()
         configureNoteDateLabel()
         configureCheckMarkButton()
+        configureNoteIcon()
     }
 
     private func configureLabelsView() {
@@ -215,6 +224,17 @@ final class NoteCell: UITableViewCell {
         )
         NSLayoutConstraint.activate([topButtonConstraint,
                                      leadingCheckMarkButtonConstraint])
+    }
+
+    private func configureNoteIcon() {
+        noteView.addSubview(noteIconImageView)
+        noteIconImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noteIconImageView.trailingAnchor.constraint(equalTo: noteView.trailingAnchor, constant: -16),
+            noteIconImageView.bottomAnchor.constraint(equalTo: noteView.bottomAnchor, constant: -10),
+            noteIconImageView.widthAnchor.constraint(equalToConstant: 24),
+            noteIconImageView.heightAnchor.constraint(equalToConstant: 24)
+        ])
     }
 
     private func changeCheckmarkImage(_ isChosen: Bool) {

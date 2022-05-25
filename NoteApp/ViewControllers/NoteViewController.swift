@@ -9,6 +9,7 @@ import UIKit
 
 final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
+    // опциональный тип ссылки
     var note: Note?
 //    var isEditingNote: Bool = false
 
