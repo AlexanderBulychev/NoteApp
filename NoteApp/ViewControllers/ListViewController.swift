@@ -21,6 +21,7 @@ class ListViewController: UIViewController {
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
     private var createNewDeleteButton = UIButton()
     private var rightBarButtonItem = UIBarButtonItem()
+    private let activityIndicator = UIActivityIndicatorView()
 
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
     private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
@@ -32,6 +33,7 @@ class ListViewController: UIViewController {
         navigationItem.backButtonTitle = ""
 
         setupUI()
+        activityIndicator.startAnimating()
 
         notes = StorageManager.shared.getNotes()
         tableViewModel = TableViewModel(notes: notes)
@@ -74,6 +76,7 @@ class ListViewController: UIViewController {
         configureTableView()
         configureCreateNewDeleteButton()
         configureRightBarButtonItem()
+        configureActivityIndicator()
     }
 
 // MARK: - Configure UI Methods
@@ -119,6 +122,17 @@ class ListViewController: UIViewController {
         navigationItem.rightBarButtonItem = rightBarButtonItem
         rightBarButtonItem.target = self
         rightBarButtonItem.action = #selector(rightBarButtonItemAction)
+    }
+
+    private func configureActivityIndicator() {
+        activityIndicator.hidesWhenStopped = true
+
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
 // MARK: - @objc methods
@@ -308,6 +322,7 @@ extension ListViewController {
             DispatchQueue.main.async {
                 self.tableViewModel.appendNetworkNotes(networkNotes)
                 self.tableView.reloadData()
+                activityIndicator.stopAnimating()
             }
         } failureCompletion: { error in
             print(error)
