@@ -39,9 +39,8 @@ final class NoteCell: UITableViewCell {
         return labelsView
     }()
 
-    private let noteIconImageView: UIImageView = {
+    private let noteIconImageView: UIImageView? = {
         let noteIcon = UIImageView()
-        noteIcon.backgroundColor = .red
         noteIcon.frame.size = CGSize(width: 24, height: 24)
         noteIcon.layer.cornerRadius = noteIcon.frame.width / 2
         return noteIcon
@@ -82,6 +81,18 @@ final class NoteCell: UITableViewCell {
         noteHeaderLabel.text = note.header
         noteBodyLabel.text = note.text
         noteDateLabel.text = formatDate(date: note.date)
+
+        NetworkManager.shared.fetchNoteIcon(
+            from: viewModel.note.userShareIcon
+        ) { [weak self] imageData in
+            // опциональная ссылка на экземпляр класса
+            DispatchQueue.main.async {
+                self?.noteIconImageView?.image = UIImage(data: imageData)
+            }
+        } failureCompletion: { error in
+            print(error)
+        }
+
         self.isEdited = CellViewModel.isEdited
         self.isChosen = viewModel.isChosen
 
@@ -227,6 +238,7 @@ final class NoteCell: UITableViewCell {
     }
 
     private func configureNoteIcon() {
+        guard let noteIconImageView = noteIconImageView else { return }
         noteView.addSubview(noteIconImageView)
         noteIconImageView.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([

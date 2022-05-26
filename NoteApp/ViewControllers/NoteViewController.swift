@@ -61,7 +61,8 @@ final class NoteViewController: UIViewController {
             note = Note(
                 header: noteHeaderTextField.text ?? "",
                 text: noteBodyTextView.text ?? "",
-                date: .now
+                date: .now,
+                userShareIcon: nil
             )
         }
         guard let note = note,
@@ -180,7 +181,8 @@ final class NoteViewController: UIViewController {
             note = Note(
                 header: noteHeaderTextField.text ?? "",
                 text: noteBodyTextView.text ?? "",
-                date: .now
+                date: .now,
+                userShareIcon: nil
             )
         }
         guard let note = note,

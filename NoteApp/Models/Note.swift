@@ -54,7 +54,13 @@ struct TableViewModel {
     }
 
     mutating func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
-        let newNotes = networkNotes.map { Note(header: $0.header, text: $0.text, date: $0.date) }
+        let newNotes = networkNotes.map { Note(
+            header: $0.header,
+            text: $0.text,
+            date: $0.date,
+            userShareIcon: $0.userShareIcon
+        )
+        }
         cellViewModels.append(contentsOf: newNotes.map { CellViewModel(note: $0) })
     }
 }
@@ -74,12 +80,14 @@ final class Note: Codable {
         header == "" && text == ""
     }
     var date: Date
+    var userShareIcon: String?
 
-    required init(header: String, text: String, date: Date) {
+    required init(header: String, text: String, date: Date, userShareIcon: String?) {
         self.header = header
         self.text = text
         self.date = date
         self.id = UUID().uuidString
+        self.userShareIcon = userShareIcon
 
         print("Class Note was created")
     }
@@ -93,4 +101,5 @@ struct NetworkNote: Codable {
     let header: String
     let text: String
     let date: Date
+    var userShareIcon: String?
 }

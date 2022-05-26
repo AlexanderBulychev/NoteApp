@@ -21,10 +21,10 @@ class NetworkManager {
         var urlComponents = URLComponents()
         urlComponents.scheme = "https"
         urlComponents.host = "firebasestorage.googleapis.com"
-        urlComponents.path = "/v0/b/ios-test-ce687.appspot.com/o/Empty.json"
+        urlComponents.path = "/v0/b/ios-test-ce687.appspot.com/o/lesson8.json"
         urlComponents.queryItems = [
             URLQueryItem(name: "alt", value: "media"),
-            URLQueryItem(name: "token", value: "d07f7d4a-141e-4ac5-a2d2-cc936d4e6f18")
+            URLQueryItem(name: "token", value: "215055df-172d-4b98-95a0-b353caca1424")
         ]
         return urlComponents.url
     }
@@ -52,5 +52,21 @@ class NetworkManager {
                 failureCompletion(.decodingError)
             }
         }.resume()
+    }
+
+    func fetchNoteIcon(
+        from url: String?,
+        successCompletion: @escaping ((Data) -> Void),
+        failureCompletion: @escaping ((NetworkError) -> Void)
+    ) {
+        guard let url = URL(string: url ?? "") else {
+            failureCompletion(.invalidURL)
+            return
+        }
+        guard let imageData = try? Data(contentsOf: url) else {
+            failureCompletion(.noData)
+            return
+        }
+        successCompletion(imageData)
     }
 }
