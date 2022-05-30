@@ -7,10 +7,10 @@
 
 import Foundation
 
-enum NetworkError: String, Error {
-    case invalidURL = "Неверный/недоступный адрес URL"
-    case noData = "Нет данных"
-    case decodingError = "Ошибка декодирования"
+enum NetworkError: Error {
+    case invalidMissingURL
+    case noData
+    case decodingError
 }
 
 class NetworkManager {
@@ -34,7 +34,7 @@ class NetworkManager {
         failureCompletion: @escaping ((NetworkError) -> Void)
     ) {
         guard let url = createURLComponents() else {
-            failureCompletion(.invalidURL)
+            failureCompletion(.invalidMissingURL)
             return
         }
         URLSession.shared.dataTask(with: url) { data, _, error in
@@ -60,7 +60,7 @@ class NetworkManager {
         failureCompletion: @escaping ((NetworkError) -> Void)
     ) {
         guard let url = URL(string: url ?? "") else {
-            failureCompletion(.invalidURL)
+            failureCompletion(.invalidMissingURL)
             return
         }
         guard let imageData = try? Data(contentsOf: url) else {

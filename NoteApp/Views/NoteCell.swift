@@ -82,15 +82,18 @@ final class NoteCell: UITableViewCell {
         noteBodyLabel.text = note.text
         noteDateLabel.text = formatDate(date: note.date)
 
-        NetworkManager.shared.fetchNoteIcon(
-            from: viewModel.note.userShareIcon
-        ) { [weak self] imageData in
-            // опциональная ссылка на экземпляр класса
-            DispatchQueue.main.async {
-                self?.noteIconImageView?.image = UIImage(data: imageData)
+        DispatchQueue.global().async {
+            NetworkManager.shared.fetchNoteIcon(
+                from: viewModel.note.userShareIcon
+            ) { [weak self] imageData in
+                /* Использование слабой ссылки более безопасно, в случае возможного перехода с данного экрана
+                до загрузки данных из сети  */
+                DispatchQueue.main.async {
+                    self?.noteIconImageView?.image = UIImage(data: imageData)
+                }
+            } failureCompletion: { error in
+                print(error)
             }
-        } failureCompletion: { error in
-            print(error)
         }
 
         self.isEdited = CellViewModel.isEdited

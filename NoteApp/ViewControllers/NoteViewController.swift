@@ -9,9 +9,8 @@ import UIKit
 
 final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
-    // опциональный тип ссылки
+    // используется слабая ссылка для передачи данных на родительский ListVC
     var note: Note?
-//    var isEditingNote: Bool = false
 
     private var bottomConstraint: NSLayoutConstraint!
     private var dateLabel = UILabel()

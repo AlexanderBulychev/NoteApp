@@ -26,6 +26,20 @@ class ListViewController: UIViewController {
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
     private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
 
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        print("class ListVC has been created")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        print("class ListVC has been deallocated")
+        // ListVC is RootVC, so class ListVC will be deallocated when the application is closed
+    }
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = viewBackgroundColor
@@ -39,19 +53,6 @@ class ListViewController: UIViewController {
         tableViewModel = TableViewModel(notes: notes)
 
         fetchData()
-    }
-
-    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
-        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
-        print("class ListVC has been created")
-    }
-
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-
-    deinit {
-        print("class ListVC has been deallocated")
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -249,8 +250,8 @@ extension ListViewController {
             delay: 0,
             usingSpringWithDamping: 0.5,
             initialSpringVelocity: 3,
-            options: []) { [ unowned self ] in
-                // ссылка на класс не является опциональной
+            options: []) {
+                // animations are not retained by self so there is no risk of strong retain cycle
                 self.createNewNoteButtonTrailingConstraint.constant -= 70
                 self.createNewNoteButtonBottomConstraint.constant -= 110
                 self.view.layoutIfNeeded()
@@ -262,8 +263,7 @@ extension ListViewController {
             withDuration: 1,
             delay: 0,
             options: []
-        ) { [ unowned self ] in
-            // ссылка на класс не является опциональной
+        ) {
             self.addKeyFrames()
         } completion: { _ in
             let noteVC = NoteViewController()
@@ -275,15 +275,13 @@ extension ListViewController {
     private func addKeyFrames() {
         UIView.addKeyframe(
             withRelativeStartTime: 0,
-            relativeDuration: 0.5) { [ unowned self ] in
-                // ссылка на класс не является опциональной
+            relativeDuration: 0.5) {
                 self.createNewNoteButtonBottomConstraint.constant -= 10
                 self.view.layoutIfNeeded()
         }
         UIView.addKeyframe(
             withRelativeStartTime: 0.25,
-            relativeDuration: 0.5) { [ unowned self ] in
-                // ссылка на класс не является опциональной
+            relativeDuration: 0.5) {
                 self.createNewNoteButtonBottomConstraint.constant += 120
                 self.view.layoutIfNeeded()
         }
@@ -317,12 +315,14 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
 // MARK: - Fetch data from the Network
 extension ListViewController {
     private func fetchData() {
-        NetworkManager.shared.fetchNotes { [unowned self] networkNotes in
-            // ссылка на класс не является опциональной
-            DispatchQueue.main.async {
-                self.tableViewModel.appendNetworkNotes(networkNotes)
-                self.tableView.reloadData()
-                activityIndicator.stopAnimating()
+        NetworkManager.shared.fetchNotes { [weak self] networkNotes in
+            /* Использование слабой ссылки более безопасно, в случае возможного перехода с экрана
+            до загрузки данных из сети  */
+            let delay = DispatchTime.now() + .seconds(10)
+            DispatchQueue.main.asyncAfter(deadline: delay) {
+                self?.tableViewModel.appendNetworkNotes(networkNotes)
+                self?.tableView.reloadData()
+                self?.activityIndicator.stopAnimating()
             }
         } failureCompletion: { error in
             print(error)
