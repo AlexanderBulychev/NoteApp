@@ -39,7 +39,7 @@ final class NoteCell: UITableViewCell {
         return labelsView
     }()
 
-    private let noteIconImageView: UIImageView? = {
+    private var noteIconImageView: UIImageView? = {
         let noteIcon = UIImageView()
         noteIcon.frame.size = CGSize(width: 24, height: 24)
         noteIcon.layer.cornerRadius = noteIcon.frame.width / 2
@@ -76,25 +76,21 @@ final class NoteCell: UITableViewCell {
         print("deallocated NoteCell class")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        noteIconImageView?.image = nil
+        noteIconImageView?.image = UIImage()
+    }
+
     func configureCell(from viewModel: CellViewModel) {
         let note = viewModel.note
         noteHeaderLabel.text = note.header
         noteBodyLabel.text = note.text
         noteDateLabel.text = formatDate(date: note.date)
-
-        DispatchQueue.global().async {
-            NetworkManager.shared.fetchNoteIcon(
-                from: viewModel.note.userShareIcon
-            ) { [weak self] imageData in
-                /* Использование слабой ссылки более безопасно, в случае возможного перехода с данного экрана
-                до загрузки данных из сети  */
-                DispatchQueue.main.async {
-                    self?.noteIconImageView?.image = UIImage(data: imageData)
-                }
-            } failureCompletion: { error in
-                print(error)
-            }
+        guard let imageData = viewModel.noteIconImageData else {
+            return
         }
+        noteIconImageView?.image = UIImage(data: imageData)
 
         self.isEdited = CellViewModel.isEdited
         self.isChosen = viewModel.isChosen

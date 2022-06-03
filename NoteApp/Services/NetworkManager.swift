@@ -54,7 +54,7 @@ class NetworkManager {
         }.resume()
     }
 
-    func fetchNoteIcon(
+    func fetchNoteIconImageData(
         from url: String?,
         successCompletion: @escaping ((Data) -> Void),
         failureCompletion: @escaping ((NetworkError) -> Void)
@@ -69,4 +69,19 @@ class NetworkManager {
         }
         successCompletion(imageData)
     }
+//    func fetchImage(from url: String?, completion: @escaping(Result<Data, NetworkError>) -> Void) {
+//        guard let url = URL(string: url ?? "") else {
+//            completion(.failure(.invalidURL))
+//            return
+//        }
+//        DispatchQueue.global().async {
+//            guard let imageData = try? Data(contentsOf: url) else {
+//                completion(.failure(.noData))
+//                return
+//            }
+//            DispatchQueue.main.async {
+//                completion(.success(imageData))
+//            }
+//        }
+//    }
 }

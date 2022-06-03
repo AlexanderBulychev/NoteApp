@@ -58,7 +58,7 @@ struct TableViewModel {
             header: $0.header,
             text: $0.text,
             date: $0.date,
-            userShareIcon: $0.userShareIcon
+            userShareIconURL: $0.userShareIconURL
         )
         }
         cellViewModels.append(contentsOf: newNotes.map { CellViewModel(note: $0) })
@@ -70,6 +70,7 @@ struct CellViewModel {
 //    var isShifted: Bool = false
     static var isEdited: Bool = false
     var isChosen: Bool = false
+    var noteIconImageData: Data?
 }
 
 final class Note: Codable {
@@ -80,14 +81,14 @@ final class Note: Codable {
         header == "" && text == ""
     }
     var date: Date
-    var userShareIcon: String?
+    var userShareIconURL: String?
 
-    required init(header: String, text: String, date: Date, userShareIcon: String?) {
+    required init(header: String, text: String, date: Date, userShareIconURL: String?) {
         self.header = header
         self.text = text
         self.date = date
         self.id = UUID().uuidString
-        self.userShareIcon = userShareIcon
+        self.userShareIconURL = userShareIconURL
 
         print("Class Note was created")
     }
@@ -101,5 +102,5 @@ struct NetworkNote: Codable {
     let header: String
     let text: String
     let date: Date
-    var userShareIcon: String?
+    var userShareIconURL: String?
 }
