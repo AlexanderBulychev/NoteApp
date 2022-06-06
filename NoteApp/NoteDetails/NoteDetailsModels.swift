@@ -22,7 +22,6 @@ enum NoteDetails {
         struct Response {
             let noteHeader: String?
             let noteText: String?
-            // дата точно должна быть либо получим - либо поставим текущую
             let noteDate: Date
         }
 
@@ -38,10 +37,10 @@ enum NoteDetails {
             let isEditingNote: Bool
             let noteHeader: String?
             let noteText: String?
-            let noteDate: Date?
+            let noteDate: Date
         }
         struct ViewModel {
-            let isEditingNote: Bool
+//            let isEditingNote: Bool
             let noteHeader: String
             let noteText: String
             let noteDate: String
