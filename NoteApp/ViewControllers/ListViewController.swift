@@ -21,9 +21,24 @@ class ListViewController: UIViewController {
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
     private var createNewDeleteButton = UIButton()
     private var rightBarButtonItem = UIBarButtonItem()
+    private let activityIndicator = UIActivityIndicatorView()
 
     private var createNewNoteButtonBottomConstraint: NSLayoutConstraint!
     private var createNewNoteButtonTrailingConstraint: NSLayoutConstraint!
+
+    override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
+        super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
+        print("class ListVC has been created")
+    }
+
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+
+    deinit {
+        print("class ListVC has been deallocated")
+        // ListVC is RootVC, so class ListVC will be deallocated when the application is closed
+    }
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -35,6 +50,8 @@ class ListViewController: UIViewController {
 
         notes = StorageManager.shared.getNotes()
         tableViewModel = TableViewModel(notes: notes)
+
+        fetchNetworkNotes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -59,6 +76,7 @@ class ListViewController: UIViewController {
         configureTableView()
         configureCreateNewDeleteButton()
         configureRightBarButtonItem()
+        configureActivityIndicator()
     }
 
 // MARK: - Configure UI Methods
@@ -104,6 +122,17 @@ class ListViewController: UIViewController {
         navigationItem.rightBarButtonItem = rightBarButtonItem
         rightBarButtonItem.target = self
         rightBarButtonItem.action = #selector(rightBarButtonItemAction)
+    }
+
+    private func configureActivityIndicator() {
+        activityIndicator.hidesWhenStopped = true
+
+        view.addSubview(activityIndicator)
+        activityIndicator.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            activityIndicator.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            activityIndicator.centerYAnchor.constraint(equalTo: view.centerYAnchor)
+        ])
     }
 
 // MARK: - @objc methods
@@ -212,10 +241,11 @@ extension ListViewController {
             delay: 0,
             usingSpringWithDamping: 0.5,
             initialSpringVelocity: 3,
-            options: []) { [ weak self ] in
-                self?.createNewNoteButtonTrailingConstraint.constant -= 70
-                self?.createNewNoteButtonBottomConstraint.constant -= 110
-                self?.view.layoutIfNeeded()
+            options: []) {
+                // animations are not retained by self so there is no risk of strong retain cycle
+                self.createNewNoteButtonTrailingConstraint.constant -= 70
+                self.createNewNoteButtonBottomConstraint.constant -= 110
+                self.view.layoutIfNeeded()
         }
     }
 
@@ -224,8 +254,8 @@ extension ListViewController {
             withDuration: 1,
             delay: 0,
             options: []
-        ) { [ weak self ] in
-            self?.addKeyFrames()
+        ) {
+            self.addKeyFrames()
         } completion: { _ in
             let noteVC = NoteViewController()
             noteVC.delegate = self
@@ -236,15 +266,15 @@ extension ListViewController {
     private func addKeyFrames() {
         UIView.addKeyframe(
             withRelativeStartTime: 0,
-            relativeDuration: 0.5) { [ weak self ] in
-                self?.createNewNoteButtonBottomConstraint.constant -= 10
-                self?.view.layoutIfNeeded()
+            relativeDuration: 0.5) {
+                self.createNewNoteButtonBottomConstraint.constant -= 10
+                self.view.layoutIfNeeded()
         }
         UIView.addKeyframe(
             withRelativeStartTime: 0.25,
-            relativeDuration: 0.5) { [ weak self ] in
-                self?.createNewNoteButtonBottomConstraint.constant += 120
-                self?.view.layoutIfNeeded()
+            relativeDuration: 0.5) {
+                self.createNewNoteButtonBottomConstraint.constant += 120
+                self.view.layoutIfNeeded()
         }
     }
 
@@ -270,5 +300,46 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
             tableViewModel.addNote(note)
         }
         tableView.reloadData()
+    }
+}
+
+// MARK: - Fetch data from the Network
+extension ListViewController {
+    private func fetchNetworkNotes() {
+        activityIndicator.startAnimating()
+        NetworkManager.shared.fetchNotes { [weak self] networkNotes in
+            /* Использование слабой ссылки более безопасно, в случае возможного перехода с экрана
+             до загрузки данных из сети  */
+            let delay = DispatchTime.now() + .seconds(10)
+            DispatchQueue.main.asyncAfter(deadline: delay) {
+                self?.tableViewModel.appendNetworkNotes(networkNotes)
+                self?.fetchNotesImageData()
+            }
+        } failureCompletion: { error in
+            print(error)
+        }
+    }
+
+    private func fetchNotesImageData() {
+        let group = DispatchGroup()
+        for index in 0 ..< self.tableViewModel.cellsCount {
+            group.enter()
+            NetworkManager.shared.fetchNoteIconImageData(
+                from: self.tableViewModel.cellViewModels[index].note.userShareIcon
+            ) { [weak self] imageData in
+                self?.tableViewModel.cellViewModels[index].noteIconImageData = imageData
+                group.leave()
+            } failureCompletion: { error in
+                print(error)
+                group.leave()
+            }
+        }
+
+        group.notify(queue: .main) { [weak self] in
+            DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
+                self?.tableView.reloadData()
+            }
+        }
     }
 }

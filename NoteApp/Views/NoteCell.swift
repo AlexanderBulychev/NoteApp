@@ -39,6 +39,13 @@ final class NoteCell: UITableViewCell {
         return labelsView
     }()
 
+    private var noteIconImageView: UIImageView? = {
+        let noteIcon = UIImageView()
+        noteIcon.frame.size = CGSize(width: 24, height: 24)
+        noteIcon.layer.cornerRadius = noteIcon.frame.width / 2
+        return noteIcon
+    }()
+
     private var checkmarkImageView: UIImageView = {
         var checkmarkImageView = UIImageView()
         checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
@@ -57,17 +64,30 @@ final class NoteCell: UITableViewCell {
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
+
+        print("created NoteCell class")
     }
 
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
 
+    deinit {
+        print("deallocated NoteCell class")
+    }
+
+    override func prepareForReuse() {
+        super.prepareForReuse()
+        noteIconImageView?.image = nil
+        noteIconImageView?.image = UIImage()
+    }
+
     func configureCell(from viewModel: CellViewModel) {
         let note = viewModel.note
         noteHeaderLabel.text = note.header
-        noteBodyLabel.text = note.body
+        noteBodyLabel.text = note.text
         noteDateLabel.text = formatDate(date: note.date)
+
         self.isEdited = CellViewModel.isEdited
         self.isChosen = viewModel.isChosen
 
@@ -77,6 +97,10 @@ final class NoteCell: UITableViewCell {
             animateCellContentBack()
         }
         changeCheckmarkImage(isChosen)
+        guard let imageData = viewModel.noteIconImageData else {
+            return
+        }
+        noteIconImageView?.image = UIImage(data: imageData)
     }
 
     // MARK: - Configure UI Methods
@@ -87,6 +111,7 @@ final class NoteCell: UITableViewCell {
         configureNoteBodyLabel()
         configureNoteDateLabel()
         configureCheckMarkButton()
+        configureNoteIcon()
     }
 
     private func configureLabelsView() {
@@ -209,6 +234,18 @@ final class NoteCell: UITableViewCell {
         )
         NSLayoutConstraint.activate([topButtonConstraint,
                                      leadingCheckMarkButtonConstraint])
+    }
+
+    private func configureNoteIcon() {
+        guard let noteIconImageView = noteIconImageView else { return }
+        noteView.addSubview(noteIconImageView)
+        noteIconImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            noteIconImageView.trailingAnchor.constraint(equalTo: noteView.trailingAnchor, constant: -16),
+            noteIconImageView.bottomAnchor.constraint(equalTo: noteView.bottomAnchor, constant: -10),
+            noteIconImageView.widthAnchor.constraint(equalToConstant: 24),
+            noteIconImageView.heightAnchor.constraint(equalToConstant: 24)
+        ])
     }
 
     private func changeCheckmarkImage(_ isChosen: Bool) {
