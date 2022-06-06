@@ -47,7 +47,6 @@ class ListViewController: UIViewController {
         navigationItem.backButtonTitle = ""
 
         setupUI()
-        activityIndicator.startAnimating()
 
         notes = StorageManager.shared.getNotes()
         tableViewModel = TableViewModel(notes: notes)
@@ -196,14 +195,6 @@ class ListViewController: UIViewController {
             }
         }
     }
-
-    private func formatDate(date: Date?) -> String {
-        guard let date = date else { return "" }
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
-        return formatter.string(from: date)
-    }
 }
 
 // MARK: - UITableViewDataSource
@@ -315,38 +306,28 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
 // MARK: - Fetch data from the Network
 extension ListViewController {
     private func fetchNetworkNotes() {
-//        NetworkManager.shared.fetchNotes { [weak self] networkNotes in
-//            /* Использование слабой ссылки более безопасно, в случае возможного перехода с экрана
-//             до загрузки данных из сети  */
-//            let delay = DispatchTime.now() + .seconds(2)
-//            DispatchQueue.main.asyncAfter(deadline: delay) {
-//                self?.tableViewModel.appendNetworkNotes(networkNotes)
-//                self?.tableView.reloadData()
-//                self?.activityIndicator.stopAnimating()
-//            }
-//        } failureCompletion: { error in
-//            print(error)
-//        }
+        activityIndicator.startAnimating()
         NetworkManager.shared.fetchNotes { [weak self] networkNotes in
-            //            let delay = DispatchTime.now() + .seconds(2)
-            //            DispatchQueue.global().asyncAfter(deadline: delay) {
-            self?.tableViewModel.appendNetworkNotes(networkNotes)
-            //            }
+            /* Использование слабой ссылки более безопасно, в случае возможного перехода с экрана
+             до загрузки данных из сети  */
+            let delay = DispatchTime.now() + .seconds(10)
+            DispatchQueue.main.asyncAfter(deadline: delay) {
+                self?.tableViewModel.appendNetworkNotes(networkNotes)
+                self?.fetchNotesImageData()
+            }
         } failureCompletion: { error in
             print(error)
         }
-
-        fetchNotesImageData()
     }
 
     private func fetchNotesImageData() {
         let group = DispatchGroup()
-        for index in 0...self.tableViewModel.cellsCount - 1 {
+        for index in 0 ..< self.tableViewModel.cellsCount {
             group.enter()
             NetworkManager.shared.fetchNoteIconImageData(
-                from: self.tableViewModel.cellViewModels[index].note.userShareIconURL
-            ) { imageData in
-                self.tableViewModel.cellViewModels[index].noteIconImageData = imageData
+                from: self.tableViewModel.cellViewModels[index].note.userShareIcon
+            ) { [weak self] imageData in
+                self?.tableViewModel.cellViewModels[index].noteIconImageData = imageData
                 group.leave()
             } failureCompletion: { error in
                 print(error)
@@ -355,55 +336,10 @@ extension ListViewController {
         }
 
         group.notify(queue: .main) { [weak self] in
-            self?.activityIndicator.stopAnimating()
-            self?.tableView.reloadData()
+            DispatchQueue.main.async {
+                self?.activityIndicator.stopAnimating()
+                self?.tableView.reloadData()
+            }
         }
     }
-
-//        let queue = DispatchQueue(label: "privateGlobalQueue", attributes: .concurrent)
-//        let group = DispatchGroup()
-//        queue.async(group: group) {
-//            for index in 0...self.tableViewModel.cellsCount - 1 {
-//                NetworkManager.shared.fetchNoteIconImageData(
-//                    from: self.tableViewModel.cellViewModels[index].note.userShareIconURL
-//                ) { imageData in
-//                        self.tableViewModel.cellViewModels[index].noteIconImageData = imageData
-//                } failureCompletion: { error in
-//                        print(error)
-//                }
-//            }
-//        }
-//        group.notify(queue: .main) {
-//            self.activityIndicator.stopAnimating()
-//            self.tableView.reloadData()
-//        }
-
-//    func fetchIcons(_ model: CellViewModel) {
-//
-//        // 1 - выбираешь модели с ссылкой на картинки
-//        // 2 - сделать цикл а в нем запросы на скачивание картинок
-//        // 3 - сделать группу запросов
-//        // 4 - сохранять данные в модель
-//        // 4 - после получения уведомления о скачивании всех картинок обновить таблицу
-//
-//        let group = DispatchGroup()
-//
-//        for item in models {
-//            group.enter()
-//
-//            NetworkManager.shared.fetchNoteIcon(
-//                from: item.userShareIcon
-//            ) { imageData in
-//                group.leave()
-//            } failureCompletion: { error in
-//                group.leave()
-//            }
-//
-//        }
-//
-//        group.notify(queue: .main) { [weak self] in
-//            self?.tableView.reloadData()
-//            // обновляем таблицу и еще что-то
-//        }
-//    }
 }

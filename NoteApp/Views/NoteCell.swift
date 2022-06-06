@@ -87,10 +87,6 @@ final class NoteCell: UITableViewCell {
         noteHeaderLabel.text = note.header
         noteBodyLabel.text = note.text
         noteDateLabel.text = formatDate(date: note.date)
-        guard let imageData = viewModel.noteIconImageData else {
-            return
-        }
-        noteIconImageView?.image = UIImage(data: imageData)
 
         self.isEdited = CellViewModel.isEdited
         self.isChosen = viewModel.isChosen
@@ -101,6 +97,10 @@ final class NoteCell: UITableViewCell {
             animateCellContentBack()
         }
         changeCheckmarkImage(isChosen)
+        guard let imageData = viewModel.noteIconImageData else {
+            return
+        }
+        noteIconImageView?.image = UIImage(data: imageData)
     }
 
     // MARK: - Configure UI Methods
