@@ -12,7 +12,7 @@
 
 protocol NoteDetailsBusinessLogic {
     func provideNoteDetails(request: NoteDetails.ShowNoteDetails.Request)
-    func editCreateNote(_ isEditingNote: Bool)
+    func updateCreateNote(request: NoteDetails.CheckNoteIsEmpty.Request)
 }
 
 protocol NoteDetailsDataStore {
@@ -21,29 +21,38 @@ protocol NoteDetailsDataStore {
 }
 
 class NoteDetailsInteractor: NoteDetailsBusinessLogic, NoteDetailsDataStore {
-
     var presenter: NoteDetailsPresentationLogic?
     var worker: NoteDetailsWorker?
+
     var note: Note?
-    var isEditingNote: Bool = false
+    lazy var isEditingNote: Bool = (note != nil) ? true : false
 
-    private func getEditingNoteStatus() -> Bool {
-        return (note != nil) ? true : false
-    }
-
-    func editCreateNote(_ isEditingNote: Bool) {
-        <#code#>
-    }
     func provideNoteDetails(request: NoteDetails.ShowNoteDetails.Request) {
         note = request.note
-//        worker = NoteDetailsWorker()
-//        worker?.formatDate()
 
         let response = NoteDetails.ShowNoteDetails.Response(
             noteHeader: note?.header,
             noteText: note?.text,
-            noteDate: note?.date ?? .now
+            noteDate: note?.date
         )
         presenter?.presentNoteDetails(response: response)
+    }
+
+    func updateCreateNote(request: NoteDetails.CheckNoteIsEmpty.Request) {
+        if isEditingNote {
+            note?.header = request.noteHeader
+            note?.text = request.noteText
+            note?.date = request.noteDate
+        } else {
+            note = Note(
+                header: request.noteHeader,
+                text: request.noteText,
+                date: request.noteDate,
+                userShareIcon: nil
+            )
+        }
+        guard let note = note else { return }
+                let response = NoteDetails.CheckNoteIsEmpty.Response(isEmptyNote: note.isEmpty)
+                presenter?.showAlert(response: response)
     }
 }

@@ -12,6 +12,7 @@
 import Foundation
 protocol NoteDetailsPresentationLogic {
     func presentNoteDetails(response: NoteDetails.ShowNoteDetails.Response)
+    func showAlert(response: NoteDetails.CheckNoteIsEmpty.Response)
 }
 
 class NoteDetailsPresenter: NoteDetailsPresentationLogic {
@@ -38,5 +39,10 @@ class NoteDetailsPresenter: NoteDetailsPresentationLogic {
             noteDate: noteDate
         )
         viewController?.displayNoteDetails(viewModel: viewModel)
+    }
+
+    func showAlert(response: NoteDetails.CheckNoteIsEmpty.Response) {
+        let viewModel = NoteDetails.CheckNoteIsEmpty.ViewModel(isEmptyNote: response.isEmptyNote)
+        viewController?.showAlert(viewModel: viewModel)
     }
 }

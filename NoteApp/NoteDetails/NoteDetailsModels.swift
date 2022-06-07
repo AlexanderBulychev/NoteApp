@@ -22,7 +22,7 @@ enum NoteDetails {
         struct Response {
             let noteHeader: String?
             let noteText: String?
-            let noteDate: Date
+            let noteDate: Date?
         }
 
         struct ViewModel {
@@ -32,18 +32,19 @@ enum NoteDetails {
         }
     }
 
-    enum EditCreateNote {
-        struct Response {
-            let isEditingNote: Bool
-            let noteHeader: String?
-            let noteText: String?
-            let noteDate: Date
-        }
-        struct ViewModel {
-//            let isEditingNote: Bool
+    enum CheckNoteIsEmpty {
+        struct Request {
             let noteHeader: String
             let noteText: String
-            let noteDate: String
+            let noteDate: Date
+        }
+
+        struct Response {
+            let isEmptyNote: Bool
+        }
+
+        struct ViewModel {
+            let isEmptyNote: Bool
         }
     }
 }

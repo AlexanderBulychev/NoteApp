@@ -10,16 +10,16 @@ import UIKit
 final class NoteViewController: UIViewController {
     weak var delegate: NoteViewControllerDelegateProtocol?
     // используется слабая ссылка для передачи данных на родительский ListVC
-    var note: Note?
+//    var note: Note?
 
     private var bottomConstraint: NSLayoutConstraint!
-    private var dateLabel = UILabel()
-    private var noteHeaderTextField = UITextField()
-    private var noteBodyTextView = UITextView()
+//    private var dateLabel = UILabel()
+//    private var noteHeaderTextField = UITextField()
+//    private var noteBodyTextView = UITextView()
 
-    private var isEditingNote: Bool = false
+//    private var isEditingNote: Bool = false
 
-    private var readyBarButtonItem = UIBarButtonItem()
+//    private var readyBarButtonItem = UIBarButtonItem()
 
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -36,17 +36,19 @@ final class NoteViewController: UIViewController {
 
     override func viewDidLoad() {
         super.viewDidLoad()
-        view.backgroundColor = .white
+//        view.backgroundColor = .white
+//
+//        setupUI()
+//        noteBodyTextView.becomeFirstResponder()
+//        noteBodyTextView.delegate = self
 
-        setupUI()
-        noteBodyTextView.becomeFirstResponder()
-        noteBodyTextView.delegate = self
+        // свойство обрабатываем в ДатаСтор
+//        isEditingNote = (note != nil) ? true : false
 
-        isEditingNote = (note != nil) ? true : false
-
-        noteHeaderTextField.text = note?.header
-        noteBodyTextView.text = note?.text
-        dateLabel.text = formatDate(date: note?.date)
+        // передачу данных осуществили через ВИП цикл
+//        noteHeaderTextField.text = note?.header
+//        noteBodyTextView.text = note?.text
+//        dateLabel.text = formatDate(date: note?.date)
     }
 
     override func viewWillDisappear(_ animated: Bool) {
