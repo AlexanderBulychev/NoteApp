@@ -126,8 +126,8 @@
             filePath = "NoteApp/Models/Note.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "28"
-            endingLineNumber = "28"
+            startingLineNumber = "29"
+            endingLineNumber = "29"
             landmarkName = "getCurrentCellViewModel(_:)"
             landmarkType = "7">
          </BreakpointContent>
@@ -142,25 +142,9 @@
             filePath = "NoteApp/Services/NetworkManager.swift"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "32"
-            endingLineNumber = "32"
+            startingLineNumber = "47"
+            endingLineNumber = "47"
             landmarkName = "fetchNotes(successCompletion:failureCompletion:)"
-            landmarkType = "7">
-         </BreakpointContent>
-      </BreakpointProxy>
-      <BreakpointProxy
-         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
-         <BreakpointContent
-            uuid = "3F87B924-CBCC-4D0B-8E15-C72E62838DA3"
-            shouldBeEnabled = "Yes"
-            ignoreCount = "0"
-            continueAfterRunningActions = "No"
-            filePath = "NoteApp/ViewControllers/ListViewController.swift"
-            startingColumnNumber = "9223372036854775807"
-            endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "160"
-            endingLineNumber = "160"
-            landmarkName = "rightBarButtonItemAction()"
             landmarkType = "7">
          </BreakpointContent>
       </BreakpointProxy>

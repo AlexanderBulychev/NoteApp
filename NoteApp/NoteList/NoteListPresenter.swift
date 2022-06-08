@@ -11,15 +11,16 @@
 //
 
 protocol NoteListPresentationLogic {
-    func presentSomething(response: NoteList.Something.Response)
+    func presentNotes(response: NoteList.ShowNotes.Response)
 }
 
 class NoteListPresenter: NoteListPresentationLogic {
-    
     weak var viewController: NoteListDisplayLogic?
-    
-    func presentSomething(response: NoteList.Something.Response) {
-        let viewModel = NoteList.Something.ViewModel()
-        viewController?.displaySomething(viewModel: viewModel)
+
+    func presentNotes(response: NoteList.ShowNotes.Response) {
+        var cellViewModels: [CellViewModel] = []
+        cellViewModels = response.notes.map { CellViewModel(note: $0) }
+        let viewModel = NoteList.ShowNotes.ViewModel(cellViewModels: cellViewModels)
+        viewController?.displayNotes(viewModel: viewModel)
     }
 }

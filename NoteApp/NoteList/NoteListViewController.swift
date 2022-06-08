@@ -13,16 +13,17 @@
 import UIKit
 
 protocol NoteListDisplayLogic: AnyObject {
-    func displaySomething(viewModel: NoteList.Something.ViewModel)
+    func displayNotes(viewModel: NoteList.ShowNotes.ViewModel)
 }
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
     func addNote(_ note: Note, _ isEditing: Bool)
 }
 
-class NoteListViewController: UIViewController {
+final class NoteListViewController: UIViewController {
 // MARK: - Stored data properties
-    var notes: [Note] = []
+    var cellViewModels: [CellViewModel] = []
+
     private var tableViewModel: TableViewModel = TableViewModel(notes: [])
     private var selectedNotesId: [String] = []
 
@@ -67,7 +68,7 @@ class NoteListViewController: UIViewController {
 
         NoteListConfigurator.shared.configure(with: self)
 
-        doSomething()
+        interactor?.getSavedNotes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -201,9 +202,9 @@ class NoteListViewController: UIViewController {
                 self.createNewNoteButtonTrailingConstraint.constant -= 70
                 self.createNewNoteButtonBottomConstraint.constant -= 110
                 self.view.layoutIfNeeded()
-            }
+        }
     }
-    
+
     private func animatePushing() {
         UIView.animateKeyframes(
             withDuration: 1,
@@ -217,22 +218,22 @@ class NoteListViewController: UIViewController {
             self.navigationController?.pushViewController(noteVC, animated: true)
         }
     }
-    
+
     private func addKeyFrames() {
         UIView.addKeyframe(
             withRelativeStartTime: 0,
             relativeDuration: 0.5) {
                 self.createNewNoteButtonBottomConstraint.constant -= 10
                 self.view.layoutIfNeeded()
-            }
+        }
         UIView.addKeyframe(
             withRelativeStartTime: 0.25,
             relativeDuration: 0.5) {
                 self.createNewNoteButtonBottomConstraint.constant += 120
                 self.view.layoutIfNeeded()
-            }
+        }
     }
-    
+
     private func animateSelection(_ isEdit: Bool) {
         UIView.transition(
             with: createNewDeleteButton,
@@ -245,7 +246,7 @@ class NoteListViewController: UIViewController {
                     let noteButtonImage = UIImage(named: "button")
                     self.createNewDeleteButton.setImage(noteButtonImage, for: .normal)
                 }
-            }
+        }
     }
 
     // MARK: - Private methods
@@ -280,17 +281,12 @@ class NoteListViewController: UIViewController {
                 }
             }
         }
-
-    private func doSomething() {
-        let request = NoteList.Something.Request()
-        interactor?.doSomething(request: request)
-    }
 }
 
 // MARK: - UITableViewDataSource
 extension NoteListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        tableViewModel.cellsCount
+        cellViewModels.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -298,7 +294,8 @@ extension NoteListViewController: UITableViewDataSource {
             withIdentifier: noteCellName,
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
-        cell.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
+        let cellViewModel = cellViewModels[indexPath.row]
+        cell.configureCell(from: cellViewModel)
         cell.backgroundColor = viewBackgroundColor
         return cell
     }
@@ -374,7 +371,8 @@ extension NoteListViewController: NoteViewControllerDelegateProtocol {
 }
 
 extension NoteListViewController: NoteListDisplayLogic {
-    func displaySomething(viewModel: NoteList.Something.ViewModel) {
-
+    func displayNotes(viewModel: NoteList.ShowNotes.ViewModel) {
+        cellViewModels = viewModel.cellViewModels
+        tableView.reloadData()
     }
 }

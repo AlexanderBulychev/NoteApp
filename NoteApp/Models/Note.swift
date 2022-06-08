@@ -21,6 +21,7 @@ struct TableViewModel {
 
     init(notes: [Note]) {
         self.notes = notes
+// метод использован - можно удалять
         self.cellViewModels = notes.map { CellViewModel(note: $0) }
     }
 
@@ -66,9 +67,9 @@ struct TableViewModel {
 }
 
 struct CellViewModel {
-    var note: Note
-//    var isShifted: Bool = false
     static var isEdited: Bool = false
+
+    var note: Note
     var isChosen: Bool = false
     var noteIconImageData: Data?
 }

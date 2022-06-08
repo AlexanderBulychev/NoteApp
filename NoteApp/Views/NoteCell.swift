@@ -7,7 +7,12 @@
 
 import UIKit
 
+protocol NoteCellRepresentableProtocol: AnyObject {
+    func configureCell(from viewModel: CellViewModel)
+}
+
 final class NoteCell: UITableViewCell {
+// MARK: - UI Elements
     private let noteView: UIView = {
         let noteViewCell = UIView()
         noteViewCell.backgroundColor = .white
@@ -52,6 +57,7 @@ final class NoteCell: UITableViewCell {
         return checkmarkImageView
     }()
 
+    // MARK: - Supporting Properties
     private var leadingLabelsViewConstraint: NSLayoutConstraint!
     private var leadingCheckMarkButtonConstraint: NSLayoutConstraint!
 
@@ -74,33 +80,6 @@ final class NoteCell: UITableViewCell {
 
     deinit {
         print("deallocated NoteCell class")
-    }
-
-    override func prepareForReuse() {
-        super.prepareForReuse()
-        noteIconImageView?.image = nil
-        noteIconImageView?.image = UIImage()
-    }
-
-    func configureCell(from viewModel: CellViewModel) {
-        let note = viewModel.note
-        noteHeaderLabel.text = note.header
-        noteBodyLabel.text = note.text
-        noteDateLabel.text = formatDate(date: note.date)
-
-        self.isEdited = CellViewModel.isEdited
-        self.isChosen = viewModel.isChosen
-
-        if isEdited && !isShifted {
-            animateCellContent()
-        } else if !isEdited && isShifted {
-            animateCellContentBack()
-        }
-        changeCheckmarkImage(isChosen)
-        guard let imageData = viewModel.noteIconImageData else {
-            return
-        }
-        noteIconImageView?.image = UIImage(data: imageData)
     }
 
     // MARK: - Configure UI Methods
@@ -248,12 +227,20 @@ final class NoteCell: UITableViewCell {
         ])
     }
 
+    // MARK: - Private methods
     private func changeCheckmarkImage(_ isChosen: Bool) {
         if isChosen {
             checkmarkImageView.image = UIImage(named: "checkmarkFilled")
         } else {
             checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
         }
+    }
+
+    private func formatDate(date: Date) -> String {
+        let formatter = DateFormatter()
+        formatter.locale = Locale(identifier: "ru_RU")
+        formatter.dateFormat = "dd.MM.YYYY"
+        return formatter.string(from: date)
     }
 }
 
@@ -282,12 +269,26 @@ extension NoteCell {
     }
 }
 
-// MARK: - Preparing Date for label
-extension NoteCell {
-    private func formatDate(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.YYYY"
-        return formatter.string(from: date)
+// MARK: - NoteCell display logic
+extension NoteCell: NoteCellRepresentableProtocol {
+    func configureCell(from viewModel: CellViewModel) {
+        let note = viewModel.note
+        noteHeaderLabel.text = note.header
+        noteBodyLabel.text = note.text
+        noteDateLabel.text = formatDate(date: note.date)
+
+        self.isEdited = CellViewModel.isEdited
+        self.isChosen = viewModel.isChosen
+
+        if isEdited && !isShifted {
+            animateCellContent()
+        } else if !isEdited && isShifted {
+            animateCellContentBack()
+        }
+        changeCheckmarkImage(isChosen)
+        guard let imageData = viewModel.noteIconImageData else {
+            return
+        }
+        noteIconImageView?.image = UIImage(data: imageData)
     }
 }

@@ -9,21 +9,24 @@
 //  you can apply clean architecture to your iOS and Mac projects,
 //  see http://clean-swift.com
 //
+import Foundation
+
+// typealias NoteCellViewModel = NoteList.ShowNotes.ViewModel.NoteCellViewModel
 
 enum NoteList {
- 
     // MARK: Use cases
-    enum Something {
-        struct Request {
-            
+    enum ShowNotes {
+        enum Request {
+            // i dont know what is that???
+//            case getNotes
         }
-        
+
         struct Response {
-            
+            let notes: [Note]
         }
-        
+
         struct ViewModel {
-            
+            var cellViewModels: [CellViewModel]
         }
     }
 }
