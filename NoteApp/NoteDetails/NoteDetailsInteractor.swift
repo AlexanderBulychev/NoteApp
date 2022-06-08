@@ -13,6 +13,7 @@
 protocol NoteDetailsBusinessLogic {
     func provideNoteDetails(request: NoteDetails.ShowNoteDetails.Request)
     func updateCreateNote(request: NoteDetails.CheckNoteIsEmpty.Request)
+    func saveNoteBeforePassing(request: NoteDetails.PassNote.Request)
 }
 
 protocol NoteDetailsDataStore {
@@ -54,5 +55,24 @@ class NoteDetailsInteractor: NoteDetailsBusinessLogic, NoteDetailsDataStore {
         guard let note = note else { return }
                 let response = NoteDetails.CheckNoteIsEmpty.Response(isEmptyNote: note.isEmpty)
                 presenter?.showAlert(response: response)
+    }
+
+    func saveNoteBeforePassing(request: NoteDetails.PassNote.Request) {
+        if isEditingNote {
+            note?.header = request.noteHeader
+            note?.text = request.noteText
+            note?.date = request.noteDate
+        } else {
+            note = Note(
+                header: request.noteHeader,
+                text: request.noteText,
+                date: request.noteDate,
+                userShareIcon: nil
+            )
+        }
+        guard let note = note, !note.isEmpty else { return }
+        worker?.save(note: note)
+        let response = NoteDetails.PassNote.Response(note: note)
+        presenter?.passNote(response: response)
     }
 }

@@ -22,6 +22,13 @@
 		FC3DF111284DD6CB00394852 /* NoteDetailsModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF10B284DD6CB00394852 /* NoteDetailsModels.swift */; };
 		FC3DF112284DD6CB00394852 /* NoteDetailsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF10C284DD6CB00394852 /* NoteDetailsViewController.swift */; };
 		FC3DF113284DD6CB00394852 /* NoteDetailsInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF10D284DD6CB00394852 /* NoteDetailsInteractor.swift */; };
+		FC3DF11B284F8F9D00394852 /* NoteListPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF115284F8F9D00394852 /* NoteListPresenter.swift */; };
+		FC3DF11C284F8F9D00394852 /* NoteListWorker.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF116284F8F9D00394852 /* NoteListWorker.swift */; };
+		FC3DF11D284F8F9D00394852 /* NoteListRouter.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF117284F8F9D00394852 /* NoteListRouter.swift */; };
+		FC3DF11E284F8F9D00394852 /* NoteListModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF118284F8F9D00394852 /* NoteListModels.swift */; };
+		FC3DF11F284F8F9D00394852 /* NoteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF119284F8F9D00394852 /* NoteListViewController.swift */; };
+		FC3DF120284F8F9D00394852 /* NoteListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */; };
+		FC3DF122284F90A200394852 /* NoteListConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF121284F90A200394852 /* NoteListConfigurator.swift */; };
 		FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8674492834C0C40082F1F2 /* NetworkManager.swift */; };
 /* End PBXBuildFile section */
 
@@ -43,6 +50,13 @@
 		FC3DF10B284DD6CB00394852 /* NoteDetailsModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsModels.swift; sourceTree = "<group>"; };
 		FC3DF10C284DD6CB00394852 /* NoteDetailsViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsViewController.swift; sourceTree = "<group>"; };
 		FC3DF10D284DD6CB00394852 /* NoteDetailsInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsInteractor.swift; sourceTree = "<group>"; };
+		FC3DF115284F8F9D00394852 /* NoteListPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListPresenter.swift; sourceTree = "<group>"; };
+		FC3DF116284F8F9D00394852 /* NoteListWorker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListWorker.swift; sourceTree = "<group>"; };
+		FC3DF117284F8F9D00394852 /* NoteListRouter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListRouter.swift; sourceTree = "<group>"; };
+		FC3DF118284F8F9D00394852 /* NoteListModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListModels.swift; sourceTree = "<group>"; };
+		FC3DF119284F8F9D00394852 /* NoteListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListViewController.swift; sourceTree = "<group>"; };
+		FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListInteractor.swift; sourceTree = "<group>"; };
+		FC3DF121284F90A200394852 /* NoteListConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListConfigurator.swift; sourceTree = "<group>"; };
 		FC8674492834C0C40082F1F2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -84,6 +98,7 @@
 		FC205D9727EDF3A800F4CE6F /* NoteApp */ = {
 			isa = PBXGroup;
 			children = (
+				FC3DF114284F8F7900394852 /* NoteList */,
 				FC3DF107284DD6A300394852 /* NoteDetails */,
 				FC205DAD27EDF58700F4CE6F /* Models */,
 				FC205DAC27EDF56400F4CE6F /* ViewControllers */,
@@ -159,6 +174,20 @@
 				FC3DF10B284DD6CB00394852 /* NoteDetailsModels.swift */,
 			);
 			path = NoteDetails;
+			sourceTree = "<group>";
+		};
+		FC3DF114284F8F7900394852 /* NoteList */ = {
+			isa = PBXGroup;
+			children = (
+				FC3DF119284F8F9D00394852 /* NoteListViewController.swift */,
+				FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */,
+				FC3DF115284F8F9D00394852 /* NoteListPresenter.swift */,
+				FC3DF116284F8F9D00394852 /* NoteListWorker.swift */,
+				FC3DF117284F8F9D00394852 /* NoteListRouter.swift */,
+				FC3DF118284F8F9D00394852 /* NoteListModels.swift */,
+				FC3DF121284F90A200394852 /* NoteListConfigurator.swift */,
+			);
+			path = NoteList;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -252,16 +281,23 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				FC3DF120284F8F9D00394852 /* NoteListInteractor.swift in Sources */,
+				FC3DF122284F90A200394852 /* NoteListConfigurator.swift in Sources */,
 				FC3DF112284DD6CB00394852 /* NoteDetailsViewController.swift in Sources */,
 				FC3DF113284DD6CB00394852 /* NoteDetailsInteractor.swift in Sources */,
+				FC3DF11B284F8F9D00394852 /* NoteListPresenter.swift in Sources */,
 				FC205D9D27EDF3A800F4CE6F /* NoteViewController.swift in Sources */,
 				FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */,
 				FC3DF110284DD6CB00394852 /* NoteDetailsRouter.swift in Sources */,
+				FC3DF11F284F8F9D00394852 /* NoteListViewController.swift in Sources */,
 				FC3DF10F284DD6CB00394852 /* NoteDetailsWorker.swift in Sources */,
 				FC0FBBBB280401CC007CE4BB /* ListViewController.swift in Sources */,
 				FC0FBBDF280EE714007CE4BB /* NoteCell.swift in Sources */,
 				FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */,
 				FC3DF10E284DD6CB00394852 /* NoteDetailsPresenter.swift in Sources */,
+				FC3DF11C284F8F9D00394852 /* NoteListWorker.swift in Sources */,
+				FC3DF11D284F8F9D00394852 /* NoteListRouter.swift in Sources */,
+				FC3DF11E284F8F9D00394852 /* NoteListModels.swift in Sources */,
 				FC205DB527F19E8B00F4CE6F /* StorageManager.swift in Sources */,
 				FC205D9B27EDF3A800F4CE6F /* SceneDelegate.swift in Sources */,
 				FC3DF111284DD6CB00394852 /* NoteDetailsModels.swift in Sources */,

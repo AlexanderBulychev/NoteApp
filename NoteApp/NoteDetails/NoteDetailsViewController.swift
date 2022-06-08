@@ -15,9 +15,11 @@ import UIKit
 protocol NoteDetailsDisplayLogic: AnyObject {
     func displayNoteDetails(viewModel: NoteDetails.ShowNoteDetails.ViewModel)
     func showAlert(viewModel: NoteDetails.CheckNoteIsEmpty.ViewModel)
+    func passNote(viewModel: NoteDetails.PassNote.ViewModel)
 }
 
 class NoteDetailsViewController: UIViewController {
+    weak var delegate: NoteViewControllerDelegateProtocol?
 // MARK: - UI Elements
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
@@ -48,7 +50,7 @@ class NoteDetailsViewController: UIViewController {
         print("class NoteVC has been deallocated")
     }
 
-    // MARK: View lifecycle
+    // MARK: - View lifecycle
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -59,7 +61,18 @@ class NoteDetailsViewController: UIViewController {
 
         passRequest()
     }
-    
+
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+
+        let request = NoteDetails.PassNote.Request(
+            noteHeader: noteHeaderTextField.text ?? "",
+            noteText: noteBodyTextView.text ?? "",
+            noteDate: .now
+            )
+        interactor?.saveNoteBeforePassing(request: request)
+    }
+
     // MARK: Routing
     override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
         if let scene = segue.identifier {
@@ -69,12 +82,12 @@ class NoteDetailsViewController: UIViewController {
             }
         }
     }
-        
+
     private func passRequest() {
         let request = NoteDetails.ShowNoteDetails.Request(note: note)
         interactor?.provideNoteDetails(request: request)
     }
-    
+
     // MARK: Setup
     private func setup() {
         let viewController = self
@@ -97,6 +110,7 @@ class NoteDetailsViewController: UIViewController {
         registerForKeyboardNotifications()
     }
 
+    // MARK: - Setup UI Methods
     private func setupDateLabel() {
         dateLabel.font = .systemFont(ofSize: 14)
         dateLabel.textAlignment = .center
@@ -197,7 +211,7 @@ class NoteDetailsViewController: UIViewController {
     }
 }
 
-// MARK: - Private methods
+// MARK: - Private supporting methods
 extension NoteDetailsViewController {
     private func showAlert() {
         let alert = UIAlertController(
@@ -266,6 +280,7 @@ extension NoteDetailsViewController {
     }
 }
 
+// MARK: - NoteDetails display logic
 extension NoteDetailsViewController: NoteDetailsDisplayLogic {
     func displayNoteDetails(viewModel: NoteDetails.ShowNoteDetails.ViewModel) {
         noteHeaderTextField.text = viewModel.noteHeader
@@ -277,5 +292,9 @@ extension NoteDetailsViewController: NoteDetailsDisplayLogic {
         if viewModel.isEmptyNote {
             showAlert()
         }
+    }
+
+    func passNote(viewModel: NoteDetails.PassNote.ViewModel) {
+        _ = viewModel.note
     }
 }

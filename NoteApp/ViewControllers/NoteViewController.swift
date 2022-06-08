@@ -4,7 +4,7 @@
 //
 //  Created by asbul on 25.03.2022.
 //
-
+/*
 import UIKit
 
 final class NoteViewController: UIViewController {
@@ -265,3 +265,4 @@ extension NoteViewController {
         }
     }
 }
+*/

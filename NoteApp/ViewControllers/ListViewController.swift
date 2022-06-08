@@ -225,7 +225,7 @@ extension ListViewController: UITableViewDelegate {
             tableView.reloadData()
         } else {
             let noteCell = tableViewModel.getCurrentCellViewModel(indexPath)
-            let noteVC = NoteViewController()
+            let noteVC = NoteDetailsViewController()
             noteVC.note = noteCell.note
             noteVC.delegate = self
             navigationController?.pushViewController(noteVC, animated: true)
@@ -257,7 +257,7 @@ extension ListViewController {
         ) {
             self.addKeyFrames()
         } completion: { _ in
-            let noteVC = NoteViewController()
+            let noteVC = NoteDetailsViewController()
             noteVC.delegate = self
             self.navigationController?.pushViewController(noteVC, animated: true)
         }

@@ -47,4 +47,20 @@ enum NoteDetails {
             let isEmptyNote: Bool
         }
     }
+
+    enum PassNote {
+        struct Request {
+            let noteHeader: String
+            let noteText: String
+            let noteDate: Date
+        }
+
+        struct Response {
+            let note: Note
+        }
+
+        struct ViewModel {
+            let note: Note
+        }
+    }
 }
