@@ -12,7 +12,7 @@ protocol NoteViewControllerDelegateProtocol: AnyObject {
 }
 
 class ListViewController: UIViewController {
-    var tableView = UITableView()
+    private var tableView = UITableView()
     var notes: [Note] = []
     private var tableViewModel: TableViewModel = TableViewModel(notes: [])
     private var selectedNotesId: [String] = []
