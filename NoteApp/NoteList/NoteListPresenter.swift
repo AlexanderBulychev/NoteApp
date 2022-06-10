@@ -12,15 +12,34 @@
 
 protocol NoteListPresentationLogic {
     func presentNotes(response: NoteList.ShowNotes.Response)
+    func presentNetworkNotes(response: NoteList.ShowNetworkNotes.Response)
 }
 
 class NoteListPresenter: NoteListPresentationLogic {
+    var cellViewModels: [CellViewModel] = []
     weak var viewController: NoteListDisplayLogic?
 
     func presentNotes(response: NoteList.ShowNotes.Response) {
-        var cellViewModels: [CellViewModel] = []
         cellViewModels = response.notes.map { CellViewModel(note: $0) }
         let viewModel = NoteList.ShowNotes.ViewModel(cellViewModels: cellViewModels)
-        viewController?.displayNotes(viewModel: viewModel)
+        viewController?.displaySavedNotes(viewModel: viewModel)
+    }
+
+    func presentNetworkNotes(response: NoteList.ShowNetworkNotes.Response) {
+        var networkNotesCellViewModels: [CellViewModel] = []
+        let newNotes = response.networkNotes.map { Note(
+            header: $0.header,
+            text: $0.text,
+            date: $0.date,
+            userShareIcon: $0.userShareIcon
+            )
+        }
+        networkNotesCellViewModels.append(contentsOf: newNotes.map { CellViewModel(note: $0) })
+        for index in 0 ..< response.networkNoteImages.count {
+            networkNotesCellViewModels[index].noteIconImageData = response.networkNoteImages[index]
+        }
+        cellViewModels.append(contentsOf: networkNotesCellViewModels)
+        let viewModel = NoteList.ShowNetworkNotes.ViewModel(cellViewModels: cellViewModels)
+        viewController?.displayNetworkNotes(viewModel: viewModel)
     }
 }

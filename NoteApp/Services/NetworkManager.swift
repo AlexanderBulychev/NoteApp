@@ -14,7 +14,6 @@ enum NetworkError: Error {
 }
 
 protocol NetworkManagerProtocol {
-
     func fetchNotes(
         successCompletion: @escaping (([NetworkNote]) -> Void),
         failureCompletion: @escaping ((NetworkError) -> Void)
@@ -25,7 +24,6 @@ protocol NetworkManagerProtocol {
         successCompletion: @escaping ((Data) -> Void),
         failureCompletion: @escaping ((NetworkError) -> Void)
     )
-
 }
 
 final class NetworkManager: NetworkManagerProtocol {

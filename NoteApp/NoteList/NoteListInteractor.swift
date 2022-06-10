@@ -1,42 +1,50 @@
+import Foundation
 
 protocol NoteListBusinessLogic {
-    func getSavedNotes()
+    func fetchSavedNotes()
     func fetchNetworkNotes()
-//    func doSomething(request: NoteList.ShowNotes.Request)
+    func fetchNetworkNotesImageData()
 }
 
 protocol NoteListDataStore {
     var notes: [Note] { get }
+    var networkNotes: [NetworkNote] { get }
+    var networkNoteImages: [Data] { get }
 }
 
 final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
     var notes: [Note] = []
+    var networkNotes: [NetworkNote] = []
+    var networkNoteImages: [Data] = []
 
     var presenter: NoteListPresentationLogic?
     var worker: NoteListWorker?
 
-    func getSavedNotes() {
-        notes = StorageManager.shared.getNotes()
+    func fetchSavedNotes() {
+        notes = worker?.getNotes() ?? []
         let response = NoteList.ShowNotes.Response(notes: notes)
         presenter?.presentNotes(response: response)
     }
 
     func fetchNetworkNotes() {
+        worker?.fetchNetworkNotes(completion: { [weak self] networkNotes in
+            self?.networkNotes = networkNotes
+            self?.fetchNetworkNotesImageData()
+        })
     }
 
-//    func doSomething(request: NoteList.ShowNotes.Request) {
-//        switch request {
-//        case .getNotes:
-//            fetchNotes()
-//        }
-//    }
-//
-//    private func fetchNotes() {
-//        worker = NoteListWorker()
-//        worker?.doSomeWork()
-//
-//        // по комплишину передать данные в презентер
-//        let response = NoteList.ShowNotes.Response()
-//        presenter?.presentSomething(response: response)
-//    }
+    func fetchNetworkNotesImageData() {
+        var networkNoteUserShareIcons: [String?] = []
+        for index in 0 ..< networkNotes.count {
+            networkNoteUserShareIcons.append(networkNotes[index].userShareIcon)
+        }
+        worker?.fetchNoteIconImageData(from: networkNoteUserShareIcons, completion: { [weak self] networkNotesImages in
+            self?.networkNoteImages = networkNotesImages
+        })
+        let response = NoteList.ShowNetworkNotes.Response(
+            networkNotes: networkNotes,
+            networkNoteImages: networkNoteImages
+        )
+        presenter?.presentNetworkNotes(response: response)
+    }
 }

@@ -16,17 +16,29 @@ import Foundation
 enum NoteList {
     // MARK: Use cases
     enum ShowNotes {
-        enum Request {
-            // i dont know what is that???
-//            case getNotes
-        }
-
         struct Response {
             let notes: [Note]
         }
-
         struct ViewModel {
-            var cellViewModels: [CellViewModel]
+            let cellViewModels: [CellViewModel]
         }
     }
+
+    enum ShowNetworkNotes {
+        struct Response {
+            let networkNotes: [NetworkNote]
+            let networkNoteImages: [Data]
+        }
+        struct ViewModel {
+            let cellViewModels: [CellViewModel]
+        }
+    }
+//    enum ShowNoteIcons {
+//        struct Response {
+//            let noteImages: [Data]
+//        }
+//        struct ViewModel {
+//            var cellViewModels: [CellViewModel]
+//        }
+//    }
 }

@@ -13,7 +13,8 @@
 import UIKit
 
 protocol NoteListDisplayLogic: AnyObject {
-    func displayNotes(viewModel: NoteList.ShowNotes.ViewModel)
+    func displaySavedNotes(viewModel: NoteList.ShowNotes.ViewModel)
+    func displayNetworkNotes(viewModel: NoteList.ShowNetworkNotes.ViewModel)
 }
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
@@ -68,7 +69,8 @@ final class NoteListViewController: UIViewController {
 
         NoteListConfigurator.shared.configure(with: self)
 
-        interactor?.getSavedNotes()
+        fetchSavedNotes()
+        fetchNetworkNotes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
@@ -87,6 +89,15 @@ final class NoteListViewController: UIViewController {
         if createNewNoteButtonBottomConstraint.constant == 50 {
             createNewNoteButtonBottomConstraint.constant -= 110
         }
+    }
+
+    private func fetchSavedNotes() {
+        interactor?.fetchSavedNotes()
+    }
+
+    private func fetchNetworkNotes() {
+        activityIndicator.startAnimating()
+        interactor?.fetchNetworkNotes()
     }
 
     // MARK: - Routing
@@ -320,47 +331,6 @@ extension NoteListViewController: UITableViewDelegate {
     }
 }
 
-// MARK: - Fetch data from the Network
-extension NoteListViewController {
-    private func fetchNetworkNotes() {
-        activityIndicator.startAnimating()
-        NetworkManager.shared.fetchNotes { [weak self] networkNotes in
-            /* Использование слабой ссылки более безопасно, в случае возможного перехода с экрана
-             до загрузки данных из сети  */
-            let delay = DispatchTime.now() + .seconds(10)
-            DispatchQueue.main.asyncAfter(deadline: delay) {
-                self?.tableViewModel.appendNetworkNotes(networkNotes)
-                self?.fetchNotesImageData()
-            }
-        } failureCompletion: { error in
-            print(error)
-        }
-    }
-
-    private func fetchNotesImageData() {
-        let group = DispatchGroup()
-        for index in 0 ..< self.tableViewModel.cellsCount {
-            group.enter()
-            NetworkManager.shared.fetchNoteIconImageData(
-                from: self.tableViewModel.cellViewModels[index].note.userShareIcon
-            ) { [weak self] imageData in
-                self?.tableViewModel.cellViewModels[index].noteIconImageData = imageData
-                group.leave()
-            } failureCompletion: { error in
-                print(error)
-                group.leave()
-            }
-        }
-
-        group.notify(queue: .main) { [weak self] in
-            DispatchQueue.main.async {
-                self?.activityIndicator.stopAnimating()
-                self?.tableView.reloadData()
-            }
-        }
-    }
-}
-
 extension NoteListViewController: NoteViewControllerDelegateProtocol {
     func addNote(_ note: Note, _ isEditing: Bool) {
         if !isEditing {
@@ -371,8 +341,17 @@ extension NoteListViewController: NoteViewControllerDelegateProtocol {
 }
 
 extension NoteListViewController: NoteListDisplayLogic {
-    func displayNotes(viewModel: NoteList.ShowNotes.ViewModel) {
+    func displaySavedNotes(viewModel: NoteList.ShowNotes.ViewModel) {
         cellViewModels = viewModel.cellViewModels
         tableView.reloadData()
+    }
+
+    func displayNetworkNotes(viewModel: NoteList.ShowNetworkNotes.ViewModel) {
+        let delay = DispatchTime.now() + .seconds(10)
+        DispatchQueue.main.asyncAfter(deadline: delay) { [weak self] in
+            self?.cellViewModels = viewModel.cellViewModels
+            self?.tableView.reloadData()
+            self?.activityIndicator.stopAnimating()
+        }
     }
 }

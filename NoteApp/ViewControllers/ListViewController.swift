@@ -306,7 +306,7 @@ extension ListViewController: NoteViewControllerDelegateProtocol {
 // MARK: - Fetch data from the Network
 extension ListViewController {
     private func fetchNetworkNotes() {
-        activityIndicator.startAnimating()
+//        activityIndicator.startAnimating()
         NetworkManager.shared.fetchNotes { [weak self] networkNotes in
             /* Использование слабой ссылки более безопасно, в случае возможного перехода с экрана
              до загрузки данных из сети  */
