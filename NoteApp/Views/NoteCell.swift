@@ -7,10 +7,6 @@
 
 import UIKit
 
-protocol NoteCellRepresentableProtocol: AnyObject {
-    func configureCell(from viewModel: CellViewModel)
-}
-
 final class NoteCell: UITableViewCell {
 // MARK: - UI Elements
     private let noteView: UIView = {
@@ -270,7 +266,7 @@ extension NoteCell {
 }
 
 // MARK: - NoteCell display logic
-extension NoteCell: NoteCellRepresentableProtocol {
+extension NoteCell {
     func configureCell(from viewModel: CellViewModel) {
         let note = viewModel.note
         noteHeaderLabel.text = note.header

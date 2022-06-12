@@ -13,7 +13,7 @@
 import UIKit
 
 @objc protocol NoteListRoutingLogic {
-    //func routeToSomewhere(segue: UIStoryboardSegue?)
+    func routeToNoteDetailsForEditingNote(at index: Int)
 }
 
 protocol NoteListDataPassing {
@@ -21,38 +21,26 @@ protocol NoteListDataPassing {
 }
 
 class NoteListRouter: NSObject, NoteListRoutingLogic, NoteListDataPassing {
-    
     weak var viewController: NoteListViewController?
     var dataStore: NoteListDataStore?
-    
+
     // MARK: Routing
-    /*
-    func routeToSomewhere(segue: UIStoryboardSegue?) {
-        if let segue = segue {
-            let destinationVC = segue.destination as! SomewhereViewController
-            var destinationDS = destinationVC.router!.dataStore!
-            passDataToSomewhere(source: dataStore!, destination: &destinationDS)
-        } else {
-            let storyboard = UIStoryboard(name: "Main", bundle: nil)
-            let destinationVC = storyboard.instantiateViewController(withIdentifier: "SomewhereViewController") as! SomewhereViewController
-            var destinationDS = destinationVC.router!.dataStore!
-            passDataToSomewhere(source: dataStore!, destination: &destinationDS)
-            navigateToSomewhere(source: viewController!, destination: destinationVC)
-        }
+    func routeToNoteDetailsForEditingNote(at index: Int) {
+        let noteDetailsVC = NoteDetailsViewController()
+        guard let dataStore = dataStore, var destinationDS = noteDetailsVC.router?.dataStore else { return }
+        passDataToNoteDetails(source: dataStore, destination: &destinationDS, at: index)
+        viewController?.navigationController?.pushViewController(
+            noteDetailsVC,
+            animated: true
+        )
     }
-    */
-    
-    // MARK: Navigation
-    /*
-    func navigateToSomewhere(source: NoteListViewController, destination: SomewhereViewController) {
-        source.show(destination, sender: nil)
-    }
-    */
-    
+
     // MARK: Passing data
-    /*
-    func passDataToSomewhere(source: NoteListDataStore, destination: inout SomewhereDataStore) {
-        destination.name = source.name
+    func passDataToNoteDetails(
+        source: NoteListDataStore,
+        destination: inout NoteDetailsDataStore,
+        at index: Int
+    ) {
+        destination.note = source.notes[index]
     }
-    */
 }

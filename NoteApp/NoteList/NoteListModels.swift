@@ -27,7 +27,7 @@ enum NoteList {
     enum ShowNetworkNotes {
         struct Response {
             let networkNotes: [NetworkNote]
-            let networkNoteImages: [Data]
+            let networkNoteImages: [Data?]
         }
         struct ViewModel {
             let cellViewModels: [CellViewModel]

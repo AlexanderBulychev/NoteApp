@@ -11,13 +11,13 @@
 //
 
 protocol NoteDetailsBusinessLogic {
-    func provideNoteDetails(request: NoteDetails.ShowNoteDetails.Request)
+    func provideNoteDetails()
     func updateCreateNote(request: NoteDetails.CheckNoteIsEmpty.Request)
     func saveNoteBeforePassing(request: NoteDetails.PassNote.Request)
 }
 
 protocol NoteDetailsDataStore {
-    var note: Note? { get }
+    var note: Note? { get set }
     var isEditingNote: Bool { get }
 }
 
@@ -28,9 +28,7 @@ class NoteDetailsInteractor: NoteDetailsBusinessLogic, NoteDetailsDataStore {
     var note: Note?
     lazy var isEditingNote: Bool = (note != nil) ? true : false
 
-    func provideNoteDetails(request: NoteDetails.ShowNoteDetails.Request) {
-        note = request.note
-
+    func provideNoteDetails() {
         let response = NoteDetails.ShowNoteDetails.Response(
             noteHeader: note?.header,
             noteText: note?.text,

@@ -32,8 +32,6 @@ class NoteDetailsViewController: UIViewController {
     var interactor: NoteDetailsBusinessLogic?
     var router: (NSObjectProtocol & NoteDetailsRoutingLogic & NoteDetailsDataPassing)?
 
-    var note: Note?
-
 // MARK: Object lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -84,8 +82,7 @@ class NoteDetailsViewController: UIViewController {
     }
 
     private func passRequest() {
-        let request = NoteDetails.ShowNoteDetails.Request(note: note)
-        interactor?.provideNoteDetails(request: request)
+        interactor?.provideNoteDetails()
     }
 
     // MARK: Setup

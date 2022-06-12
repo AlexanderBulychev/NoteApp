@@ -15,10 +15,6 @@ import Foundation
 enum NoteDetails {
     // MARK: Use cases
     enum ShowNoteDetails {
-        struct Request {
-            let note: Note?
-        }
-
         struct Response {
             let noteHeader: String?
             let noteText: String?

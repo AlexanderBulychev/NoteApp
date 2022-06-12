@@ -7,13 +7,13 @@
 
 import Foundation
 
-protocol StorageManagerProtocol {
-    func save(note: Note)
-    func getNotes() -> [Note]
-    func deleteNotes(at ids: [String])
-}
+// protocol StorageManagerProtocol {
+//    func save(note: Note)
+//    func getNotes() -> [Note]
+//    func deleteNotes(at ids: [String])
+// }
 
-final class StorageManager: StorageManagerProtocol {
+final class StorageManager {
     static let shared = StorageManager()
 
     private let userDefaults = UserDefaults.standard

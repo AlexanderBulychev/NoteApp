@@ -68,6 +68,7 @@ final class NoteListViewController: UIViewController {
         navigationItem.backButtonTitle = ""
 
         NoteListConfigurator.shared.configure(with: self)
+        setupUI()
 
         fetchSavedNotes()
         fetchNetworkNotes()
@@ -322,12 +323,14 @@ extension NoteListViewController: UITableViewDelegate {
             cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
             tableView.reloadData()
         } else {
-            let noteCell = tableViewModel.getCurrentCellViewModel(indexPath)
-            let noteVC = NoteDetailsViewController()
-            noteVC.note = noteCell.note
-            noteVC.delegate = self
-            navigationController?.pushViewController(noteVC, animated: true)
+//            let noteCell = tableViewModel.getCurrentCellViewModel(indexPath)
+//            let noteVC = NoteDetailsViewController()
+//            noteVC.note = noteCell.note
+//            noteVC.delegate = self
+//            navigationController?.pushViewController(noteVC, animated: true)
+            router?.routeToNoteDetailsForEditingNote(at: indexPath.row)
         }
+        tableView.deselectRow(at: indexPath, animated: true)
     }
 }
 
@@ -347,11 +350,11 @@ extension NoteListViewController: NoteListDisplayLogic {
     }
 
     func displayNetworkNotes(viewModel: NoteList.ShowNetworkNotes.ViewModel) {
-        let delay = DispatchTime.now() + .seconds(10)
-        DispatchQueue.main.asyncAfter(deadline: delay) { [weak self] in
-            self?.cellViewModels = viewModel.cellViewModels
-            self?.tableView.reloadData()
-            self?.activityIndicator.stopAnimating()
+        cellViewModels = viewModel.cellViewModels
+        let delay = DispatchTime.now() + .seconds(1)
+        DispatchQueue.main.asyncAfter(deadline: delay) {
+            self.tableView.reloadData()
+            self.activityIndicator.stopAnimating()
         }
     }
 }

@@ -3,31 +3,32 @@ import Foundation
 protocol NoteListWorkerProtocol {
     func getNotes() -> [Note]
     func fetchNetworkNotes(completion: @escaping ([NetworkNote]) -> Void)
-    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data]) -> Void)
+    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data?]) -> Void)
 }
 
 final class NoteListWorker: NoteListWorkerProtocol {
-    private var storageManager: StorageManagerProtocol?
-    private var networkManager: NetworkManagerProtocol?
+//    var storageManager: StorageManagerProtocol?
+//    var networkManager: NetworkManagerProtocol?
 
     func getNotes() -> [Note] {
-        storageManager?.getNotes() ?? []
+        StorageManager.shared.getNotes()
     }
 
     func fetchNetworkNotes(completion: @escaping ([NetworkNote]) -> Void) {
-        networkManager?.fetchNotes(successCompletion: { networkNotes in
+        NetworkManager.shared.fetchNotes { networkNotes in
             completion(networkNotes)
-        }, failureCompletion: { error in
+        } failureCompletion: { error in
             print(error)
-        })
+        }
     }
 
-    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data]) -> Void) {
-        var networkNotesImages: [Data] = []
+    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data?]) -> Void) {
+        var networkNotesImages: [Data?] = []
         let group = DispatchGroup()
         for index in 0 ..< urls.count {
             group.enter()
-            networkManager?.fetchNoteIconImageData(
+
+            NetworkManager.shared.fetchNoteIconImageData(
                 from: urls[index],
                 successCompletion: { imageData in
                     networkNotesImages.append(imageData)
@@ -35,6 +36,7 @@ final class NoteListWorker: NoteListWorkerProtocol {
                 },
                 failureCompletion: { error in
                     print(error)
+                    networkNotesImages.append(nil)
                     group.leave()
                 }
             )

@@ -9,24 +9,26 @@ protocol NoteListBusinessLogic {
 protocol NoteListDataStore {
     var notes: [Note] { get }
     var networkNotes: [NetworkNote] { get }
-    var networkNoteImages: [Data] { get }
+    var networkNoteImages: [Data?] { get }
 }
 
 final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
     var notes: [Note] = []
     var networkNotes: [NetworkNote] = []
-    var networkNoteImages: [Data] = []
+    var networkNoteImages: [Data?] = []
 
     var presenter: NoteListPresentationLogic?
-    var worker: NoteListWorker?
+    var worker: NoteListWorkerProtocol?
 
     func fetchSavedNotes() {
+        worker = NoteListWorker()
         notes = worker?.getNotes() ?? []
         let response = NoteList.ShowNotes.Response(notes: notes)
         presenter?.presentNotes(response: response)
     }
 
     func fetchNetworkNotes() {
+        worker = NoteListWorker()
         worker?.fetchNetworkNotes(completion: { [weak self] networkNotes in
             self?.networkNotes = networkNotes
             self?.fetchNetworkNotesImageData()
@@ -40,11 +42,15 @@ final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
         }
         worker?.fetchNoteIconImageData(from: networkNoteUserShareIcons, completion: { [weak self] networkNotesImages in
             self?.networkNoteImages = networkNotesImages
+            let response = NoteList.ShowNetworkNotes.Response(
+                networkNotes: self?.networkNotes ?? [],
+                networkNoteImages: self?.networkNoteImages ?? []
+            )
+            self?.presenter?.presentNetworkNotes(response: response)
         })
-        let response = NoteList.ShowNetworkNotes.Response(
-            networkNotes: networkNotes,
-            networkNoteImages: networkNoteImages
-        )
-        presenter?.presentNetworkNotes(response: response)
+    }
+
+    private func appendNetworkNotes(networNotes: [NetworkNote]) {
+
     }
 }

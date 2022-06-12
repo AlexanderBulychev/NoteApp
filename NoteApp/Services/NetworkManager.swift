@@ -13,20 +13,20 @@ enum NetworkError: Error {
     case decodingError
 }
 
-protocol NetworkManagerProtocol {
-    func fetchNotes(
-        successCompletion: @escaping (([NetworkNote]) -> Void),
-        failureCompletion: @escaping ((NetworkError) -> Void)
-    )
+// protocol NetworkManagerProtocol {
+//    func fetchNotes(
+//        successCompletion: @escaping (([NetworkNote]) -> Void),
+//        failureCompletion: @escaping ((NetworkError) -> Void)
+//    )
+//
+//    func fetchNoteIconImageData(
+//        from url: String?,
+//        successCompletion: @escaping ((Data) -> Void),
+//        failureCompletion: @escaping ((NetworkError) -> Void)
+//    )
+// }
 
-    func fetchNoteIconImageData(
-        from url: String?,
-        successCompletion: @escaping ((Data) -> Void),
-        failureCompletion: @escaping ((NetworkError) -> Void)
-    )
-}
-
-final class NetworkManager: NetworkManagerProtocol {
+final class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
 
@@ -68,7 +68,7 @@ final class NetworkManager: NetworkManagerProtocol {
 
     func fetchNoteIconImageData(
         from url: String?,
-        successCompletion: @escaping ((Data) -> Void),
+        successCompletion: @escaping ((Data?) -> Void),
         failureCompletion: @escaping ((NetworkError) -> Void)
     ) {
         guard let url = URL(string: url ?? "") else {
