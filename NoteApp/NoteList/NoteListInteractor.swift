@@ -31,6 +31,7 @@ final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
         worker = NoteListWorker()
         worker?.fetchNetworkNotes(completion: { [weak self] networkNotes in
             self?.networkNotes = networkNotes
+            self?.appendNetworkNotes(networkNotes)
             self?.fetchNetworkNotesImageData()
         })
     }
@@ -50,7 +51,14 @@ final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
         })
     }
 
-    private func appendNetworkNotes(networNotes: [NetworkNote]) {
-
+    private func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
+        let newNotes = networkNotes.map { Note(
+            header: $0.header,
+            text: $0.text,
+            date: $0.date,
+            userShareIcon: $0.userShareIcon
+        )
+        }
+        notes.append(contentsOf: newNotes)
     }
 }
