@@ -23,7 +23,7 @@ protocol NoteDetailsDataStore {
 
 class NoteDetailsInteractor: NoteDetailsBusinessLogic, NoteDetailsDataStore {
     var presenter: NoteDetailsPresentationLogic?
-    var worker: NoteDetailsWorker?
+    var worker: NoteDetailsWorkerProtocol?
 
     var note: Note?
     lazy var isEditingNote: Bool = (note != nil) ? true : false
@@ -70,7 +70,6 @@ class NoteDetailsInteractor: NoteDetailsBusinessLogic, NoteDetailsDataStore {
         }
         guard let note = note, !note.isEmpty else { return }
         worker?.save(note: note)
-        let response = NoteDetails.PassNote.Response(note: note)
-        presenter?.passNote(response: response)
+        presenter?.passNote()
     }
 }

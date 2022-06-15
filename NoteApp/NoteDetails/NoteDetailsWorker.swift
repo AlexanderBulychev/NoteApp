@@ -12,7 +12,14 @@
 
 import Foundation
 
-final class NoteDetailsWorker {
+protocol NoteDetailsWorkerProtocol {
+    func save(note: Note)
+//    func getNotes() -> [Note]
+//    func fetchNetworkNotes(completion: @escaping ([NetworkNote]) -> Void)
+//    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data?]) -> Void)
+}
+
+final class NoteDetailsWorker: NoteDetailsWorkerProtocol {
     func save(note: Note) {
         StorageManager.shared.save(note: note)
     }

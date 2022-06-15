@@ -1,18 +1,19 @@
 import Foundation
 
 protocol NoteListBusinessLogic {
+    func showNotes()
     func fetchSavedNotes()
     func fetchNetworkNotes()
     func fetchNetworkNotesImageData()
 }
 
 protocol NoteListDataStore {
-    var notes: [Note] { get }
+    var notes: [Note] { get set }
     var networkNotes: [NetworkNote] { get }
     var networkNoteImages: [Data?] { get }
 }
 
-final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
+final class NoteListInteractor: NoteListDataStore {
     var notes: [Note] = []
     var networkNotes: [NetworkNote] = []
     var networkNoteImages: [Data?] = []
@@ -20,15 +21,31 @@ final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
     var presenter: NoteListPresentationLogic?
     var worker: NoteListWorkerProtocol?
 
+    private func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
+        let newNotes = networkNotes.map { Note(
+            header: $0.header,
+            text: $0.text,
+            date: $0.date,
+            userShareIcon: $0.userShareIcon
+        )
+        }
+        notes.append(contentsOf: newNotes)
+    }
+}
+
+extension NoteListInteractor: NoteListBusinessLogic {
+    func showNotes() {
+//        let response = NoteList.ShowNotes.Response(notes: notes)
+        presenter?.presentNotes(response: .init(notes: notes))
+    }
+
     func fetchSavedNotes() {
-        worker = NoteListWorker()
         notes = worker?.getNotes() ?? []
-        let response = NoteList.ShowNotes.Response(notes: notes)
-        presenter?.presentNotes(response: response)
+        let response = NoteList.ShowSavedNotes.Response(notes: notes)
+        presenter?.presentSavedNotes(response: response)
     }
 
     func fetchNetworkNotes() {
-        worker = NoteListWorker()
         worker?.fetchNetworkNotes(completion: { [weak self] networkNotes in
             self?.networkNotes = networkNotes
             self?.appendNetworkNotes(networkNotes)
@@ -49,16 +66,5 @@ final class NoteListInteractor: NoteListBusinessLogic, NoteListDataStore {
             )
             self?.presenter?.presentNetworkNotes(response: response)
         })
-    }
-
-    private func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
-        let newNotes = networkNotes.map { Note(
-            header: $0.header,
-            text: $0.text,
-            date: $0.date,
-            userShareIcon: $0.userShareIcon
-        )
-        }
-        notes.append(contentsOf: newNotes)
     }
 }

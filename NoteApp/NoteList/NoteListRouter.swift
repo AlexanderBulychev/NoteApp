@@ -1,4 +1,3 @@
-//
 //  NoteListRouter.swift
 //  NoteApp
 //
@@ -9,11 +8,11 @@
 //  you can apply clean architecture to your iOS and Mac projects,
 //  see http://clean-swift.com
 //
-
 import UIKit
 
 @objc protocol NoteListRoutingLogic {
-    func routeToNoteDetailsForEditingNote(at index: Int)
+    func routeToNoteDetailsForEditing(at index: Int)
+    func routeToNoteDetailsForCreating()
 }
 
 protocol NoteListDataPassing {
@@ -25,10 +24,17 @@ class NoteListRouter: NSObject, NoteListRoutingLogic, NoteListDataPassing {
     var dataStore: NoteListDataStore?
 
     // MARK: Routing
-    func routeToNoteDetailsForEditingNote(at index: Int) {
+    func routeToNoteDetailsForEditing(at index: Int) {
         let noteDetailsVC = NoteDetailsViewController()
         guard let dataStore = dataStore, var destinationDS = noteDetailsVC.router?.dataStore else { return }
         passDataToNoteDetails(source: dataStore, destination: &destinationDS, at: index)
+        viewController?.navigationController?.pushViewController(
+            noteDetailsVC,
+            animated: true
+        )
+    }
+    func routeToNoteDetailsForCreating() {
+        let noteDetailsVC = NoteDetailsViewController()
         viewController?.navigationController?.pushViewController(
             noteDetailsVC,
             animated: true

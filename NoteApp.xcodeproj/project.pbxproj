@@ -102,7 +102,6 @@
 				FC3DF107284DD6A300394852 /* NoteDetails */,
 				FC205DAD27EDF58700F4CE6F /* Models */,
 				FC205DAC27EDF56400F4CE6F /* ViewControllers */,
-				FC0FBBE4280FE41B007CE4BB /* Views */,
 				FC205DB227EDFBF300F4CE6F /* Source */,
 				FC205DB327F19E6000F4CE6F /* Services */,
 				FC205DB027EDF69900F4CE6F /* StoryBoards */,
@@ -169,9 +168,9 @@
 				FC3DF10C284DD6CB00394852 /* NoteDetailsViewController.swift */,
 				FC3DF10D284DD6CB00394852 /* NoteDetailsInteractor.swift */,
 				FC3DF108284DD6CB00394852 /* NoteDetailsPresenter.swift */,
+				FC3DF10B284DD6CB00394852 /* NoteDetailsModels.swift */,
 				FC3DF109284DD6CB00394852 /* NoteDetailsWorker.swift */,
 				FC3DF10A284DD6CB00394852 /* NoteDetailsRouter.swift */,
-				FC3DF10B284DD6CB00394852 /* NoteDetailsModels.swift */,
 			);
 			path = NoteDetails;
 			sourceTree = "<group>";
@@ -180,11 +179,12 @@
 			isa = PBXGroup;
 			children = (
 				FC3DF119284F8F9D00394852 /* NoteListViewController.swift */,
+				FC0FBBE4280FE41B007CE4BB /* Views */,
 				FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */,
 				FC3DF115284F8F9D00394852 /* NoteListPresenter.swift */,
+				FC3DF118284F8F9D00394852 /* NoteListModels.swift */,
 				FC3DF116284F8F9D00394852 /* NoteListWorker.swift */,
 				FC3DF117284F8F9D00394852 /* NoteListRouter.swift */,
-				FC3DF118284F8F9D00394852 /* NoteListModels.swift */,
 				FC3DF121284F90A200394852 /* NoteListConfigurator.swift */,
 			);
 			path = NoteList;

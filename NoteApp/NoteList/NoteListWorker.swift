@@ -7,9 +7,6 @@ protocol NoteListWorkerProtocol {
 }
 
 final class NoteListWorker: NoteListWorkerProtocol {
-//    var storageManager: StorageManagerProtocol?
-//    var networkManager: NetworkManagerProtocol?
-
     func getNotes() -> [Note] {
         StorageManager.shared.getNotes()
     }

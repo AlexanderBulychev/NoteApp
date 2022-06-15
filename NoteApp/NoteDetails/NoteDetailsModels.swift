@@ -50,13 +50,5 @@ enum NoteDetails {
             let noteText: String
             let noteDate: Date
         }
-
-        struct Response {
-            let note: Note
-        }
-
-        struct ViewModel {
-            let note: Note
-        }
     }
 }

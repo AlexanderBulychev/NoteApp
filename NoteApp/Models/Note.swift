@@ -54,16 +54,16 @@ struct TableViewModel {
         }
     }
 
-    mutating func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
-        let newNotes = networkNotes.map { Note(
-            header: $0.header,
-            text: $0.text,
-            date: $0.date,
-            userShareIcon: $0.userShareIcon
-        )
-        }
-        cellViewModels.append(contentsOf: newNotes.map { CellViewModel(note: $0) })
-    }
+//    mutating func appendNetworkNotes(_ networkNotes: [NetworkNote]) {
+//        let newNotes = networkNotes.map { Note(
+//            header: $0.header,
+//            text: $0.text,
+//            date: $0.date,
+//            userShareIcon: $0.userShareIcon
+//        )
+//        }
+//        cellViewModels.append(contentsOf: newNotes.map { CellViewModel(note: $0) })
+//    }
 }
 
 struct CellViewModel {

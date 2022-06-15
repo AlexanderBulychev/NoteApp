@@ -78,6 +78,12 @@ final class NoteCell: UITableViewCell {
         print("deallocated NoteCell class")
     }
 
+    override func prepareForReuse() {
+        super.prepareForReuse()
+
+        noteIconImageView?.image = UIImage()
+    }
+
     // MARK: - Configure UI Methods
     private func setupUI() {
         configureNoteView()

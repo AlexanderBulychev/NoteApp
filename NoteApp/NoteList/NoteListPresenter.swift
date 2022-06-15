@@ -12,7 +12,9 @@
 
 protocol NoteListPresentationLogic {
     func presentNotes(response: NoteList.ShowNotes.Response)
+    func presentSavedNotes(response: NoteList.ShowSavedNotes.Response)
     func presentNetworkNotes(response: NoteList.ShowNetworkNotes.Response)
+    // func present(_ savedNotes: Note, networkNotes: NoteNetwork, images: [Images])
 }
 
 class NoteListPresenter: NoteListPresentationLogic {
@@ -21,7 +23,13 @@ class NoteListPresenter: NoteListPresentationLogic {
 
     func presentNotes(response: NoteList.ShowNotes.Response) {
         cellViewModels = response.notes.map { CellViewModel(note: $0) }
-        let viewModel = NoteList.ShowNotes.ViewModel(cellViewModels: cellViewModels)
+        let viewModel = NoteList.ShowNotes.ViewModel(cellviewModels: cellViewModels)
+        viewController?.displayNotes(viewModel: viewModel)
+    }
+
+    func presentSavedNotes(response: NoteList.ShowSavedNotes.Response) {
+        cellViewModels = response.notes.map { CellViewModel(note: $0) }
+        let viewModel = NoteList.ShowSavedNotes.ViewModel(cellViewModels: cellViewModels)
         viewController?.displaySavedNotes(viewModel: viewModel)
     }
 

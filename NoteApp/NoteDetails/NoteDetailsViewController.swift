@@ -15,7 +15,7 @@ import UIKit
 protocol NoteDetailsDisplayLogic: AnyObject {
     func displayNoteDetails(viewModel: NoteDetails.ShowNoteDetails.ViewModel)
     func showAlert(viewModel: NoteDetails.CheckNoteIsEmpty.ViewModel)
-    func passNote(viewModel: NoteDetails.PassNote.ViewModel)
+    func passNote()
 }
 
 class NoteDetailsViewController: UIViewController {
@@ -62,7 +62,15 @@ class NoteDetailsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
+        saveCurrentNote()
+        router?.routeToNoteList()
+    }
 
+    private func passRequest() {
+        interactor?.provideNoteDetails()
+    }
+
+    private func saveCurrentNote() {
         let request = NoteDetails.PassNote.Request(
             noteHeader: noteHeaderTextField.text ?? "",
             noteText: noteBodyTextView.text ?? "",
@@ -71,29 +79,17 @@ class NoteDetailsViewController: UIViewController {
         interactor?.saveNoteBeforePassing(request: request)
     }
 
-    // MARK: Routing
-    override func prepare(for segue: UIStoryboardSegue, sender: Any?) {
-        if let scene = segue.identifier {
-            let selector = NSSelectorFromString("routeTo\(scene)WithSegue:")
-            if let router = router, router.responds(to: selector) {
-                router.perform(selector, with: segue)
-            }
-        }
-    }
-
-    private func passRequest() {
-        interactor?.provideNoteDetails()
-    }
-
     // MARK: Setup
     private func setup() {
         let viewController = self
         let interactor = NoteDetailsInteractor()
         let presenter = NoteDetailsPresenter()
         let router = NoteDetailsRouter()
+        let worker = NoteDetailsWorker()
         viewController.interactor = interactor
         viewController.router = router
         interactor.presenter = presenter
+        interactor.worker = worker
         presenter.viewController = viewController
         router.viewController = viewController
         router.dataStore = interactor
@@ -197,6 +193,7 @@ class NoteDetailsViewController: UIViewController {
         readyBarButtonItem.action = #selector(readyBarButtonAction)
     }
 
+    // MARK: - @objc methods
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
         let request = NoteDetails.CheckNoteIsEmpty.Request(
@@ -291,7 +288,5 @@ extension NoteDetailsViewController: NoteDetailsDisplayLogic {
         }
     }
 
-    func passNote(viewModel: NoteDetails.PassNote.ViewModel) {
-        _ = viewModel.note
-    }
+    func passNote() {}
 }
