@@ -4,19 +4,12 @@ protocol NoteListDisplayLogic: AnyObject {
     func displayNotes(viewModel: NoteList.ViewModel.ViewModelData)
 }
 
-protocol NoteViewControllerDelegateProtocol: AnyObject {
-    func addNote(_ note: Note, _ isEditing: Bool)
-}
-
 final class NoteListViewController: UIViewController {
     var interactor: NoteListBusinessLogic?
     var router: (NSObjectProtocol & NoteListRoutingLogic & NoteListDataPassing)?
 
     // MARK: - Stored data properties
     private var noteListViewModel: NoteListViewModel = NoteListViewModel(cells: [])
-
-    private var tableViewModel: TableViewModel = TableViewModel(notes: [])
-    private var selectedNotesId: [String] = []
 
     // MARK: - UI Elements
 
@@ -58,7 +51,7 @@ final class NoteListViewController: UIViewController {
         navigationItem.backButtonTitle = ""
 
         setupUI()
-        getNotes()
+        getStoredNotes()
         getNetworkNotes()
     }
 
@@ -81,7 +74,7 @@ final class NoteListViewController: UIViewController {
         }
     }
 
-    private func getNotes() {
+    private func getStoredNotes() {
         interactor?.makeRequest(request: .getStoredNotes)
     }
 
@@ -159,24 +152,8 @@ final class NoteListViewController: UIViewController {
             if !noteListViewModel.isEditMode {
                 animatePushing()
             } else {
-                
+                interactor?.makeRequest(request: .deleteChosenNotes)
             }
-//            if !tableViewModel.isEditTable {
-//            } else {
-//                if !selectedNotesId.isEmpty {
-//                    tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter {
-//                        !selectedNotesId.contains($0.note.id)
-//                    }
-//                    StorageManager.shared.deleteNotes(at: selectedNotesId)
-//                    selectedNotesId.removeAll()
-//                    tableView.reloadData()
-//                } else {
-//                    showAlert()
-//                    return
-//                }
-//                tableViewModel.isEditTable.toggle()
-//                switchMode(for: tableViewModel.isEditTable)
-//            }
         }
 
         @objc func rightBarButtonItemAction() {
@@ -260,18 +237,6 @@ final class NoteListViewController: UIViewController {
                 rightBarButtonItem.title = "Выбрать"
             }
         }
-
-        private func updateSelectedNotesId(indexPath: IndexPath) {
-            let idForChosenNote = tableViewModel.getCurrentCellViewModel(indexPath).note.id
-            if tableViewModel.isChosen(indexPath) {
-                selectedNotesId.append(idForChosenNote)
-            } else {
-                let idx = selectedNotesId.firstIndex { $0 == idForChosenNote }
-                if let idx = idx {
-                    selectedNotesId.remove(at: idx)
-                }
-            }
-        }
 }
 
 // MARK: - UITableViewDataSource
@@ -300,25 +265,7 @@ extension NoteListViewController: UITableViewDelegate {
         } else {
             router?.routeToNoteDetailsForEditing(at: indexPath.row)
         }
-//        if tableViewModel.isEditTable {
-//            tableViewModel.toggleCellSelection(indexPath)
-//            updateSelectedNotesId(indexPath: indexPath)
-//            let cell = tableView.cellForRow(at: indexPath) as? NoteCell
-//            cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
-//            tableView.reloadData()
-//        } else {
-
-//        }
         tableView.deselectRow(at: indexPath, animated: true)
-    }
-}
-
-extension NoteListViewController: NoteViewControllerDelegateProtocol {
-    func addNote(_ note: Note, _ isEditing: Bool) {
-        if !isEditing {
-            tableViewModel.addNote(note)
-        }
-        tableView.reloadData()
     }
 }
 
@@ -339,6 +286,8 @@ extension NoteListViewController: NoteListDisplayLogic {
         case .displayCellSelection(idx: let idx):
             noteListViewModel.cells[idx].isChosen.toggle()
             tableView.reloadData()
+        case .displayNoSelection:
+            showAlert()
         }
     }
 }

@@ -25,27 +25,32 @@ extension NoteListInteractor: NoteListBusinessLogic {
         case .getStoredNotes:
             notes = worker?.getSavedNotes() ?? []
             presenter?.presentNotes(response: .presentStoredNotes(notes: notes, isEditMode: isEditMode))
-            
         case .getNetworkNotes:
             worker?.fetchNetworkNotes(completion: { [weak self] networkNotes in
                 guard let newNotes = self?.convert(networkNotes) else { return }
                 self?.notes.append(contentsOf: newNotes)
                 self?.presenter?.presentNotes(response: .presentNetworkNotes(newNotes: newNotes, isEditMode: self?.isEditMode ?? false))
             })
-
         case .getNotes:
             presenter?.presentNotes(response: .presentNotes(notes: notes, isEditMode: isEditMode))
-
         case .switchIsEditMode:
             isEditMode.toggle()
             if !isEditMode {
                 selectedNotesIds = []
             }
             presenter?.presentNotes(response: .presentNotes(notes: notes, isEditMode: isEditMode))
-
         case .switchNoteSelection(idx: let idx):
             selectedNotesIds = collectSelectedNotes(idx: idx)
             presenter?.presentNotes(response: .presentCellSelection(idx: idx))
+        case .deleteChosenNotes:
+            if !selectedNotesIds.isEmpty {
+                worker?.deleteChosenNotes(at: selectedNotesIds)
+                notes = notes.filter { !selectedNotesIds.contains($0.id) }
+                selectedNotesIds = []
+                presenter?.presentNotes(response: .presentNotes(notes: notes, isEditMode: isEditMode))
+            } else {
+                presenter?.presentNotes(response: .presentNoSelection)
+            }
         }
     }
 

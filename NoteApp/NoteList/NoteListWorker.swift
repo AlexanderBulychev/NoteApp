@@ -3,6 +3,7 @@ import Foundation
 protocol NoteListWorkerProtocol {
     func getSavedNotes() -> [Note]
     func fetchNetworkNotes(completion: @escaping ([NetworkNote]) -> Void)
+    func deleteChosenNotes(at ids: [String])
 }
 
 final class NoteListWorker: NoteListWorkerProtocol {
@@ -16,5 +17,9 @@ final class NoteListWorker: NoteListWorkerProtocol {
         } failureCompletion: { error in
             print(error)
         }
+    }
+
+    func deleteChosenNotes(at ids: [String]) {
+        StorageManager.shared.deleteNotes(at: ids)
     }
 }

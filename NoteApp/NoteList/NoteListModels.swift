@@ -1,4 +1,3 @@
-// swiftlint disable: all
 import Foundation
 
 enum NoteList {
@@ -9,6 +8,7 @@ enum NoteList {
             case getNetworkNotes
             case switchIsEditMode
             case switchNoteSelection(idx: Int)
+            case deleteChosenNotes
         }
     }
     struct Response {
@@ -16,8 +16,8 @@ enum NoteList {
             case presentStoredNotes(notes: [Note], isEditMode: Bool)
             case presentNetworkNotes(newNotes: [Note], isEditMode: Bool)
             case presentNotes(notes: [Note], isEditMode: Bool)
-//            case presentEditMode(notes: [Note], isEditMode: Bool)
             case presentCellSelection(idx: Int)
+            case presentNoSelection
         }
     }
     struct ViewModel {
@@ -26,6 +26,7 @@ enum NoteList {
             case displayNetworkNotes(noteListViewModel: NoteListViewModel)
             case displayNotes(noteListViewModel: NoteListViewModel)
             case displayCellSelection(idx: Int)
+            case displayNoSelection
         }
     }
 }
