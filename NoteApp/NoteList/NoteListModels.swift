@@ -1,70 +1,44 @@
 // swiftlint disable: all
 import Foundation
 
-// typealias NoteCellViewModel = NoteList.ShowNotes.ViewModel.NoteCellViewModel
-
 enum NoteList {
-    // Request
-    /* enum Request {
-        case savedNotes
-        case remoteNotes
+    struct Request {
+        enum RequestType {
+            case getNotes
+            case getStoredNotes
+            case getNetworkNotes
+            case switchIsEditMode
+            case switchNoteSelection(idx: Int)
+        }
     }
-
-    enum Response {
-        case note([Note])
+    struct Response {
+        enum ResponseType {
+            case presentStoredNotes(notes: [Note], isEditMode: Bool)
+            case presentNetworkNotes(newNotes: [Note], isEditMode: Bool)
+            case presentNotes(notes: [Note], isEditMode: Bool)
+//            case presentEditMode(notes: [Note], isEditMode: Bool)
+            case presentCellSelection(idx: Int)
+        }
     }
-
     struct ViewModel {
-
-    }*/
-
-    // MARK: Use cases
-
-    enum ShowNotes {
-        struct Response {
-            let notes: [Note]
-        }
-        struct ViewModel {
-            let cellviewModels: [CellViewModel]
+        enum ViewModelData {
+            case displayStoredNotes(noteListViewModel: NoteListViewModel)
+            case displayNetworkNotes(noteListViewModel: NoteListViewModel)
+            case displayNotes(noteListViewModel: NoteListViewModel)
+            case displayCellSelection(idx: Int)
         }
     }
+}
 
-    enum ShowSavedNotes {
-        struct Response {
-            let notes: [Note]
-        }
-        struct ViewModel {
-            let cellViewModels: [CellViewModel]
-        }
+struct NoteListViewModel {
+    struct Cell: NoteCellViewModelProtocol {
+        var header: String
+        var text: String
+        var date: String
+        var userShareIcon: String?
+        var isEdited: Bool
+        var isChosen: Bool
     }
-
-    enum ShowNetworkNotes {
-        struct Response {
-            let networkNotes: [NetworkNote]
-            let networkNoteImages: [Data?]
-        }
-        struct ViewModel {
-            let cellViewModels: [CellViewModel]
-        }
-    }
-
-    enum SwitchModeForEditing {
-        struct Response {
-            let isEnabled: Bool
-        }
-        struct ViewModel {
-            let rightBarButtonTitle: String
-        }
-    }
-
-    enum SelectNotesForDeleting {
-        struct Request {
-        }
-        struct Response {
-            let notes: [Note]
-        }
-        struct ViewModel {
-            let cellViewModels: [CellViewModel]
-        }
-    }
+    var cells: [Cell]
+    var isEditMode: Bool = false
 }

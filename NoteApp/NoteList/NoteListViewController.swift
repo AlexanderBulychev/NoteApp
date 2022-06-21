@@ -1,9 +1,7 @@
 import UIKit
 
 protocol NoteListDisplayLogic: AnyObject {
-    func displayNotes(viewModel: NoteList.ShowNotes.ViewModel)
-    func displaySavedNotes(viewModel: NoteList.ShowSavedNotes.ViewModel)
-    func displayNetworkNotes(viewModel: NoteList.ShowNetworkNotes.ViewModel)
+    func displayNotes(viewModel: NoteList.ViewModel.ViewModelData)
 }
 
 protocol NoteViewControllerDelegateProtocol: AnyObject {
@@ -11,9 +9,11 @@ protocol NoteViewControllerDelegateProtocol: AnyObject {
 }
 
 final class NoteListViewController: UIViewController {
-    // MARK: - Stored data properties
+    var interactor: NoteListBusinessLogic?
+    var router: (NSObjectProtocol & NoteListRoutingLogic & NoteListDataPassing)?
 
-    var cellViewModels: [CellViewModel] = []
+    // MARK: - Stored data properties
+    private var noteListViewModel: NoteListViewModel = NoteListViewModel(cells: [])
 
     private var tableViewModel: TableViewModel = TableViewModel(notes: [])
     private var selectedNotesId: [String] = []
@@ -33,9 +33,6 @@ final class NoteListViewController: UIViewController {
     private let viewBackgroundColor = UIColor(red: 0.898, green: 0.898, blue: 0.898, alpha: 1)
     private let noteCellName = "NoteCell"
 
-    var interactor: NoteListBusinessLogic?
-    var router: (NSObjectProtocol & NoteListRoutingLogic & NoteListDataPassing)?
-
     // MARK: Object lifecycle
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
@@ -51,7 +48,8 @@ final class NoteListViewController: UIViewController {
         // ListVC is RootVC, so class ListVC will be deallocated when the application is closed
     }
 
-    // MARK: View lifecycle
+    // MARK: - View lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
 
@@ -60,14 +58,13 @@ final class NoteListViewController: UIViewController {
         navigationItem.backButtonTitle = ""
 
         setupUI()
-//        NoteListConfigurator.shared.configure(with: self)
-
-        fetchSavedNotes()
-        fetchNetworkNotes()
+        getNotes()
+        getNetworkNotes()
     }
 
     override func viewWillAppear(_ animated: Bool) {
         super.viewWillAppear(animated)
+        interactor?.makeRequest(request: .getNotes)
         createNewNoteButtonTrailingConstraint.constant += 70
         createNewNoteButtonBottomConstraint.constant += 110
     }
@@ -75,7 +72,6 @@ final class NoteListViewController: UIViewController {
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         animateAppearance()
-        showNotes()
     }
 
     override func viewDidDisappear(_ animated: Bool) {
@@ -85,18 +81,15 @@ final class NoteListViewController: UIViewController {
         }
     }
 
-    private func showNotes() {
-        interactor?.showNotes()
+    private func getNotes() {
+        interactor?.makeRequest(request: .getStoredNotes)
     }
 
-    private func fetchSavedNotes() {
-        interactor?.fetchSavedNotes()
-    }
-
-    private func fetchNetworkNotes() {
+    private func getNetworkNotes() {
         activityIndicator.startAnimating()
-        interactor?.fetchNetworkNotes()
+        interactor?.makeRequest(request: .getNetworkNotes)
     }
+
 
 // MARK: - Configure UI Methods
     private func setupUI() {
@@ -163,31 +156,31 @@ final class NoteListViewController: UIViewController {
 
     // MARK: - @objc methods
         @objc func createNewDeleteButtonPressed() {
-            if !tableViewModel.isEditTable {
+            if !noteListViewModel.isEditMode {
                 animatePushing()
             } else {
-                if !selectedNotesId.isEmpty {
-                    tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter {
-                        !selectedNotesId.contains($0.note.id)
-                    }
-                    StorageManager.shared.deleteNotes(at: selectedNotesId)
-                    selectedNotesId.removeAll()
-                    tableView.reloadData()
-                } else {
-                    showAlert()
-                    return
-                }
-                tableViewModel.isEditTable.toggle()
-                switchMode(for: tableViewModel.isEditTable)
+                
             }
+//            if !tableViewModel.isEditTable {
+//            } else {
+//                if !selectedNotesId.isEmpty {
+//                    tableViewModel.cellViewModels = tableViewModel.cellViewModels.filter {
+//                        !selectedNotesId.contains($0.note.id)
+//                    }
+//                    StorageManager.shared.deleteNotes(at: selectedNotesId)
+//                    selectedNotesId.removeAll()
+//                    tableView.reloadData()
+//                } else {
+//                    showAlert()
+//                    return
+//                }
+//                tableViewModel.isEditTable.toggle()
+//                switchMode(for: tableViewModel.isEditTable)
+//            }
         }
 
         @objc func rightBarButtonItemAction() {
-//            interactor
-            tableViewModel.isEditTable.toggle()
-            tableViewModel.deselectCells()
-            tableView.reloadData()
-            switchMode(for: tableViewModel.isEditTable)
+            interactor?.makeRequest(request: .switchIsEditMode)
         }
 
     // MARK: - Animation Methods
@@ -284,7 +277,7 @@ final class NoteListViewController: UIViewController {
 // MARK: - UITableViewDataSource
 extension NoteListViewController: UITableViewDataSource {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        cellViewModels.count
+        noteListViewModel.cells.count
     }
 
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
@@ -292,8 +285,8 @@ extension NoteListViewController: UITableViewDataSource {
             withIdentifier: noteCellName,
             for: indexPath
         ) as? NoteCell else { return UITableViewCell() }
-        let cellViewModel = cellViewModels[indexPath.row]
-        cell.configureCell(from: cellViewModel)
+        let cellViewModel = noteListViewModel.cells[indexPath.row]
+        cell.configure(from: cellViewModel)
         cell.backgroundColor = viewBackgroundColor
         return cell
     }
@@ -302,15 +295,20 @@ extension NoteListViewController: UITableViewDataSource {
 // MARK: - UITableViewDelegate
 extension NoteListViewController: UITableViewDelegate {
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-        if tableViewModel.isEditTable {
-            tableViewModel.toggleCellSelection(indexPath)
-            updateSelectedNotesId(indexPath: indexPath)
-            let cell = tableView.cellForRow(at: indexPath) as? NoteCell
-            cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
-            tableView.reloadData()
+        if noteListViewModel.isEditMode {
+            interactor?.makeRequest(request: .switchNoteSelection(idx: indexPath.row))
         } else {
             router?.routeToNoteDetailsForEditing(at: indexPath.row)
         }
+//        if tableViewModel.isEditTable {
+//            tableViewModel.toggleCellSelection(indexPath)
+//            updateSelectedNotesId(indexPath: indexPath)
+//            let cell = tableView.cellForRow(at: indexPath) as? NoteCell
+//            cell?.configureCell(from: tableViewModel.getCurrentCellViewModel(indexPath))
+//            tableView.reloadData()
+//        } else {
+
+//        }
         tableView.deselectRow(at: indexPath, animated: true)
     }
 }
@@ -325,22 +323,22 @@ extension NoteListViewController: NoteViewControllerDelegateProtocol {
 }
 
 extension NoteListViewController: NoteListDisplayLogic {
-    func displayNotes(viewModel: NoteList.ShowNotes.ViewModel) {
-        cellViewModels = viewModel.cellviewModels
-        tableView.reloadData()
-    }
-
-    func displaySavedNotes(viewModel: NoteList.ShowSavedNotes.ViewModel) {
-        cellViewModels = viewModel.cellViewModels
-        tableView.reloadData()
-    }
-
-    func displayNetworkNotes(viewModel: NoteList.ShowNetworkNotes.ViewModel) {
-        cellViewModels = viewModel.cellViewModels
-        let delay = DispatchTime.now() + .seconds(1)
-        DispatchQueue.main.asyncAfter(deadline: delay) {
-            self.tableView.reloadData()
-            self.activityIndicator.stopAnimating()
+    func displayNotes(viewModel: NoteList.ViewModel.ViewModelData) {
+        switch viewModel {
+        case .displayStoredNotes(noteListViewModel: let listViewModel):
+            self.noteListViewModel = listViewModel
+            tableView.reloadData()
+        case .displayNetworkNotes(noteListViewModel: let noteListViewModel):
+            self.noteListViewModel.cells.append(contentsOf: noteListViewModel.cells)
+            tableView.reloadData()
+            activityIndicator.stopAnimating()
+        case .displayNotes(noteListViewModel: let noteListViewModel):
+            self.noteListViewModel = noteListViewModel
+            switchMode(for: noteListViewModel.isEditMode)
+            tableView.reloadData()
+        case .displayCellSelection(idx: let idx):
+            noteListViewModel.cells[idx].isChosen.toggle()
+            tableView.reloadData()
         }
     }
 }

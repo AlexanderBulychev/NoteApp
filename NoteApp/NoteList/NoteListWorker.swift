@@ -1,13 +1,12 @@
 import Foundation
 
 protocol NoteListWorkerProtocol {
-    func getNotes() -> [Note]
+    func getSavedNotes() -> [Note]
     func fetchNetworkNotes(completion: @escaping ([NetworkNote]) -> Void)
-    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data?]) -> Void)
 }
 
 final class NoteListWorker: NoteListWorkerProtocol {
-    func getNotes() -> [Note] {
+    func getSavedNotes() -> [Note] {
         StorageManager.shared.getNotes()
     }
 
@@ -16,30 +15,6 @@ final class NoteListWorker: NoteListWorkerProtocol {
             completion(networkNotes)
         } failureCompletion: { error in
             print(error)
-        }
-    }
-
-    func fetchNoteIconImageData(from urls: [String?], completion: @escaping ([Data?]) -> Void) {
-        var networkNotesImages: [Data?] = []
-        let group = DispatchGroup()
-        for index in 0 ..< urls.count {
-            group.enter()
-
-            NetworkManager.shared.fetchNoteIconImageData(
-                from: urls[index],
-                successCompletion: { imageData in
-                    networkNotesImages.append(imageData)
-                    group.leave()
-                },
-                failureCompletion: { error in
-                    print(error)
-                    networkNotesImages.append(nil)
-                    group.leave()
-                }
-            )
-        }
-        group.notify(queue: .global()) {
-            completion(networkNotesImages)
         }
     }
 }

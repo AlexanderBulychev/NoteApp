@@ -11,15 +11,46 @@
 //
 import Foundation
 protocol NoteDetailsPresentationLogic {
-    func presentNoteDetails(response: NoteDetails.ShowNoteDetails.Response)
-    func showAlert(response: NoteDetails.CheckNoteIsEmpty.Response)
-    func passNote()
+    func presentNoteDetails(response: NoteDetails.Response.ResponseType)
+//    func showAlert(response: NoteDetails.CheckNoteIsEmpty.Response)
+//    func passNote()
 }
 
 class NoteDetailsPresenter: NoteDetailsPresentationLogic {
-//    var worker: NoteDetailsWorker?
-
     weak var viewController: NoteDetailsDisplayLogic?
+
+    func presentNoteDetails(response: NoteDetails.Response.ResponseType) {
+        switch response {
+        case .presentNoteDetails(note: let note):
+            viewController?.displayNoteDetails(viewModel: .displayNoteDetails(
+                noteHeader: note?.header ?? "",
+                noteText: note?.text ?? "",
+                noteDate: formatDate(date: note?.date)))
+        case .checkNote(isEmpty: let isEmpty):
+            if isEmpty {
+                viewController?.displayNoteDetails(viewModel: .showAlert)
+            }
+        }
+    }
+//    func presentNoteDetails(response: NoteDetails.ShowNoteDetails.Response) {
+//        let noteDate = formatDate(date: response.noteDate)
+//
+//        let viewModel = NoteDetails.ShowNoteDetails.ViewModel(
+//            noteHeader: response.noteHeader ?? "",
+//            noteText: response.noteText ?? "",
+//            noteDate: noteDate
+//        )
+//        viewController?.displayNoteDetails(viewModel: viewModel)
+//    }
+//
+//    func showAlert(response: NoteDetails.CheckNoteIsEmpty.Response) {
+//        let viewModel = NoteDetails.CheckNoteIsEmpty.ViewModel(isEmptyNote: response.isEmptyNote)
+//        viewController?.showAlert(viewModel: viewModel)
+//    }
+//
+//    func passNote() {
+//        viewController?.passNote()
+//    }
 
     private func formatDate(date: Date?) -> String {
         guard let date = date else { return "" }
@@ -27,25 +58,5 @@ class NoteDetailsPresenter: NoteDetailsPresentationLogic {
         formatter.locale = Locale(identifier: "ru_RU")
         formatter.dateFormat = "dd.MM.YYYY EEEE HH:mm"
         return formatter.string(from: date)
-    }
-
-    func presentNoteDetails(response: NoteDetails.ShowNoteDetails.Response) {
-        let noteDate = formatDate(date: response.noteDate)
-
-        let viewModel = NoteDetails.ShowNoteDetails.ViewModel(
-            noteHeader: response.noteHeader ?? "",
-            noteText: response.noteText ?? "",
-            noteDate: noteDate
-        )
-        viewController?.displayNoteDetails(viewModel: viewModel)
-    }
-
-    func showAlert(response: NoteDetails.CheckNoteIsEmpty.Response) {
-        let viewModel = NoteDetails.CheckNoteIsEmpty.ViewModel(isEmptyNote: response.isEmptyNote)
-        viewController?.showAlert(viewModel: viewModel)
-    }
-
-    func passNote() {
-        viewController?.passNote()
     }
 }

@@ -13,19 +13,6 @@ enum NetworkError: Error {
     case decodingError
 }
 
-// protocol NetworkManagerProtocol {
-//    func fetchNotes(
-//        successCompletion: @escaping (([NetworkNote]) -> Void),
-//        failureCompletion: @escaping ((NetworkError) -> Void)
-//    )
-//
-//    func fetchNoteIconImageData(
-//        from url: String?,
-//        successCompletion: @escaping ((Data) -> Void),
-//        failureCompletion: @escaping ((NetworkError) -> Void)
-//    )
-// }
-
 final class NetworkManager {
     static let shared = NetworkManager()
     private init() {}
@@ -59,26 +46,13 @@ final class NetworkManager {
                 let decoder = JSONDecoder()
                 decoder.dateDecodingStrategy = .secondsSince1970
                 let networkNotes = try decoder.decode([NetworkNote].self, from: data)
-                successCompletion(networkNotes)
+                let delay = DispatchTime.now() + .seconds(1)
+                DispatchQueue.main.asyncAfter(deadline: delay) {
+                    successCompletion(networkNotes)
+                }
             } catch {
                 failureCompletion(.decodingError)
             }
         }.resume()
-    }
-
-    func fetchNoteIconImageData(
-        from url: String?,
-        successCompletion: @escaping ((Data?) -> Void),
-        failureCompletion: @escaping ((NetworkError) -> Void)
-    ) {
-        guard let url = URL(string: url ?? "") else {
-            failureCompletion(.invalidMissingURL)
-            return
-        }
-        guard let imageData = try? Data(contentsOf: url) else {
-            failureCompletion(.noData)
-            return
-        }
-        successCompletion(imageData)
     }
 }

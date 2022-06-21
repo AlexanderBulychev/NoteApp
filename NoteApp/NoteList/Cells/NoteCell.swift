@@ -7,6 +7,16 @@
 
 import UIKit
 
+protocol NoteCellViewModelProtocol {
+    var header: String { get }
+    var text: String { get }
+    var date: String { get }
+    var userShareIcon: String? { get }
+
+    var isEdited: Bool { get set }
+    var isChosen: Bool { get set }
+}
+
 final class NoteCell: UITableViewCell {
 // MARK: - UI Elements
     private let noteView: UIView = {
@@ -40,8 +50,8 @@ final class NoteCell: UITableViewCell {
         return labelsView
     }()
 
-    private var noteIconImageView: UIImageView? = {
-        let noteIcon = UIImageView()
+    private var noteIconImageView: NoteIconImageView? = {
+        let noteIcon = NoteIconImageView()
         noteIcon.frame.size = CGSize(width: 24, height: 24)
         noteIcon.layer.cornerRadius = noteIcon.frame.width / 2
         return noteIcon
@@ -57,12 +67,13 @@ final class NoteCell: UITableViewCell {
     private var leadingLabelsViewConstraint: NSLayoutConstraint!
     private var leadingCheckMarkButtonConstraint: NSLayoutConstraint!
 
-    private var isChosen: Bool = false
-    private var isEdited: Bool = false
+    var isEdited: Bool = false
+    var isChosen: Bool = false
     private var isShifted: Bool {
         leadingLabelsViewConstraint.constant > 16
     }
 
+    // MARK: - Object lifeCycle
     override init(style: UITableViewCell.CellStyle, reuseIdentifier: String?) {
         super.init(style: style, reuseIdentifier: reuseIdentifier)
         setupUI()
@@ -80,7 +91,7 @@ final class NoteCell: UITableViewCell {
 
     override func prepareForReuse() {
         super.prepareForReuse()
-
+        noteIconImageView?.image = nil
         noteIconImageView?.image = UIImage()
     }
 
@@ -237,13 +248,6 @@ final class NoteCell: UITableViewCell {
             checkmarkImageView.image = UIImage(named: "checkmarkEmpty")
         }
     }
-
-    private func formatDate(date: Date) -> String {
-        let formatter = DateFormatter()
-        formatter.locale = Locale(identifier: "ru_RU")
-        formatter.dateFormat = "dd.MM.YYYY"
-        return formatter.string(from: date)
-    }
 }
 
 // MARK: - Animation Methods
@@ -273,24 +277,40 @@ extension NoteCell {
 
 // MARK: - NoteCell display logic
 extension NoteCell {
-    func configureCell(from viewModel: CellViewModel) {
-        let note = viewModel.note
-        noteHeaderLabel.text = note.header
-        noteBodyLabel.text = note.text
-        noteDateLabel.text = formatDate(date: note.date)
-
-        self.isEdited = CellViewModel.isEdited
-        self.isChosen = viewModel.isChosen
-
+    func configure(from viewModel: NoteCellViewModelProtocol) {
+        noteHeaderLabel.text = viewModel.header
+        noteBodyLabel.text = viewModel.text
+        noteDateLabel.text = viewModel.date
+        noteIconImageView?.set(from: viewModel.userShareIcon)
+        isEdited = viewModel.isEdited
+        isChosen = viewModel.isChosen
+        
         if isEdited && !isShifted {
             animateCellContent()
         } else if !isEdited && isShifted {
             animateCellContentBack()
         }
         changeCheckmarkImage(isChosen)
-        guard let imageData = viewModel.noteIconImageData else {
-            return
-        }
-        noteIconImageView?.image = UIImage(data: imageData)
     }
+
+//    func configureCell(from viewModel: CellViewModel) {
+//        let note = viewModel.note
+//        noteHeaderLabel.text = note.header
+//        noteBodyLabel.text = note.text
+//        noteDateLabel.text = formatDate(date: note.date)
+//
+//        self.isEdited = CellViewModel.isEdited
+//        self.isChosen = viewModel.isChosen
+//
+//        if isEdited && !isShifted {
+//            animateCellContent()
+//        } else if !isEdited && isShifted {
+//            animateCellContentBack()
+//        }
+//        changeCheckmarkImage(isChosen)
+//        guard let imageData = viewModel.noteIconImageData else {
+//            return
+//        }
+//        noteIconImageView?.image = UIImage(data: imageData)
+//    }
 }

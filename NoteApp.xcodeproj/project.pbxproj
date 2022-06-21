@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		15744E76D8D2A9E2CAE33BDF /* Pods_NoteApp.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 293E6DC6D31C137AD37B537C /* Pods_NoteApp.framework */; };
 		FC0FBBBB280401CC007CE4BB /* ListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0FBBBA280401CC007CE4BB /* ListViewController.swift */; };
 		FC0FBBDF280EE714007CE4BB /* NoteCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC0FBBDE280EE714007CE4BB /* NoteCell.swift */; };
 		FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC205D9827EDF3A800F4CE6F /* AppDelegate.swift */; };
@@ -30,9 +31,13 @@
 		FC3DF120284F8F9D00394852 /* NoteListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */; };
 		FC3DF122284F90A200394852 /* NoteListConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF121284F90A200394852 /* NoteListConfigurator.swift */; };
 		FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8674492834C0C40082F1F2 /* NetworkManager.swift */; };
+		FC9D86EC285B3DB400145051 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9D86EB285B3DB400145051 /* ImageManager.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		293E6DC6D31C137AD37B537C /* Pods_NoteApp.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_NoteApp.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		8D417C9EBEA5738AA94BFE81 /* Pods-NoteApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteApp.debug.xcconfig"; path = "Target Support Files/Pods-NoteApp/Pods-NoteApp.debug.xcconfig"; sourceTree = "<group>"; };
+		E3576A78FCD02B1D8020897C /* Pods-NoteApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-NoteApp.release.xcconfig"; path = "Target Support Files/Pods-NoteApp/Pods-NoteApp.release.xcconfig"; sourceTree = "<group>"; };
 		FC0FBBBA280401CC007CE4BB /* ListViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ListViewController.swift; sourceTree = "<group>"; };
 		FC0FBBDE280EE714007CE4BB /* NoteCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteCell.swift; sourceTree = "<group>"; };
 		FC205D9527EDF3A800F4CE6F /* NoteApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = NoteApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -58,6 +63,7 @@
 		FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListInteractor.swift; sourceTree = "<group>"; };
 		FC3DF121284F90A200394852 /* NoteListConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListConfigurator.swift; sourceTree = "<group>"; };
 		FC8674492834C0C40082F1F2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
+		FC9D86EB285B3DB400145051 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -65,18 +71,36 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				15744E76D8D2A9E2CAE33BDF /* Pods_NoteApp.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		FC0FBBE4280FE41B007CE4BB /* Views */ = {
+		6A383D4278C6EF31387F9189 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				8D417C9EBEA5738AA94BFE81 /* Pods-NoteApp.debug.xcconfig */,
+				E3576A78FCD02B1D8020897C /* Pods-NoteApp.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
+		6F07B50C8E61434D96957135 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				293E6DC6D31C137AD37B537C /* Pods_NoteApp.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		FC0FBBE4280FE41B007CE4BB /* Cells */ = {
 			isa = PBXGroup;
 			children = (
 				FC0FBBDE280EE714007CE4BB /* NoteCell.swift */,
 			);
-			path = Views;
+			path = Cells;
 			sourceTree = "<group>";
 		};
 		FC205D8C27EDF3A800F4CE6F = {
@@ -84,6 +108,8 @@
 			children = (
 				FC205D9727EDF3A800F4CE6F /* NoteApp */,
 				FC205D9627EDF3A800F4CE6F /* Products */,
+				6A383D4278C6EF31387F9189 /* Pods */,
+				6F07B50C8E61434D96957135 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -98,12 +124,11 @@
 		FC205D9727EDF3A800F4CE6F /* NoteApp */ = {
 			isa = PBXGroup;
 			children = (
+				FC205DB327F19E6000F4CE6F /* Services */,
 				FC3DF114284F8F7900394852 /* NoteList */,
 				FC3DF107284DD6A300394852 /* NoteDetails */,
-				FC205DAD27EDF58700F4CE6F /* Models */,
 				FC205DAC27EDF56400F4CE6F /* ViewControllers */,
 				FC205DB227EDFBF300F4CE6F /* Source */,
-				FC205DB327F19E6000F4CE6F /* Services */,
 				FC205DB027EDF69900F4CE6F /* StoryBoards */,
 				FC205DB127EDFBC500F4CE6F /* SupportingFiles */,
 			);
@@ -156,8 +181,10 @@
 		FC205DB327F19E6000F4CE6F /* Services */ = {
 			isa = PBXGroup;
 			children = (
+				FC205DAD27EDF58700F4CE6F /* Models */,
 				FC205DB427F19E8B00F4CE6F /* StorageManager.swift */,
 				FC8674492834C0C40082F1F2 /* NetworkManager.swift */,
+				FC9D86EB285B3DB400145051 /* ImageManager.swift */,
 			);
 			path = Services;
 			sourceTree = "<group>";
@@ -178,8 +205,8 @@
 		FC3DF114284F8F7900394852 /* NoteList */ = {
 			isa = PBXGroup;
 			children = (
+				FC0FBBE4280FE41B007CE4BB /* Cells */,
 				FC3DF119284F8F9D00394852 /* NoteListViewController.swift */,
-				FC0FBBE4280FE41B007CE4BB /* Views */,
 				FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */,
 				FC3DF115284F8F9D00394852 /* NoteListPresenter.swift */,
 				FC3DF118284F8F9D00394852 /* NoteListModels.swift */,
@@ -197,10 +224,11 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = FC205DA927EDF3AB00F4CE6F /* Build configuration list for PBXNativeTarget "NoteApp" */;
 			buildPhases = (
-				FC205DB627F31DCD00F4CE6F /* ShellScript */,
+				9FA0CB04808BD003760F61F0 /* [CP] Check Pods Manifest.lock */,
 				FC205D9127EDF3A800F4CE6F /* Sources */,
 				FC205D9227EDF3A800F4CE6F /* Frameworks */,
 				FC205D9327EDF3A800F4CE6F /* Resources */,
+				994B939774EAED0F5F266794 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
@@ -257,22 +285,44 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		FC205DB627F31DCD00F4CE6F /* ShellScript */ = {
+		994B939774EAED0F5F266794 /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
-			buildActionMask = 12;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NoteApp/Pods-NoteApp-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-NoteApp/Pods-NoteApp-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-NoteApp/Pods-NoteApp-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		9FA0CB04808BD003760F61F0 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
 			files = (
 			);
 			inputFileListPaths = (
 			);
 			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
 			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputFileListPaths = (
 			);
 			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-NoteApp-checkManifestLockResult.txt",
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "export PATH=\"$PATH:~/portable_swiftlint\"\nif which swiftlint > /dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -290,6 +340,7 @@
 				FC205D9927EDF3A800F4CE6F /* AppDelegate.swift in Sources */,
 				FC3DF110284DD6CB00394852 /* NoteDetailsRouter.swift in Sources */,
 				FC3DF11F284F8F9D00394852 /* NoteListViewController.swift in Sources */,
+				FC9D86EC285B3DB400145051 /* ImageManager.swift in Sources */,
 				FC3DF10F284DD6CB00394852 /* NoteDetailsWorker.swift in Sources */,
 				FC0FBBBB280401CC007CE4BB /* ListViewController.swift in Sources */,
 				FC0FBBDF280EE714007CE4BB /* NoteCell.swift in Sources */,
@@ -437,6 +488,7 @@
 		};
 		FC205DAA27EDF3AB00F4CE6F /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 8D417C9EBEA5738AA94BFE81 /* Pods-NoteApp.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -464,6 +516,7 @@
 		};
 		FC205DAB27EDF3AB00F4CE6F /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = E3576A78FCD02B1D8020897C /* Pods-NoteApp.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;

@@ -13,14 +13,16 @@
 import UIKit
 
 protocol NoteDetailsDisplayLogic: AnyObject {
-    func displayNoteDetails(viewModel: NoteDetails.ShowNoteDetails.ViewModel)
-    func showAlert(viewModel: NoteDetails.CheckNoteIsEmpty.ViewModel)
-    func passNote()
+    func displayNoteDetails(viewModel: NoteDetails.ViewModel.ViewModelData)
+//    func displayNoteDetails(viewModel: NoteDetails.ShowNoteDetails.ViewModel)
+//    func showAlert(viewModel: NoteDetails.CheckNoteIsEmpty.ViewModel)
+//    func passNote()
 }
 
 class NoteDetailsViewController: UIViewController {
-    weak var delegate: NoteViewControllerDelegateProtocol?
-// MARK: - UI Elements
+
+    // MARK: - UI Elements
+
     private var noteHeaderTextField = UITextField()
     private var noteBodyTextView = UITextView()
     private var dateLabel = UILabel()
@@ -32,7 +34,8 @@ class NoteDetailsViewController: UIViewController {
     var interactor: NoteDetailsBusinessLogic?
     var router: (NSObjectProtocol & NoteDetailsRoutingLogic & NoteDetailsDataPassing)?
 
-// MARK: Object lifecycle
+    // MARK: - Object lifecycle
+
     override init(nibName nibNameOrNil: String?, bundle nibBundleOrNil: Bundle?) {
         super.init(nibName: nibNameOrNil, bundle: nibBundleOrNil)
         print("class NoteVC has been created")
@@ -49,6 +52,7 @@ class NoteDetailsViewController: UIViewController {
     }
 
     // MARK: - View lifecycle
+
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .white
@@ -62,24 +66,29 @@ class NoteDetailsViewController: UIViewController {
 
     override func viewWillDisappear(_ animated: Bool) {
         super.viewWillDisappear(animated)
-        saveCurrentNote()
-        router?.routeToNoteList()
-    }
-
-    private func passRequest() {
-        interactor?.provideNoteDetails()
-    }
-
-    private func saveCurrentNote() {
-        let request = NoteDetails.PassNote.Request(
+        interactor?.provideNoteDetails(request: .saveNoteForPassing(
             noteHeader: noteHeaderTextField.text ?? "",
             noteText: noteBodyTextView.text ?? "",
             noteDate: .now
-            )
-        interactor?.saveNoteBeforePassing(request: request)
+        ))
+        router?.routeToNoteList()
     }
 
-    // MARK: Setup
+    // MARK: - Private functions
+    private func passRequest() {
+        interactor?.provideNoteDetails(request: .provideNoteDetails)
+    }
+
+    private func setupUI() {
+        setupDateLabel()
+        setupNoteHeaderTextField()
+        setupNoteBodyTextView()
+        setupBarButtonItem()
+        registerForKeyboardNotifications()
+    }
+
+    // MARK: - Setup
+
     private func setup() {
         let viewController = self
         let interactor = NoteDetailsInteractor()
@@ -95,15 +104,8 @@ class NoteDetailsViewController: UIViewController {
         router.dataStore = interactor
     }
 
-    private func setupUI() {
-        setupDateLabel()
-        setupNoteHeaderTextField()
-        setupNoteBodyTextView()
-        setupBarButtonItem()
-        registerForKeyboardNotifications()
-    }
-
     // MARK: - Setup UI Methods
+
     private func setupDateLabel() {
         dateLabel.font = .systemFont(ofSize: 14)
         dateLabel.textAlignment = .center
@@ -196,12 +198,11 @@ class NoteDetailsViewController: UIViewController {
     // MARK: - @objc methods
     @objc private func readyBarButtonAction() {
         view.endEditing(true)
-        let request = NoteDetails.CheckNoteIsEmpty.Request(
+        interactor?.provideNoteDetails(request: .saveNote(
             noteHeader: noteHeaderTextField.text ?? "",
             noteText: noteBodyTextView.text ?? "",
             noteDate: .now
-        )
-        interactor?.updateCreateNote(request: request)
+        ))
     }
 }
 
@@ -276,17 +277,14 @@ extension NoteDetailsViewController {
 
 // MARK: - NoteDetails display logic
 extension NoteDetailsViewController: NoteDetailsDisplayLogic {
-    func displayNoteDetails(viewModel: NoteDetails.ShowNoteDetails.ViewModel) {
-        noteHeaderTextField.text = viewModel.noteHeader
-        noteBodyTextView.text = viewModel.noteText
-        dateLabel.text = viewModel.noteDate
-    }
-
-    func showAlert(viewModel: NoteDetails.CheckNoteIsEmpty.ViewModel) {
-        if viewModel.isEmptyNote {
+    func displayNoteDetails(viewModel: NoteDetails.ViewModel.ViewModelData) {
+        switch viewModel {
+        case .displayNoteDetails(noteHeader: let noteHeader, noteText: let noteText, noteDate: let noteDate):
+            noteHeaderTextField.text = noteHeader
+            noteBodyTextView.text = noteText
+            dateLabel.text = noteDate
+        case .showAlert:
             showAlert()
         }
     }
-
-    func passNote() {}
 }
