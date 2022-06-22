@@ -3,7 +3,7 @@
 //  NoteApp
 //
 //  Created by asbul on 28.03.2022.
-//
+// swiftlint: disableAll
 
 import Foundation
 
