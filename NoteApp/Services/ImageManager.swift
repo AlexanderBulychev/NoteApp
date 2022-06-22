@@ -1,10 +1,3 @@
-//
-//  ImageManager.swift
-//  NoteApp
-//
-//  Created by asbul on 16.06.2022.
-//
-
 import UIKit
 import Kingfisher
 

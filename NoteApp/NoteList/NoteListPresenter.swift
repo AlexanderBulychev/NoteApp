@@ -4,7 +4,7 @@ protocol NoteListPresentationLogic {
     func presentNotes(response: NoteList.Response.ResponseType)
 }
 
-class NoteListPresenter: NoteListPresentationLogic {
+final class NoteListPresenter: NoteListPresentationLogic {
     weak var viewController: NoteListDisplayLogic?
 
     func presentNotes(response: NoteList.Response.ResponseType) {

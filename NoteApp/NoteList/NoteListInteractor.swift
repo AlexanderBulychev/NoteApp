@@ -47,6 +47,7 @@ extension NoteListInteractor: NoteListBusinessLogic {
                 worker?.deleteChosenNotes(at: selectedNotesIds)
                 notes = notes.filter { !selectedNotesIds.contains($0.id) }
                 selectedNotesIds = []
+                isEditMode.toggle()
                 presenter?.presentNotes(response: .presentNotes(notes: notes, isEditMode: isEditMode))
             } else {
                 presenter?.presentNotes(response: .presentNoSelection)

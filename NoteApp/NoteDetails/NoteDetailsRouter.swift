@@ -8,7 +8,7 @@ protocol NoteDetailsDataPassing {
     var dataStore: NoteDetailsDataStore? { get }
 }
 
-class NoteDetailsRouter: NSObject, NoteDetailsRoutingLogic, NoteDetailsDataPassing {
+final class NoteDetailsRouter: NSObject, NoteDetailsRoutingLogic, NoteDetailsDataPassing {
     weak var viewController: NoteDetailsViewController?
     var dataStore: NoteDetailsDataStore?
 

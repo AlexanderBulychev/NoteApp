@@ -1,10 +1,3 @@
-//
-//  NetworkManager.swift
-//  NoteApp
-//
-//  Created by asbul on 18.05.2022.
-//
-
 import Foundation
 
 enum NetworkError: Error {

@@ -1,10 +1,3 @@
-//
-//  StorageManager.swift
-//  NoteApp
-//
-//  Created by asbul on 28.03.2022.
-//
-
 import Foundation
 
 final class StorageManager {

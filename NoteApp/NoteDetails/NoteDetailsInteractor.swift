@@ -9,7 +9,7 @@ protocol NoteDetailsDataStore {
     var isEditingNote: Bool { get }
 }
 
-class NoteDetailsInteractor: NoteDetailsDataStore {
+final class NoteDetailsInteractor: NoteDetailsDataStore {
     var presenter: NoteDetailsPresentationLogic?
     var worker: NoteDetailsWorkerProtocol?
 

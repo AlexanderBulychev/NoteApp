@@ -1,10 +1,3 @@
-//
-//  NoteTableViewCell.swift
-//  NoteApp
-//
-//  Created by asbul on 19.04.2022.
-//
-
 import UIKit
 
 protocol NoteCellViewModelProtocol {
@@ -18,7 +11,7 @@ protocol NoteCellViewModelProtocol {
 }
 
 final class NoteCell: UITableViewCell {
-// MARK: - UI Elements
+    // MARK: - UI Elements
     private let noteView: UIView = {
         let noteViewCell = UIView()
         noteViewCell.backgroundColor = .white
@@ -260,7 +253,7 @@ extension NoteCell {
                 self.leadingLabelsViewConstraint.constant += 44
                 self.leadingCheckMarkButtonConstraint.constant += 56
                 self.layoutIfNeeded()
-        }
+            }
     }
 
     private func animateCellContentBack() {
@@ -271,7 +264,7 @@ extension NoteCell {
                 self.leadingLabelsViewConstraint.constant -= 44
                 self.leadingCheckMarkButtonConstraint.constant -= 56
                 self.layoutIfNeeded()
-        }
+            }
     }
 }
 
@@ -292,25 +285,4 @@ extension NoteCell {
         }
         changeCheckmarkImage(isChosen)
     }
-
-//    func configureCell(from viewModel: CellViewModel) {
-//        let note = viewModel.note
-//        noteHeaderLabel.text = note.header
-//        noteBodyLabel.text = note.text
-//        noteDateLabel.text = formatDate(date: note.date)
-//
-//        self.isEdited = CellViewModel.isEdited
-//        self.isChosen = viewModel.isChosen
-//
-//        if isEdited && !isShifted {
-//            animateCellContent()
-//        } else if !isEdited && isShifted {
-//            animateCellContentBack()
-//        }
-//        changeCheckmarkImage(isChosen)
-//        guard let imageData = viewModel.noteIconImageData else {
-//            return
-//        }
-//        noteIconImageView?.image = UIImage(data: imageData)
-//    }
 }
