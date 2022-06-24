@@ -33,6 +33,8 @@
 		FC53E1442864739A00CE466D /* NoteListInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E1402864739A00CE466D /* NoteListInteractorTests.swift */; };
 		FC53E1452864739A00CE466D /* NoteListWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E1412864739A00CE466D /* NoteListWorkerTests.swift */; };
 		FC53E1462864739A00CE466D /* NoteListPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E1422864739A00CE466D /* NoteListPresenterTests.swift */; };
+		FC53E14B2865C81B00CE466D /* NoteListPresentationLogicSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E14A2865C81A00CE466D /* NoteListPresentationLogicSpy.swift */; };
+		FC53E14D2865CB1900CE466D /* NoteListWorkerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E14C2865CB1900CE466D /* NoteListWorkerSpy.swift */; };
 		FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8674492834C0C40082F1F2 /* NetworkManager.swift */; };
 		FC9D86EC285B3DB400145051 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9D86EB285B3DB400145051 /* ImageManager.swift */; };
 /* End PBXBuildFile section */
@@ -79,6 +81,8 @@
 		FC53E1402864739A00CE466D /* NoteListInteractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListInteractorTests.swift; sourceTree = "<group>"; };
 		FC53E1412864739A00CE466D /* NoteListWorkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListWorkerTests.swift; sourceTree = "<group>"; };
 		FC53E1422864739A00CE466D /* NoteListPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListPresenterTests.swift; sourceTree = "<group>"; };
+		FC53E14A2865C81A00CE466D /* NoteListPresentationLogicSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListPresentationLogicSpy.swift; sourceTree = "<group>"; };
+		FC53E14C2865CB1900CE466D /* NoteListWorkerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListWorkerSpy.swift; sourceTree = "<group>"; };
 		FC8674492834C0C40082F1F2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		FC9D86EB285B3DB400145051 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -237,12 +241,38 @@
 			isa = PBXGroup;
 			children = (
 				FC53E13028634E8A00CE466D /* NoteAppTests.swift */,
+				FC53E14728659E0C00CE466D /* NoteList */,
+			);
+			path = NoteAppTests;
+			sourceTree = "<group>";
+		};
+		FC53E14728659E0C00CE466D /* NoteList */ = {
+			isa = PBXGroup;
+			children = (
 				FC53E13F2864739A00CE466D /* NoteListViewControllerTests.swift */,
 				FC53E1402864739A00CE466D /* NoteListInteractorTests.swift */,
 				FC53E1422864739A00CE466D /* NoteListPresenterTests.swift */,
 				FC53E1412864739A00CE466D /* NoteListWorkerTests.swift */,
+				FC53E14828659E9500CE466D /* TestDoubles */,
 			);
-			path = NoteAppTests;
+			path = NoteList;
+			sourceTree = "<group>";
+		};
+		FC53E14828659E9500CE466D /* TestDoubles */ = {
+			isa = PBXGroup;
+			children = (
+				FC53E14928659EAF00CE466D /* Spies */,
+			);
+			path = TestDoubles;
+			sourceTree = "<group>";
+		};
+		FC53E14928659EAF00CE466D /* Spies */ = {
+			isa = PBXGroup;
+			children = (
+				FC53E14A2865C81A00CE466D /* NoteListPresentationLogicSpy.swift */,
+				FC53E14C2865CB1900CE466D /* NoteListWorkerSpy.swift */,
+			);
+			path = Spies;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -421,6 +451,8 @@
 				FC53E1462864739A00CE466D /* NoteListPresenterTests.swift in Sources */,
 				FC53E13128634E8A00CE466D /* NoteAppTests.swift in Sources */,
 				FC53E1452864739A00CE466D /* NoteListWorkerTests.swift in Sources */,
+				FC53E14D2865CB1900CE466D /* NoteListWorkerSpy.swift in Sources */,
+				FC53E14B2865C81B00CE466D /* NoteListPresentationLogicSpy.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
