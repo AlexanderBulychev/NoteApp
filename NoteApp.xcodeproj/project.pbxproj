@@ -28,13 +28,18 @@
 		FC3DF11F284F8F9D00394852 /* NoteListViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF119284F8F9D00394852 /* NoteListViewController.swift */; };
 		FC3DF120284F8F9D00394852 /* NoteListInteractor.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */; };
 		FC3DF122284F90A200394852 /* NoteListConfigurator.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC3DF121284F90A200394852 /* NoteListConfigurator.swift */; };
-		FC53E13128634E8A00CE466D /* NoteAppTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E13028634E8A00CE466D /* NoteAppTests.swift */; };
 		FC53E1432864739A00CE466D /* NoteListViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E13F2864739A00CE466D /* NoteListViewControllerTests.swift */; };
 		FC53E1442864739A00CE466D /* NoteListInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E1402864739A00CE466D /* NoteListInteractorTests.swift */; };
 		FC53E1452864739A00CE466D /* NoteListWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E1412864739A00CE466D /* NoteListWorkerTests.swift */; };
 		FC53E1462864739A00CE466D /* NoteListPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E1422864739A00CE466D /* NoteListPresenterTests.swift */; };
 		FC53E14B2865C81B00CE466D /* NoteListPresentationLogicSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E14A2865C81A00CE466D /* NoteListPresentationLogicSpy.swift */; };
 		FC53E14D2865CB1900CE466D /* NoteListWorkerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E14C2865CB1900CE466D /* NoteListWorkerSpy.swift */; };
+		FC53E15728699B9B00CE466D /* NoteDetailsViewControllerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E15328699B9B00CE466D /* NoteDetailsViewControllerTests.swift */; };
+		FC53E15828699B9B00CE466D /* NoteDetailsInteractorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E15428699B9B00CE466D /* NoteDetailsInteractorTests.swift */; };
+		FC53E15928699B9B00CE466D /* NoteDetailsWorkerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E15528699B9B00CE466D /* NoteDetailsWorkerTests.swift */; };
+		FC53E15A28699B9B00CE466D /* NoteDetailsPresenterTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E15628699B9B00CE466D /* NoteDetailsPresenterTests.swift */; };
+		FC53E15E28699C5100CE466D /* NoteDetailsPresentationLogicSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E15D28699C5100CE466D /* NoteDetailsPresentationLogicSpy.swift */; };
+		FC53E16028699D7100CE466D /* NoteDetailsWorkerSpy.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC53E15F28699D7100CE466D /* NoteDetailsWorkerSpy.swift */; };
 		FC86744A2834C0C40082F1F2 /* NetworkManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC8674492834C0C40082F1F2 /* NetworkManager.swift */; };
 		FC9D86EC285B3DB400145051 /* ImageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = FC9D86EB285B3DB400145051 /* ImageManager.swift */; };
 /* End PBXBuildFile section */
@@ -76,13 +81,18 @@
 		FC3DF11A284F8F9D00394852 /* NoteListInteractor.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListInteractor.swift; sourceTree = "<group>"; };
 		FC3DF121284F90A200394852 /* NoteListConfigurator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListConfigurator.swift; sourceTree = "<group>"; };
 		FC53E12E28634E8A00CE466D /* NoteAppTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = NoteAppTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		FC53E13028634E8A00CE466D /* NoteAppTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteAppTests.swift; sourceTree = "<group>"; };
 		FC53E13F2864739A00CE466D /* NoteListViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListViewControllerTests.swift; sourceTree = "<group>"; };
 		FC53E1402864739A00CE466D /* NoteListInteractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListInteractorTests.swift; sourceTree = "<group>"; };
 		FC53E1412864739A00CE466D /* NoteListWorkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListWorkerTests.swift; sourceTree = "<group>"; };
 		FC53E1422864739A00CE466D /* NoteListPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListPresenterTests.swift; sourceTree = "<group>"; };
 		FC53E14A2865C81A00CE466D /* NoteListPresentationLogicSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListPresentationLogicSpy.swift; sourceTree = "<group>"; };
 		FC53E14C2865CB1900CE466D /* NoteListWorkerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteListWorkerSpy.swift; sourceTree = "<group>"; };
+		FC53E15328699B9B00CE466D /* NoteDetailsViewControllerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsViewControllerTests.swift; sourceTree = "<group>"; };
+		FC53E15428699B9B00CE466D /* NoteDetailsInteractorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsInteractorTests.swift; sourceTree = "<group>"; };
+		FC53E15528699B9B00CE466D /* NoteDetailsWorkerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsWorkerTests.swift; sourceTree = "<group>"; };
+		FC53E15628699B9B00CE466D /* NoteDetailsPresenterTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsPresenterTests.swift; sourceTree = "<group>"; };
+		FC53E15D28699C5100CE466D /* NoteDetailsPresentationLogicSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsPresentationLogicSpy.swift; sourceTree = "<group>"; };
+		FC53E15F28699D7100CE466D /* NoteDetailsWorkerSpy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoteDetailsWorkerSpy.swift; sourceTree = "<group>"; };
 		FC8674492834C0C40082F1F2 /* NetworkManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NetworkManager.swift; sourceTree = "<group>"; };
 		FC9D86EB285B3DB400145051 /* ImageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ImageManager.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -240,8 +250,8 @@
 		FC53E12F28634E8A00CE466D /* NoteAppTests */ = {
 			isa = PBXGroup;
 			children = (
-				FC53E13028634E8A00CE466D /* NoteAppTests.swift */,
 				FC53E14728659E0C00CE466D /* NoteList */,
+				FC53E15228699B6600CE466D /* NoteDetails */,
 			);
 			path = NoteAppTests;
 			sourceTree = "<group>";
@@ -271,6 +281,35 @@
 			children = (
 				FC53E14A2865C81A00CE466D /* NoteListPresentationLogicSpy.swift */,
 				FC53E14C2865CB1900CE466D /* NoteListWorkerSpy.swift */,
+			);
+			path = Spies;
+			sourceTree = "<group>";
+		};
+		FC53E15228699B6600CE466D /* NoteDetails */ = {
+			isa = PBXGroup;
+			children = (
+				FC53E15328699B9B00CE466D /* NoteDetailsViewControllerTests.swift */,
+				FC53E15428699B9B00CE466D /* NoteDetailsInteractorTests.swift */,
+				FC53E15528699B9B00CE466D /* NoteDetailsWorkerTests.swift */,
+				FC53E15628699B9B00CE466D /* NoteDetailsPresenterTests.swift */,
+				FC53E15B28699BF100CE466D /* TestDoubles */,
+			);
+			path = NoteDetails;
+			sourceTree = "<group>";
+		};
+		FC53E15B28699BF100CE466D /* TestDoubles */ = {
+			isa = PBXGroup;
+			children = (
+				FC53E15C28699C0300CE466D /* Spies */,
+			);
+			path = TestDoubles;
+			sourceTree = "<group>";
+		};
+		FC53E15C28699C0300CE466D /* Spies */ = {
+			isa = PBXGroup;
+			children = (
+				FC53E15D28699C5100CE466D /* NoteDetailsPresentationLogicSpy.swift */,
+				FC53E15F28699D7100CE466D /* NoteDetailsWorkerSpy.swift */,
 			);
 			path = Spies;
 			sourceTree = "<group>";
@@ -448,8 +487,13 @@
 			files = (
 				FC53E1442864739A00CE466D /* NoteListInteractorTests.swift in Sources */,
 				FC53E1432864739A00CE466D /* NoteListViewControllerTests.swift in Sources */,
+				FC53E15928699B9B00CE466D /* NoteDetailsWorkerTests.swift in Sources */,
+				FC53E15828699B9B00CE466D /* NoteDetailsInteractorTests.swift in Sources */,
+				FC53E15728699B9B00CE466D /* NoteDetailsViewControllerTests.swift in Sources */,
+				FC53E15A28699B9B00CE466D /* NoteDetailsPresenterTests.swift in Sources */,
 				FC53E1462864739A00CE466D /* NoteListPresenterTests.swift in Sources */,
-				FC53E13128634E8A00CE466D /* NoteAppTests.swift in Sources */,
+				FC53E16028699D7100CE466D /* NoteDetailsWorkerSpy.swift in Sources */,
+				FC53E15E28699C5100CE466D /* NoteDetailsPresentationLogicSpy.swift in Sources */,
 				FC53E1452864739A00CE466D /* NoteListWorkerTests.swift in Sources */,
 				FC53E14D2865CB1900CE466D /* NoteListWorkerSpy.swift in Sources */,
 				FC53E14B2865C81B00CE466D /* NoteListPresentationLogicSpy.swift in Sources */,

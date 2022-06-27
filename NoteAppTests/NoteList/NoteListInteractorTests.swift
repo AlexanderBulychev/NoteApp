@@ -43,7 +43,6 @@ class NoteListInteractorTests: XCTestCase {
         worker = nil
         super.tearDown()
     }
-
     
     // MARK: Tests
     
