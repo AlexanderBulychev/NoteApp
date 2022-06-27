@@ -36,7 +36,7 @@ extension NoteListInteractor: NoteListBusinessLogic {
         case .switchIsEditMode:
             isEditMode.toggle()
             if !isEditMode {
-                selectedNotesIds = []
+                selectedNotesIds.removeAll()
             }
             presenter?.presentNotes(response: .presentNotes(notes: notes, isEditMode: isEditMode))
         case .switchNoteSelection(idx: let idx):

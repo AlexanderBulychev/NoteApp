@@ -23,7 +23,7 @@ extension NoteDetailsInteractor: NoteDetailsBusinessLogic {
         switch request {
         case .provideNoteDetails:
             presenter?.presentNoteDetails(response: .presentNoteDetails(note: note))
-
+            
         case .saveNote(noteHeader: let noteHeader, noteText: let noteText, noteDate: let noteDate):
             if isEditingNote {
                 note?.header = noteHeader
@@ -39,7 +39,6 @@ extension NoteDetailsInteractor: NoteDetailsBusinessLogic {
             }
             guard let note = note else { return }
             presenter?.presentNoteDetails(response: .checkNote(isEmpty: note.isEmpty))
-
         case .saveNoteForPassing(noteHeader: let noteHeader, noteText: let noteText, noteDate: let noteDate):
             if isEditingNote {
                 note?.header = noteHeader
