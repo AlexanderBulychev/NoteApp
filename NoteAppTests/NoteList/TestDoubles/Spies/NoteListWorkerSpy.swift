@@ -16,7 +16,8 @@ final class NoteListWorkerSpy: NoteListWorkerProtocol {
     let networkNotes: [NetworkNote] = [
         NetworkNote(header: "Note1", text: "SomeText1", date: .now, userShareIcon: nil),
         NetworkNote(header: "Note2", text: "SomeText2", date: .now, userShareIcon: nil),
-        NetworkNote(header: "Note3", text: "SomeText3", date: .now, userShareIcon: nil)
+        NetworkNote(header: "Note3", text: "SomeText3", date: .now, userShareIcon: nil),
+        NetworkNote(header: "Note4",  text: "SomeText4", date: .now, userShareIcon: nil)
     ]
 
     let notes: [Note] = [

@@ -9,9 +9,14 @@ import Foundation
 @testable import NoteApp
 
 final class NoteListPresentationLogicSpy: NoteListPresentationLogic {
-    private(set) var isCalledPresentFetchedNotes = false
+    private(set) var isCalledPresentNotes = false
+    // for what??
+//    var responseMock: NoteList.Response.ResponseType?
+//    var fetchResponse: (() -> Void)?
 
     func presentNotes(response: NoteList.Response.ResponseType) {
-        isCalledPresentFetchedNotes = true
+        isCalledPresentNotes = true
+//        responseMock = response
+//        fetchResponse?()
     }    
 }
